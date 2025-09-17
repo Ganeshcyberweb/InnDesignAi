@@ -39,3 +39,36 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Logs
+logs
+*.log
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+.env
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 
+
+/src/generated/prisma
+.claude
+.taskmaster
+.mcp.json
+AI_INTEGRATION_SETUP.md
+CLAUDE.md
+PRD.md
+OAUTH_SETUP.md
+SUPABASE_OAUTH_SETUP.md
+.gitignore
