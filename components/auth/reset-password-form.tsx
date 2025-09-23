@@ -11,8 +11,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form'
-import { useAuth } from '@/app/lib/auth/context'
-import { ResetPasswordFormData } from '@/app/types/auth'
+import { useAuth } from '@/lib/auth/context'
+import { ResetPasswordFormData } from '@/types/auth'
 
 const resetPasswordSchema = z.object({
   email: z
@@ -33,26 +33,12 @@ const formVariants = {
 
 const fieldVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+  visible: { opacity: 1, y: 0 },
 }
 
 const successVariants = {
   hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.4,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+  visible: { opacity: 1, scale: 1 },
 }
 
 export function ResetPasswordForm() {

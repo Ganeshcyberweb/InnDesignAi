@@ -1,6 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, Variants } from 'framer-motion'
+import { cubicBezier } from 'framer-motion'
 import { useState } from 'react'
 import {
   Home,
@@ -20,9 +21,9 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { UserMenu } from '@/components/auth/user-menu'
-import { useAuth } from '@/app/lib/auth/context'
+import { useAuth } from '@/lib/auth/context'
 
-const sidebarVariants = {
+const sidebarVariants: Variants = {
   hidden: { x: -280, opacity: 0 },
   visible: {
     x: 0,
@@ -35,7 +36,7 @@ const sidebarVariants = {
   },
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { x: -20, opacity: 0 },
   visible: {
     x: 0,
@@ -103,7 +104,7 @@ export function Sidebar() {
       variants={sidebarVariants}
       initial="hidden"
       animate="visible"
-      className="fixed inset-y-0 left-0 z-50 w-72 bg-black border-r border-black/20 flex flex-col hidden lg:flex"
+      className="fixed inset-y-0 left-0 z-50 w-72 bg-black border-r border-black/20 hidden lg:flex flex-col"
     >
       {/* Logo */}
       <motion.div variants={itemVariants} className="flex items-center space-x-3 p-6 border-b border-black/20">

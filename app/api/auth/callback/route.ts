@@ -4,8 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/lib/supabase/server'
-import { getOrCreateUserProfile } from '@/app/lib/database'
+import { createClient } from '@/lib/supabase/server'
+import { getOrCreateUserProfile } from '@/lib/database'
 
 export async function GET(request: NextRequest) {
   try {

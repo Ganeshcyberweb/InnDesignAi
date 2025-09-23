@@ -22,4 +22,4 @@ export { AuthButton } from './auth-button'
 export { UserMenu } from './user-menu'
 
 // Re-export auth context and hooks for convenience
-export { useAuth, useUser, useRequireAuth, AuthProvider } from '@/app/lib/auth/context'
+export { useAuth, useUser, useRequireAuth, AuthProvider } from '@/lib/auth/context'

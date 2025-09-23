@@ -5,17 +5,18 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Eye, EyeOff, Loader2, Building2, Palette, Shield } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Building2, Palette } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form'
 import { OAuthButtons } from '@/components/auth/oauth-buttons'
-import { useAuth } from '@/app/lib/auth/context'
-import { SignupFormData, UserRole } from '@/app/types/auth'
+import { useAuth } from '@/lib/auth/context'
+import { UserRole } from '@/types/auth'
+
+type SignupRole = 'CLIENT' | 'DESIGNER'
 
 const signupSchema = z.object({
   name: z
@@ -38,20 +39,14 @@ const signupSchema = z.object({
     .min(1, 'Please confirm your password'),
   role: z.enum(['CLIENT', 'DESIGNER'], {
     required_error: 'Please select your role',
-  }),
+  }) as z.ZodType<SignupRole>,
   company: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
-}).refine((data) => {
-  if (data.role === 'DESIGNER' && (!data.company || data.company.trim().length === 0)) {
-    return false
-  }
-  return true
-}, {
-  message: 'Company name is required for designers',
-  path: ['company'],
 })
+
+type SignupFormData = z.infer<typeof signupSchema>
 
 const formVariants = {
   hidden: { opacity: 0 },
@@ -65,30 +60,13 @@ const formVariants = {
 
 const fieldVariants = {
   hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+  visible: { opacity: 1, x: 0 },
 }
 
 const buttonVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-      delay: 0.3,
-    },
-  },
-  tap: {
-    scale: 0.98,
-  },
+  visible: { opacity: 1, y: 0 },
+  tap: { scale: 0.98 },
 }
 
 const roleOptions = [

@@ -6,12 +6,13 @@ import { z } from 'zod'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, KeyRound, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
+import { fadeIn, fadeInLeft, transitions } from '@/lib/animations'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form'
-import { useAuth } from '@/app/lib/auth/context'
-import { ConfirmPasswordFormData } from '@/app/types/auth'
+import { useAuth } from '@/lib/auth/context'
+import { ConfirmPasswordFormData } from '@/types/auth'
 
 const confirmPasswordSchema = z.object({
   password: z
@@ -29,39 +30,9 @@ const confirmPasswordSchema = z.object({
   path: ['confirmPassword'],
 })
 
-const formVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-}
-
-const fieldVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-}
-
-const successVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.4,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-}
+const formVariants = fadeIn;
+const fieldVariants = fadeInLeft;
+const successVariants = fadeIn;
 
 interface ConfirmPasswordFormProps {
   token?: string
@@ -97,12 +68,14 @@ export function ConfirmPasswordForm({ token }: ConfirmPasswordFormProps) {
         initial: 'hidden',
         animate: 'visible',
         variants: formVariants,
+        transition: { ...transitions.default, staggerChildren: 0.1 }
       }
 
   const fieldMotionProps = shouldReduceMotion
     ? {}
     : {
         variants: fieldVariants,
+        transition: transitions.default
       }
 
   const successMotionProps = shouldReduceMotion
@@ -111,6 +84,7 @@ export function ConfirmPasswordForm({ token }: ConfirmPasswordFormProps) {
         initial: 'hidden',
         animate: 'visible',
         variants: successVariants,
+        transition: transitions.default
       }
 
   if (success) {

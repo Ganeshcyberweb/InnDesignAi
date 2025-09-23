@@ -2,9 +2,13 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Github } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/lib/auth/context'
+import { fadeInUp, transitions, tapVariant } from '@/lib/animations'
 import { toast } from 'sonner'
-import { createClient } from '@/app/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -66,20 +70,7 @@ export function OAuthButtons({ disabled = false }: OAuthButtonsProps) {
     }
   }
 
-  const buttonVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-    tap: {
-      scale: 0.98,
-    },
-  }
+  const buttonVariants = { ...fadeInUp, ...tapVariant };
 
   return (
     <div className="space-y-3">
@@ -97,6 +88,7 @@ export function OAuthButtons({ disabled = false }: OAuthButtonsProps) {
       <div className="grid grid-cols-2 gap-3">
         <motion.div
           variants={buttonVariants}
+          transition={transitions.default}
           initial="hidden"
           animate="visible"
           whileTap="tap"
@@ -114,6 +106,7 @@ export function OAuthButtons({ disabled = false }: OAuthButtonsProps) {
 
         <motion.div
           variants={buttonVariants}
+          transition={transitions.default}
           initial="hidden"
           animate="visible"
           whileTap="tap"

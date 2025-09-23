@@ -8,14 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+  visible: { opacity: 1, y: 0 },
 }
 
 interface SuggestedItem {

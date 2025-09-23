@@ -1,8 +1,9 @@
 'use client'
-
 import { ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
+import { Palette } from 'lucide-react'
+import { fadeIn, scaleIn, transitions } from '@/lib/animations'
 
 interface AuthLayoutProps {
   children: ReactNode
@@ -11,42 +12,8 @@ interface AuthLayoutProps {
   showLogo?: boolean
 }
 
-const containerVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.4,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-}
-
-const childVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-      delay: 0.1,
-    },
-  },
-}
-
-const logoVariants = {
-  hidden: { opacity: 0, y: -20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-}
+const containerVariants = scaleIn;
+const childVariants = fadeIn;
 
 export function AuthLayout({
   children,
@@ -62,6 +29,7 @@ export function AuthLayout({
         initial: 'hidden',
         animate: 'visible',
         variants: containerVariants,
+        transition: transitions.default
       }
 
   const childMotionProps = shouldReduceMotion
@@ -70,71 +38,58 @@ export function AuthLayout({
         initial: 'hidden',
         animate: 'visible',
         variants: childVariants,
-      }
-
-  const logoMotionProps = shouldReduceMotion
-    ? {}
-    : {
-        initial: 'hidden',
-        animate: 'visible',
-        variants: logoVariants,
+        transition: { ...transitions.default, delay: 0.1 }
       }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
-      <motion.div
-        {...motionProps}
-        className="w-full max-w-md space-y-8"
-      >
-        {showLogo && (
-          <motion.div {...logoMotionProps} className="text-center">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-              InnDesign
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              AI-Powered Interior Design
-            </p>
-          </motion.div>
-        )}
+        <div className="flex h-screen bg-[hsl(240_5%_92.16%)] md:rounded-s-3xl md:group-peer-data-[state=collapsed]/sidebar-inset:rounded-s-none transition-all ease-in-out duration-300">
+          <div className="flex-1 w-full shadow-md md:rounded-s-[inherit] min-[1024px]:rounded-e-3xl bg-background">
+            <div className="h-full flex items-center justify-center px-4 md:px-6 lg:px-8 py-12">
+              <motion.div
+                {...motionProps}
+                className="w-full h-full max-w-md space-y-8"
+              >
 
-        <Card className="p-8 shadow-lg border-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-          <motion.div {...childMotionProps} className="space-y-6">
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                {title}
-              </h2>
-              {subtitle && (
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {subtitle}
-                </p>
-              )}
+                <Card className="p-8 shadow-lg border bg-background">
+                  <motion.div {...childMotionProps} className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h2 className="text-2xl font-semibold text-foreground">
+                        {title}
+                      </h2>
+                      {subtitle && (
+                        <p className="text-sm text-muted-foreground">
+                          {subtitle}
+                        </p>
+                      )}
+                    </div>
+                    {children}
+                  </motion.div>
+                </Card>
+
+                <motion.div
+                  {...childMotionProps}
+                  className="text-center text-xs text-muted-foreground"
+                >
+                  <p>
+                    By continuing, you agree to our{' '}
+                    <a
+                      href="/terms"
+                      className="underline hover:text-foreground transition-colors"
+                    >
+                      Terms of Service
+                    </a>{' '}
+                    and{' '}
+                    <a
+                      href="/privacy"
+                      className="underline hover:text-foreground transition-colors"
+                    >
+                      Privacy Policy
+                    </a>
+                  </p>
+                </motion.div>
+              </motion.div>
             </div>
-            {children}
-          </motion.div>
-        </Card>
-
-        <motion.div
-          {...childMotionProps}
-          className="text-center text-xs text-slate-500 dark:text-slate-500"
-        >
-          <p>
-            By continuing, you agree to our{' '}
-            <a
-              href="/terms"
-              className="underline hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
-            >
-              Terms of Service
-            </a>{' '}
-            and{' '}
-            <a
-              href="/privacy"
-              className="underline hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
-            >
-              Privacy Policy
-            </a>
-          </p>
-        </motion.div>
-      </motion.div>
-    </div>
+          </div>
+        </div>
   )
 }

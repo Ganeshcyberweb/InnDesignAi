@@ -18,39 +18,17 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UserMenu } from '@/components/auth/user-menu'
-import { useAuth } from '@/app/lib/auth/context'
+import { useAuth } from '@/lib/auth/context'
 
 const mobileMenuVariants = {
   hidden: { opacity: 0, x: '-100%' },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-      staggerChildren: 0.05,
-    },
-  },
-  exit: {
-    opacity: 0,
-    x: '-100%',
-    transition: {
-      duration: 0.2,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+  visible: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: '-100%' },
 }
 
 const itemVariants = {
   hidden: { x: -20, opacity: 0 },
-  visible: {
-    x: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+  visible: { x: 0, opacity: 1 },
 }
 
 interface NavigationItem {

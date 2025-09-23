@@ -4,10 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/lib/supabase/server'
-import { createUserProfile } from '@/app/lib/database'
-import { signUpSchema, validateAuthData } from '@/app/lib/validations/auth'
-import { createAuthSuccessResponse, createAuthErrorResponse, getAuthUrls } from '@/app/lib/auth/helpers'
+import { createClient } from '@/lib/supabase/server'
+import { createUserProfile } from '@/lib/database'
+import { signUpSchema, validateAuthData } from '@/lib/validations/auth'
+import { createAuthSuccessResponse, createAuthErrorResponse, getAuthUrls } from '@/lib/auth/helpers'
 
 export async function POST(request: NextRequest) {
   try {
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       // This is recoverable - profile can be created on first sign-in
       return createAuthSuccessResponse({
         user: data.user,
-        session: data.session,
+        session: data.session || undefined,
         message: 'Registration successful! Please check your email to confirm your account.',
       })
     }
@@ -99,8 +99,8 @@ export async function POST(request: NextRequest) {
     // Registration successful with profile
     return createAuthSuccessResponse({
       user: data.user,
-      profile,
-      session: data.session,
+      profile: profile || undefined,
+      session: data.session || undefined,
       message: 'Registration successful! Please check your email to confirm your account.',
     })
 

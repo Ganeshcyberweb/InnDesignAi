@@ -5,7 +5,7 @@
 
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import type { Database } from '@/app/types/database'
+import type { Database } from '@/types/database'
 
 // Define protected routes and their required roles
 const PROTECTED_ROUTES = {

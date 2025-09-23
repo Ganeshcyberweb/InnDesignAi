@@ -4,9 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserProfile, updateUserProfile } from '@/app/lib/database'
-import { profileUpdateSchema, validateAuthData } from '@/app/lib/validations/auth'
-import { createAuthSuccessResponse, createAuthErrorResponse, protectApiRoute } from '@/app/lib/auth/helpers'
+import { getUserProfile, updateUserProfile } from '@/lib/database'
+import { profileUpdateSchema, validateAuthData } from '@/lib/validations/auth'
+import { createAuthSuccessResponse, createAuthErrorResponse, protectApiRoute } from '@/lib/auth/helpers'
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Get complete profile data
     const { profile: fullProfile, error: profileError } = await getUserProfile(user.id)
 
-    if (profileError) {
+    if (profileError || !fullProfile) {
       console.error('Profile fetch error:', profileError)
       return createAuthErrorResponse(
         'Failed to fetch profile',
@@ -94,7 +94,7 @@ export async function PATCH(request: NextRequest) {
       cleanUpdateData
     )
 
-    if (updateError) {
+    if (updateError || !updatedProfile) {
       console.error('Profile update error:', updateError)
       return createAuthErrorResponse(
         'Failed to update profile',
@@ -141,7 +141,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete profile and all associated data
-    const { deleteUserProfile } = await import('@/app/lib/database')
+    const { deleteUserProfile } = await import('@/lib/database')
     const { success, error: deleteError } = await deleteUserProfile(user.id)
 
     if (!success || deleteError) {
@@ -154,7 +154,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Also delete the user from Supabase Auth
-    const { createClient } = await import('@/app/lib/supabase/server')
+    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
 
     const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id)

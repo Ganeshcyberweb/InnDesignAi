@@ -4,10 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/lib/supabase/server'
-import { getOrCreateUserProfile } from '@/app/lib/database'
-import { signInSchema, validateAuthData } from '@/app/lib/validations/auth'
-import { createAuthSuccessResponse, createAuthErrorResponse } from '@/app/lib/auth/helpers'
+import { createClient } from '@/lib/supabase/server'
+import { getOrCreateUserProfile } from '@/lib/database'
+import { signInSchema, validateAuthData } from '@/lib/validations/auth'
+import { createAuthSuccessResponse, createAuthErrorResponse } from '@/lib/auth/helpers'
 
 export async function POST(request: NextRequest) {
   try {

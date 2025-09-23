@@ -5,22 +5,13 @@ import { LogIn, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/app/lib/auth/context'
+import { useAuth } from '@/lib/auth/context'
 import { UserMenu } from './user-menu'
+import { scaleIn, transitions, tapVariant } from '@/lib/animations'
 
 const buttonVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.2,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-  tap: {
-    scale: 0.95,
-  },
+  ...scaleIn,
+  ...tapVariant
 }
 
 const containerVariants = {
@@ -49,7 +40,10 @@ export function AuthButton() {
     ? {}
     : {
         variants: buttonVariants,
-        whileTap: 'tap',
+        initial: "hidden",
+        animate: "visible",
+        whileTap: "tap",
+        transition: transitions.default
       }
 
   // Show loading state

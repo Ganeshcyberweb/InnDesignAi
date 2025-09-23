@@ -1,8 +1,7 @@
-import { PrismaClient } from '../generated/prisma'
-import { PrismaClientKnownRequestError } from '../generated/prisma/runtime/library'
+import { PrismaClient } from '@prisma/client'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 declare global {
-  // eslint-disable-next-line no-var
   var __prisma: PrismaClient | undefined
 }
 
@@ -69,12 +68,15 @@ export function handlePrismaError(error: unknown): never {
  * Transaction wrapper for complex operations
  */
 export async function withTransaction<T>(
-  operation: (prisma: PrismaClient) => Promise<T>
+  operation: (prisma: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'>) => Promise<T>
 ): Promise<T> {
-  return await prisma.$transaction(operation)
+  return await prisma.$transaction(operation, {
+    maxWait: 10000, // 10s maximum wait time
+    timeout: 30000, // 30s timeout
+  })
 }
 
-// Re-export Prisma types for convenience
+// Re-export types from the generated Prisma client
 export type {
   Profile,
   Preferences,
@@ -82,10 +84,11 @@ export type {
   DesignOutput,
   RoiCalculation,
   Feedback,
+} from '../generated/prisma'
+
+// Re-export enum types
+export {
   UserRole,
   DesignStatus,
   FeedbackType,
 } from '../generated/prisma'
-
-// Re-export Prisma Client type
-export type { PrismaClient } from '../generated/prisma'

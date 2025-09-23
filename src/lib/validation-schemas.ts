@@ -79,7 +79,14 @@ export const createDesignOutputSchema = z.object({
   designId: uuidSchema,
   outputImageUrl: z.string().url('Invalid output image URL'),
   variationName: z.string().max(100, 'Variation name too long').optional(),
-  generationParameters: z.record(z.any()).optional(),
+  generationParameters: z.object({
+    seed: z.number().optional(),
+    guidance_scale: z.number().optional(),
+    num_inference_steps: z.number().optional(),
+    negative_prompt: z.string().optional(),
+    style_strength: z.number().optional(),
+    composition_strength: z.number().optional()
+  }).optional(),
 })
 
 // ================================

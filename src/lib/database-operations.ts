@@ -16,6 +16,9 @@ import type {
   FeedbackType,
 } from '../generated/prisma'
 
+import type { GenerationParameters } from '@/types/design'
+import type { CostBreakdown } from '@/types/roi'
+
 // ================================
 // Type Definitions
 // ================================
@@ -40,7 +43,7 @@ export interface CreateDesignOutputRequest {
   designId: string
   outputImageUrl: string
   variationName?: string
-  generationParameters?: Record<string, any>
+  generationParameters?: GenerationParameters
 }
 
 export interface CreateRoiCalculationRequest {
@@ -48,7 +51,7 @@ export interface CreateRoiCalculationRequest {
   estimatedCost: number
   roiPercentage: number
   paybackTimeline?: string
-  costBreakdown?: Record<string, any>
+  costBreakdown?: CostBreakdown
   notes?: string
 }
 

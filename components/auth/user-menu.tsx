@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, easeInOut } from 'framer-motion'
 import {
   User,
   Settings,
@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/app/lib/auth/context'
+import { useAuth } from '@/lib/auth/context'
 
 const dropdownVariants = {
   hidden: {
@@ -38,7 +38,7 @@ const dropdownVariants = {
     y: 0,
     transition: {
       duration: 0.15,
-      ease: [0.22, 1, 0.36, 1],
+      ease: easeInOut,
     },
   },
   exit: {
@@ -47,7 +47,7 @@ const dropdownVariants = {
     y: -10,
     transition: {
       duration: 0.1,
-      ease: [0.22, 1, 0.36, 1],
+      ease: easeInOut,
     },
   },
 }
@@ -58,7 +58,7 @@ const avatarVariants = {
     scale: 1.05,
     transition: {
       duration: 0.2,
-      ease: [0.22, 1, 0.36, 1],
+      ease: easeInOut,
     },
   },
   tap: { scale: 0.95 },

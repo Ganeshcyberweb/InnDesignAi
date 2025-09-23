@@ -8,13 +8,15 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
+import { fadeIn, fadeInUp, tapVariant, transitions } from '@/lib/animations'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { OAuthButtons } from '@/components/auth/oauth-buttons'
-import { useAuth } from '@/app/lib/auth/context'
-import { LoginFormData } from '@/app/types/auth'
+import { useAuth } from '@/lib/auth/context'
+import { LoginFormData } from '@/types/auth'
 
 const loginSchema = z.object({
   email: z
@@ -27,42 +29,26 @@ const loginSchema = z.object({
     .min(6, 'Password must be at least 6 characters'),
 })
 
-const formVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
+const formVariants = fadeIn;
+const fieldVariants = fadeInUp;
+const buttonVariants = { ...fadeInUp, ...tapVariant };
+
+const formTransition = {
+  staggerChildren: 0.1,
+  type: "tween" as const
 }
 
-const fieldVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+const fieldTransition = {
+  duration: 0.3,
+  type: "tween" as const,
+  ease: [0.22, 1, 0.36, 1]
 }
 
-const buttonVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
-      delay: 0.2,
-    },
-  },
-  tap: {
-    scale: 0.98,
-  },
+const buttonTransition = {
+  duration: 0.3,
+  type: "tween" as const,
+  ease: [0.22, 1, 0.36, 1],
+  delay: 0.2
 }
 
 export function LoginForm() {
@@ -85,18 +71,20 @@ export function LoginForm() {
     }
   }
 
-  const motionProps = shouldReduceMotion
+  const motionProps: { [key: string]: any } = shouldReduceMotion
     ? {}
     : {
         initial: 'hidden',
         animate: 'visible',
         variants: formVariants,
+        transition: formTransition
       }
 
-  const fieldMotionProps = shouldReduceMotion
+  const fieldMotionProps: { [key: string]: any } = shouldReduceMotion
     ? {}
     : {
         variants: fieldVariants,
+        transition: fieldTransition
       }
 
   const buttonMotionProps = shouldReduceMotion

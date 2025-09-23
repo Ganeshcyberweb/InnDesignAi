@@ -4,9 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/lib/supabase/server'
-import { resetPasswordConfirmSchema, validateAuthData } from '@/app/lib/validations/auth'
-import { createAuthSuccessResponse, createAuthErrorResponse, protectApiRoute } from '@/app/lib/auth/helpers'
+import { createClient } from '@/lib/supabase/server'
+import { resetPasswordConfirmSchema, validateAuthData } from '@/lib/validations/auth'
+import { createAuthSuccessResponse, createAuthErrorResponse, protectApiRoute } from '@/lib/auth/helpers'
 
 export async function POST(request: NextRequest) {
   try {

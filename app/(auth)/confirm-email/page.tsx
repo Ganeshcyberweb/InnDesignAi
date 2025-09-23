@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 import { AuthLayout } from '@/components/auth/auth-layout'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/app/lib/auth/context'
+import { useAuth } from '@/lib/auth/context'
 
 function ConfirmEmailContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
