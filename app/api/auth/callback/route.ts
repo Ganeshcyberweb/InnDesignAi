@@ -60,20 +60,8 @@ export async function GET(request: NextRequest) {
       // Continue to redirect even if profile has issues - can be resolved later
     }
 
-    // Redirect to the appropriate page
-    let redirectUrl: string
-
-    if (created) {
-      // New user - redirect to profile setup
-      redirectUrl = '/profile/setup?welcome=true'
-    } else {
-      // Existing user - redirect to requested page or dashboard
-      redirectUrl = next.startsWith('/') ? next : '/dashboard'
-    }
-
+    let redirectUrl = next.startsWith('/') ? next : '/dashboard'
     const successUrl = new URL(redirectUrl, requestUrl.origin)
-
-    // Add success parameter to URL
     successUrl.searchParams.set('authenticated', 'true')
 
     return NextResponse.redirect(successUrl)

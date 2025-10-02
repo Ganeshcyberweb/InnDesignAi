@@ -95,28 +95,8 @@ export async function middleware(request: NextRequest) {
 
   // Handle public routes and auth callback
   if (PUBLIC_ROUTES.includes(pathname) || PUBLIC_API_ROUTES.includes(pathname) || AUTH_ROUTES.includes(pathname)) {
-    // If user is authenticated and trying to access auth pages, redirect appropriately
     if (user && (pathname === '/login' || pathname === '/signup')) {
-      // Check if user has a complete profile
-      try {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', user.id)
-          .single()
-
-        if (error || !profile) {
-          // User needs to complete profile setup
-          return NextResponse.redirect(new URL('/profile/setup', request.url))
-        } else {
-          // User has complete profile, redirect to dashboard
-          return NextResponse.redirect(new URL('/dashboard', request.url))
-        }
-      } catch (error) {
-        console.error('Error checking profile during auth page redirect:', error)
-        // Default to dashboard if there's an error
-        return NextResponse.redirect(new URL('/dashboard', request.url))
-      }
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
     return response
   }

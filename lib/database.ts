@@ -3,7 +3,7 @@
  * Handles user profile creation and management
  */
 
-import { PrismaClient, UserRole } from '@/src/generated/prisma'
+import { PrismaClient, UserRole } from '@/lib/generated/prisma'
 import type { User } from '@supabase/supabase-js'
 
 // Singleton Prisma client instance

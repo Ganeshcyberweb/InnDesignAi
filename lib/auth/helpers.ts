@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, getUser, getSession } from '@/lib/supabase/server'
 import { getUserProfile, getOrCreateUserProfile } from '@/lib/database'
 import type { User, Session } from '@supabase/supabase-js'
-import type { UserRole } from '@/src/generated/prisma'
+import type { UserRole } from '@/lib/generated/prisma'
 
 export interface AuthUser {
   id: string

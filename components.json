@@ -18,5 +18,10 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "registries": {}
+  "registries": {
+    "@kokonutui": "https://kokonutui.com/r/{name}.json",
+    "@smoothui": "https://smoothui.dev/r/{name}.json",
+    "@ai-elements": "https://registry.ai-sdk.dev/{name}.json",
+    "@reui": "https://reui.io/r/{name}.json"
+  }
 }
