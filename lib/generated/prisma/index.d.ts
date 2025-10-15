@@ -24,25 +24,10 @@ export type Profile = $Result.DefaultSelection<Prisma.$ProfilePayload>
  */
 export type Design = $Result.DefaultSelection<Prisma.$DesignPayload>
 /**
- * Model Preferences
- * 
- */
-export type Preferences = $Result.DefaultSelection<Prisma.$PreferencesPayload>
-/**
  * Model DesignOutput
  * 
  */
 export type DesignOutput = $Result.DefaultSelection<Prisma.$DesignOutputPayload>
-/**
- * Model RoiCalculation
- * 
- */
-export type RoiCalculation = $Result.DefaultSelection<Prisma.$RoiCalculationPayload>
-/**
- * Model Feedback
- * 
- */
-export type Feedback = $Result.DefaultSelection<Prisma.$FeedbackPayload>
 
 /**
  * Enums
@@ -67,18 +52,6 @@ export const DesignStatus: {
 
 export type DesignStatus = (typeof DesignStatus)[keyof typeof DesignStatus]
 
-
-export const FeedbackType: {
-  GENERAL: 'GENERAL',
-  QUALITY: 'QUALITY',
-  ACCURACY: 'ACCURACY',
-  USABILITY: 'USABILITY',
-  FEATURE_REQUEST: 'FEATURE_REQUEST',
-  BUG_REPORT: 'BUG_REPORT'
-};
-
-export type FeedbackType = (typeof FeedbackType)[keyof typeof FeedbackType]
-
 }
 
 export type UserRole = $Enums.UserRole
@@ -88,10 +61,6 @@ export const UserRole: typeof $Enums.UserRole
 export type DesignStatus = $Enums.DesignStatus
 
 export const DesignStatus: typeof $Enums.DesignStatus
-
-export type FeedbackType = $Enums.FeedbackType
-
-export const FeedbackType: typeof $Enums.FeedbackType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -232,16 +201,6 @@ export class PrismaClient<
   get design(): Prisma.DesignDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.preferences`: Exposes CRUD operations for the **Preferences** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Preferences
-    * const preferences = await prisma.preferences.findMany()
-    * ```
-    */
-  get preferences(): Prisma.PreferencesDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.designOutput`: Exposes CRUD operations for the **DesignOutput** model.
     * Example usage:
     * ```ts
@@ -250,26 +209,6 @@ export class PrismaClient<
     * ```
     */
   get designOutput(): Prisma.DesignOutputDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.roiCalculation`: Exposes CRUD operations for the **RoiCalculation** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more RoiCalculations
-    * const roiCalculations = await prisma.roiCalculation.findMany()
-    * ```
-    */
-  get roiCalculation(): Prisma.RoiCalculationDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.feedback`: Exposes CRUD operations for the **Feedback** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Feedbacks
-    * const feedbacks = await prisma.feedback.findMany()
-    * ```
-    */
-  get feedback(): Prisma.FeedbackDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -712,10 +651,7 @@ export namespace Prisma {
   export const ModelName: {
     Profile: 'Profile',
     Design: 'Design',
-    Preferences: 'Preferences',
-    DesignOutput: 'DesignOutput',
-    RoiCalculation: 'RoiCalculation',
-    Feedback: 'Feedback'
+    DesignOutput: 'DesignOutput'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -734,7 +670,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "profile" | "design" | "preferences" | "designOutput" | "roiCalculation" | "feedback"
+      modelProps: "profile" | "design" | "designOutput"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -886,80 +822,6 @@ export namespace Prisma {
           }
         }
       }
-      Preferences: {
-        payload: Prisma.$PreferencesPayload<ExtArgs>
-        fields: Prisma.PreferencesFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.PreferencesFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.PreferencesFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>
-          }
-          findFirst: {
-            args: Prisma.PreferencesFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.PreferencesFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>
-          }
-          findMany: {
-            args: Prisma.PreferencesFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>[]
-          }
-          create: {
-            args: Prisma.PreferencesCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>
-          }
-          createMany: {
-            args: Prisma.PreferencesCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.PreferencesCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>[]
-          }
-          delete: {
-            args: Prisma.PreferencesDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>
-          }
-          update: {
-            args: Prisma.PreferencesUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>
-          }
-          deleteMany: {
-            args: Prisma.PreferencesDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.PreferencesUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.PreferencesUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>[]
-          }
-          upsert: {
-            args: Prisma.PreferencesUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PreferencesPayload>
-          }
-          aggregate: {
-            args: Prisma.PreferencesAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePreferences>
-          }
-          groupBy: {
-            args: Prisma.PreferencesGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PreferencesGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.PreferencesCountArgs<ExtArgs>
-            result: $Utils.Optional<PreferencesCountAggregateOutputType> | number
-          }
-        }
-      }
       DesignOutput: {
         payload: Prisma.$DesignOutputPayload<ExtArgs>
         fields: Prisma.DesignOutputFieldRefs
@@ -1031,154 +893,6 @@ export namespace Prisma {
           count: {
             args: Prisma.DesignOutputCountArgs<ExtArgs>
             result: $Utils.Optional<DesignOutputCountAggregateOutputType> | number
-          }
-        }
-      }
-      RoiCalculation: {
-        payload: Prisma.$RoiCalculationPayload<ExtArgs>
-        fields: Prisma.RoiCalculationFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.RoiCalculationFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.RoiCalculationFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>
-          }
-          findFirst: {
-            args: Prisma.RoiCalculationFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.RoiCalculationFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>
-          }
-          findMany: {
-            args: Prisma.RoiCalculationFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>[]
-          }
-          create: {
-            args: Prisma.RoiCalculationCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>
-          }
-          createMany: {
-            args: Prisma.RoiCalculationCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.RoiCalculationCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>[]
-          }
-          delete: {
-            args: Prisma.RoiCalculationDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>
-          }
-          update: {
-            args: Prisma.RoiCalculationUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>
-          }
-          deleteMany: {
-            args: Prisma.RoiCalculationDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.RoiCalculationUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.RoiCalculationUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>[]
-          }
-          upsert: {
-            args: Prisma.RoiCalculationUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$RoiCalculationPayload>
-          }
-          aggregate: {
-            args: Prisma.RoiCalculationAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateRoiCalculation>
-          }
-          groupBy: {
-            args: Prisma.RoiCalculationGroupByArgs<ExtArgs>
-            result: $Utils.Optional<RoiCalculationGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.RoiCalculationCountArgs<ExtArgs>
-            result: $Utils.Optional<RoiCalculationCountAggregateOutputType> | number
-          }
-        }
-      }
-      Feedback: {
-        payload: Prisma.$FeedbackPayload<ExtArgs>
-        fields: Prisma.FeedbackFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.FeedbackFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.FeedbackFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>
-          }
-          findFirst: {
-            args: Prisma.FeedbackFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.FeedbackFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>
-          }
-          findMany: {
-            args: Prisma.FeedbackFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>[]
-          }
-          create: {
-            args: Prisma.FeedbackCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>
-          }
-          createMany: {
-            args: Prisma.FeedbackCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.FeedbackCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>[]
-          }
-          delete: {
-            args: Prisma.FeedbackDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>
-          }
-          update: {
-            args: Prisma.FeedbackUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>
-          }
-          deleteMany: {
-            args: Prisma.FeedbackDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.FeedbackUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.FeedbackUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>[]
-          }
-          upsert: {
-            args: Prisma.FeedbackUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FeedbackPayload>
-          }
-          aggregate: {
-            args: Prisma.FeedbackAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateFeedback>
-          }
-          groupBy: {
-            args: Prisma.FeedbackGroupByArgs<ExtArgs>
-            result: $Utils.Optional<FeedbackGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.FeedbackCountArgs<ExtArgs>
-            result: $Utils.Optional<FeedbackCountAggregateOutputType> | number
           }
         }
       }
@@ -1280,10 +994,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     profile?: ProfileOmit
     design?: DesignOmit
-    preferences?: PreferencesOmit
     designOutput?: DesignOutputOmit
-    roiCalculation?: RoiCalculationOmit
-    feedback?: FeedbackOmit
   }
 
   /* Types for Logging */
@@ -1365,12 +1076,10 @@ export namespace Prisma {
 
   export type ProfileCountOutputType = {
     designs: number
-    feedback: number
   }
 
   export type ProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     designs?: boolean | ProfileCountOutputTypeCountDesignsArgs
-    feedback?: boolean | ProfileCountOutputTypeCountFeedbackArgs
   }
 
   // Custom InputTypes
@@ -1391,26 +1100,19 @@ export namespace Prisma {
     where?: DesignWhereInput
   }
 
-  /**
-   * ProfileCountOutputType without action
-   */
-  export type ProfileCountOutputTypeCountFeedbackArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FeedbackWhereInput
-  }
-
 
   /**
    * Count Type DesignCountOutputType
    */
 
   export type DesignCountOutputType = {
-    designOutputs: number
-    feedback: number
+    outputs: number
+    childDesigns: number
   }
 
   export type DesignCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    designOutputs?: boolean | DesignCountOutputTypeCountDesignOutputsArgs
-    feedback?: boolean | DesignCountOutputTypeCountFeedbackArgs
+    outputs?: boolean | DesignCountOutputTypeCountOutputsArgs
+    childDesigns?: boolean | DesignCountOutputTypeCountChildDesignsArgs
   }
 
   // Custom InputTypes
@@ -1427,15 +1129,15 @@ export namespace Prisma {
   /**
    * DesignCountOutputType without action
    */
-  export type DesignCountOutputTypeCountDesignOutputsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type DesignCountOutputTypeCountOutputsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DesignOutputWhereInput
   }
 
   /**
    * DesignCountOutputType without action
    */
-  export type DesignCountOutputTypeCountFeedbackArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FeedbackWhereInput
+  export type DesignCountOutputTypeCountChildDesignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DesignWhereInput
   }
 
 
@@ -1632,7 +1334,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     designs?: boolean | Profile$designsArgs<ExtArgs>
-    feedback?: boolean | Profile$feedbackArgs<ExtArgs>
     _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
@@ -1672,7 +1373,6 @@ export namespace Prisma {
   export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "company" | "role" | "avatar" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
   export type ProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     designs?: boolean | Profile$designsArgs<ExtArgs>
-    feedback?: boolean | Profile$feedbackArgs<ExtArgs>
     _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1682,7 +1382,6 @@ export namespace Prisma {
     name: "Profile"
     objects: {
       designs: Prisma.$DesignPayload<ExtArgs>[]
-      feedback: Prisma.$FeedbackPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2088,7 +1787,6 @@ export namespace Prisma {
   export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     designs<T extends Profile$designsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$designsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    feedback<T extends Profile$feedbackArgs<ExtArgs> = {}>(args?: Subset<T, Profile$feedbackArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2538,30 +2236,6 @@ export namespace Prisma {
   }
 
   /**
-   * Profile.feedback
-   */
-  export type Profile$feedbackArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    where?: FeedbackWhereInput
-    orderBy?: FeedbackOrderByWithRelationInput | FeedbackOrderByWithRelationInput[]
-    cursor?: FeedbackWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: FeedbackScalarFieldEnum | FeedbackScalarFieldEnum[]
-  }
-
-  /**
    * Profile without action
    */
   export type ProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2586,76 +2260,218 @@ export namespace Prisma {
 
   export type AggregateDesign = {
     _count: DesignCountAggregateOutputType | null
+    _avg: DesignAvgAggregateOutputType | null
+    _sum: DesignSumAggregateOutputType | null
     _min: DesignMinAggregateOutputType | null
     _max: DesignMaxAggregateOutputType | null
+  }
+
+  export type DesignAvgAggregateOutputType = {
+    generationNumber: number | null
+    budget: Decimal | null
+    estimatedCost: number | null
+    roiPercentage: number | null
+  }
+
+  export type DesignSumAggregateOutputType = {
+    generationNumber: number | null
+    budget: Decimal | null
+    estimatedCost: number | null
+    roiPercentage: number | null
   }
 
   export type DesignMinAggregateOutputType = {
     id: string | null
     userId: string | null
-    inputPrompt: string | null
-    uploadedImageUrl: string | null
-    aiModelUsed: string | null
+    description: string | null
+    imageUrl: string | null
+    customRequirements: string | null
     status: $Enums.DesignStatus | null
     createdAt: Date | null
     updatedAt: Date | null
+    generationNumber: number | null
+    parentId: string | null
+    budget: Decimal | null
+    colorScheme: string | null
+    isPublic: boolean | null
+    materialPreferences: string | null
+    mood: string | null
+    otherRequirements: string | null
+    priority: string | null
+    roomType: string | null
+    size: string | null
+    style: string | null
+    stylePreference: string | null
+    title: string | null
+    estimatedCost: number | null
+    paybackTimeline: string | null
+    roiNotes: string | null
+    roiPercentage: number | null
   }
 
   export type DesignMaxAggregateOutputType = {
     id: string | null
     userId: string | null
-    inputPrompt: string | null
-    uploadedImageUrl: string | null
-    aiModelUsed: string | null
+    description: string | null
+    imageUrl: string | null
+    customRequirements: string | null
     status: $Enums.DesignStatus | null
     createdAt: Date | null
     updatedAt: Date | null
+    generationNumber: number | null
+    parentId: string | null
+    budget: Decimal | null
+    colorScheme: string | null
+    isPublic: boolean | null
+    materialPreferences: string | null
+    mood: string | null
+    otherRequirements: string | null
+    priority: string | null
+    roomType: string | null
+    size: string | null
+    style: string | null
+    stylePreference: string | null
+    title: string | null
+    estimatedCost: number | null
+    paybackTimeline: string | null
+    roiNotes: string | null
+    roiPercentage: number | null
   }
 
   export type DesignCountAggregateOutputType = {
     id: number
     userId: number
-    inputPrompt: number
-    uploadedImageUrl: number
-    aiModelUsed: number
+    description: number
+    imageUrl: number
+    customRequirements: number
     status: number
     createdAt: number
     updatedAt: number
+    generationNumber: number
+    parentId: number
+    budget: number
+    colorPalette: number
+    colorScheme: number
+    isPublic: number
+    materialPreferences: number
+    mood: number
+    otherRequirements: number
+    priority: number
+    roomType: number
+    size: number
+    style: number
+    stylePreference: number
+    title: number
+    costBreakdown: number
+    estimatedCost: number
+    paybackTimeline: number
+    roiNotes: number
+    roiPercentage: number
     _all: number
   }
 
 
+  export type DesignAvgAggregateInputType = {
+    generationNumber?: true
+    budget?: true
+    estimatedCost?: true
+    roiPercentage?: true
+  }
+
+  export type DesignSumAggregateInputType = {
+    generationNumber?: true
+    budget?: true
+    estimatedCost?: true
+    roiPercentage?: true
+  }
+
   export type DesignMinAggregateInputType = {
     id?: true
     userId?: true
-    inputPrompt?: true
-    uploadedImageUrl?: true
-    aiModelUsed?: true
+    description?: true
+    imageUrl?: true
+    customRequirements?: true
     status?: true
     createdAt?: true
     updatedAt?: true
+    generationNumber?: true
+    parentId?: true
+    budget?: true
+    colorScheme?: true
+    isPublic?: true
+    materialPreferences?: true
+    mood?: true
+    otherRequirements?: true
+    priority?: true
+    roomType?: true
+    size?: true
+    style?: true
+    stylePreference?: true
+    title?: true
+    estimatedCost?: true
+    paybackTimeline?: true
+    roiNotes?: true
+    roiPercentage?: true
   }
 
   export type DesignMaxAggregateInputType = {
     id?: true
     userId?: true
-    inputPrompt?: true
-    uploadedImageUrl?: true
-    aiModelUsed?: true
+    description?: true
+    imageUrl?: true
+    customRequirements?: true
     status?: true
     createdAt?: true
     updatedAt?: true
+    generationNumber?: true
+    parentId?: true
+    budget?: true
+    colorScheme?: true
+    isPublic?: true
+    materialPreferences?: true
+    mood?: true
+    otherRequirements?: true
+    priority?: true
+    roomType?: true
+    size?: true
+    style?: true
+    stylePreference?: true
+    title?: true
+    estimatedCost?: true
+    paybackTimeline?: true
+    roiNotes?: true
+    roiPercentage?: true
   }
 
   export type DesignCountAggregateInputType = {
     id?: true
     userId?: true
-    inputPrompt?: true
-    uploadedImageUrl?: true
-    aiModelUsed?: true
+    description?: true
+    imageUrl?: true
+    customRequirements?: true
     status?: true
     createdAt?: true
     updatedAt?: true
+    generationNumber?: true
+    parentId?: true
+    budget?: true
+    colorPalette?: true
+    colorScheme?: true
+    isPublic?: true
+    materialPreferences?: true
+    mood?: true
+    otherRequirements?: true
+    priority?: true
+    roomType?: true
+    size?: true
+    style?: true
+    stylePreference?: true
+    title?: true
+    costBreakdown?: true
+    estimatedCost?: true
+    paybackTimeline?: true
+    roiNotes?: true
+    roiPercentage?: true
     _all?: true
   }
 
@@ -2697,6 +2513,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: DesignAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DesignSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: DesignMinAggregateInputType
@@ -2727,6 +2555,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: DesignCountAggregateInputType | true
+    _avg?: DesignAvgAggregateInputType
+    _sum?: DesignSumAggregateInputType
     _min?: DesignMinAggregateInputType
     _max?: DesignMaxAggregateInputType
   }
@@ -2734,13 +2564,35 @@ export namespace Prisma {
   export type DesignGroupByOutputType = {
     id: string
     userId: string
-    inputPrompt: string
-    uploadedImageUrl: string | null
-    aiModelUsed: string
+    description: string | null
+    imageUrl: string | null
+    customRequirements: string | null
     status: $Enums.DesignStatus
     createdAt: Date
     updatedAt: Date
+    generationNumber: number
+    parentId: string | null
+    budget: Decimal | null
+    colorPalette: JsonValue | null
+    colorScheme: string | null
+    isPublic: boolean
+    materialPreferences: string | null
+    mood: string | null
+    otherRequirements: string | null
+    priority: string | null
+    roomType: string | null
+    size: string | null
+    style: string | null
+    stylePreference: string | null
+    title: string | null
+    costBreakdown: JsonValue | null
+    estimatedCost: number | null
+    paybackTimeline: string | null
+    roiNotes: string | null
+    roiPercentage: number | null
     _count: DesignCountAggregateOutputType | null
+    _avg: DesignAvgAggregateOutputType | null
+    _sum: DesignSumAggregateOutputType | null
     _min: DesignMinAggregateOutputType | null
     _max: DesignMaxAggregateOutputType | null
   }
@@ -2762,89 +2614,190 @@ export namespace Prisma {
   export type DesignSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    inputPrompt?: boolean
-    uploadedImageUrl?: boolean
-    aiModelUsed?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    customRequirements?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    designOutputs?: boolean | Design$designOutputsArgs<ExtArgs>
+    generationNumber?: boolean
+    parentId?: boolean
+    budget?: boolean
+    colorPalette?: boolean
+    colorScheme?: boolean
+    isPublic?: boolean
+    materialPreferences?: boolean
+    mood?: boolean
+    otherRequirements?: boolean
+    priority?: boolean
+    roomType?: boolean
+    size?: boolean
+    style?: boolean
+    stylePreference?: boolean
+    title?: boolean
+    costBreakdown?: boolean
+    estimatedCost?: boolean
+    paybackTimeline?: boolean
+    roiNotes?: boolean
+    roiPercentage?: boolean
+    outputs?: boolean | Design$outputsArgs<ExtArgs>
+    parentDesign?: boolean | Design$parentDesignArgs<ExtArgs>
+    childDesigns?: boolean | Design$childDesignsArgs<ExtArgs>
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
-    feedback?: boolean | Design$feedbackArgs<ExtArgs>
-    preferences?: boolean | Design$preferencesArgs<ExtArgs>
-    roiCalculation?: boolean | Design$roiCalculationArgs<ExtArgs>
     _count?: boolean | DesignCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["design"]>
 
   export type DesignSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    inputPrompt?: boolean
-    uploadedImageUrl?: boolean
-    aiModelUsed?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    customRequirements?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    generationNumber?: boolean
+    parentId?: boolean
+    budget?: boolean
+    colorPalette?: boolean
+    colorScheme?: boolean
+    isPublic?: boolean
+    materialPreferences?: boolean
+    mood?: boolean
+    otherRequirements?: boolean
+    priority?: boolean
+    roomType?: boolean
+    size?: boolean
+    style?: boolean
+    stylePreference?: boolean
+    title?: boolean
+    costBreakdown?: boolean
+    estimatedCost?: boolean
+    paybackTimeline?: boolean
+    roiNotes?: boolean
+    roiPercentage?: boolean
+    parentDesign?: boolean | Design$parentDesignArgs<ExtArgs>
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["design"]>
 
   export type DesignSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    inputPrompt?: boolean
-    uploadedImageUrl?: boolean
-    aiModelUsed?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    customRequirements?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    generationNumber?: boolean
+    parentId?: boolean
+    budget?: boolean
+    colorPalette?: boolean
+    colorScheme?: boolean
+    isPublic?: boolean
+    materialPreferences?: boolean
+    mood?: boolean
+    otherRequirements?: boolean
+    priority?: boolean
+    roomType?: boolean
+    size?: boolean
+    style?: boolean
+    stylePreference?: boolean
+    title?: boolean
+    costBreakdown?: boolean
+    estimatedCost?: boolean
+    paybackTimeline?: boolean
+    roiNotes?: boolean
+    roiPercentage?: boolean
+    parentDesign?: boolean | Design$parentDesignArgs<ExtArgs>
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["design"]>
 
   export type DesignSelectScalar = {
     id?: boolean
     userId?: boolean
-    inputPrompt?: boolean
-    uploadedImageUrl?: boolean
-    aiModelUsed?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    customRequirements?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    generationNumber?: boolean
+    parentId?: boolean
+    budget?: boolean
+    colorPalette?: boolean
+    colorScheme?: boolean
+    isPublic?: boolean
+    materialPreferences?: boolean
+    mood?: boolean
+    otherRequirements?: boolean
+    priority?: boolean
+    roomType?: boolean
+    size?: boolean
+    style?: boolean
+    stylePreference?: boolean
+    title?: boolean
+    costBreakdown?: boolean
+    estimatedCost?: boolean
+    paybackTimeline?: boolean
+    roiNotes?: boolean
+    roiPercentage?: boolean
   }
 
-  export type DesignOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "inputPrompt" | "uploadedImageUrl" | "aiModelUsed" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["design"]>
+  export type DesignOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "description" | "imageUrl" | "customRequirements" | "status" | "createdAt" | "updatedAt" | "generationNumber" | "parentId" | "budget" | "colorPalette" | "colorScheme" | "isPublic" | "materialPreferences" | "mood" | "otherRequirements" | "priority" | "roomType" | "size" | "style" | "stylePreference" | "title" | "costBreakdown" | "estimatedCost" | "paybackTimeline" | "roiNotes" | "roiPercentage", ExtArgs["result"]["design"]>
   export type DesignInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    designOutputs?: boolean | Design$designOutputsArgs<ExtArgs>
+    outputs?: boolean | Design$outputsArgs<ExtArgs>
+    parentDesign?: boolean | Design$parentDesignArgs<ExtArgs>
+    childDesigns?: boolean | Design$childDesignsArgs<ExtArgs>
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
-    feedback?: boolean | Design$feedbackArgs<ExtArgs>
-    preferences?: boolean | Design$preferencesArgs<ExtArgs>
-    roiCalculation?: boolean | Design$roiCalculationArgs<ExtArgs>
     _count?: boolean | DesignCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DesignIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    parentDesign?: boolean | Design$parentDesignArgs<ExtArgs>
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }
   export type DesignIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    parentDesign?: boolean | Design$parentDesignArgs<ExtArgs>
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
   }
 
   export type $DesignPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Design"
     objects: {
-      designOutputs: Prisma.$DesignOutputPayload<ExtArgs>[]
+      outputs: Prisma.$DesignOutputPayload<ExtArgs>[]
+      parentDesign: Prisma.$DesignPayload<ExtArgs> | null
+      childDesigns: Prisma.$DesignPayload<ExtArgs>[]
       profile: Prisma.$ProfilePayload<ExtArgs>
-      feedback: Prisma.$FeedbackPayload<ExtArgs>[]
-      preferences: Prisma.$PreferencesPayload<ExtArgs> | null
-      roiCalculation: Prisma.$RoiCalculationPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      inputPrompt: string
-      uploadedImageUrl: string | null
-      aiModelUsed: string
+      description: string | null
+      imageUrl: string | null
+      customRequirements: string | null
       status: $Enums.DesignStatus
       createdAt: Date
       updatedAt: Date
+      generationNumber: number
+      parentId: string | null
+      budget: Prisma.Decimal | null
+      colorPalette: Prisma.JsonValue | null
+      colorScheme: string | null
+      isPublic: boolean
+      materialPreferences: string | null
+      mood: string | null
+      otherRequirements: string | null
+      priority: string | null
+      roomType: string | null
+      size: string | null
+      style: string | null
+      stylePreference: string | null
+      title: string | null
+      costBreakdown: Prisma.JsonValue | null
+      estimatedCost: number | null
+      paybackTimeline: string | null
+      roiNotes: string | null
+      roiPercentage: number | null
     }, ExtArgs["result"]["design"]>
     composites: {}
   }
@@ -3239,11 +3192,10 @@ export namespace Prisma {
    */
   export interface Prisma__DesignClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    designOutputs<T extends Design$designOutputsArgs<ExtArgs> = {}>(args?: Subset<T, Design$designOutputsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignOutputPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    outputs<T extends Design$outputsArgs<ExtArgs> = {}>(args?: Subset<T, Design$outputsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignOutputPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    parentDesign<T extends Design$parentDesignArgs<ExtArgs> = {}>(args?: Subset<T, Design$parentDesignArgs<ExtArgs>>): Prisma__DesignClient<$Result.GetResult<Prisma.$DesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    childDesigns<T extends Design$childDesignsArgs<ExtArgs> = {}>(args?: Subset<T, Design$childDesignsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DesignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     profile<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    feedback<T extends Design$feedbackArgs<ExtArgs> = {}>(args?: Subset<T, Design$feedbackArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    preferences<T extends Design$preferencesArgs<ExtArgs> = {}>(args?: Subset<T, Design$preferencesArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    roiCalculation<T extends Design$roiCalculationArgs<ExtArgs> = {}>(args?: Subset<T, Design$roiCalculationArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3275,12 +3227,32 @@ export namespace Prisma {
   interface DesignFieldRefs {
     readonly id: FieldRef<"Design", 'String'>
     readonly userId: FieldRef<"Design", 'String'>
-    readonly inputPrompt: FieldRef<"Design", 'String'>
-    readonly uploadedImageUrl: FieldRef<"Design", 'String'>
-    readonly aiModelUsed: FieldRef<"Design", 'String'>
+    readonly description: FieldRef<"Design", 'String'>
+    readonly imageUrl: FieldRef<"Design", 'String'>
+    readonly customRequirements: FieldRef<"Design", 'String'>
     readonly status: FieldRef<"Design", 'DesignStatus'>
     readonly createdAt: FieldRef<"Design", 'DateTime'>
     readonly updatedAt: FieldRef<"Design", 'DateTime'>
+    readonly generationNumber: FieldRef<"Design", 'Int'>
+    readonly parentId: FieldRef<"Design", 'String'>
+    readonly budget: FieldRef<"Design", 'Decimal'>
+    readonly colorPalette: FieldRef<"Design", 'Json'>
+    readonly colorScheme: FieldRef<"Design", 'String'>
+    readonly isPublic: FieldRef<"Design", 'Boolean'>
+    readonly materialPreferences: FieldRef<"Design", 'String'>
+    readonly mood: FieldRef<"Design", 'String'>
+    readonly otherRequirements: FieldRef<"Design", 'String'>
+    readonly priority: FieldRef<"Design", 'String'>
+    readonly roomType: FieldRef<"Design", 'String'>
+    readonly size: FieldRef<"Design", 'String'>
+    readonly style: FieldRef<"Design", 'String'>
+    readonly stylePreference: FieldRef<"Design", 'String'>
+    readonly title: FieldRef<"Design", 'String'>
+    readonly costBreakdown: FieldRef<"Design", 'Json'>
+    readonly estimatedCost: FieldRef<"Design", 'Float'>
+    readonly paybackTimeline: FieldRef<"Design", 'String'>
+    readonly roiNotes: FieldRef<"Design", 'String'>
+    readonly roiPercentage: FieldRef<"Design", 'Float'>
   }
     
 
@@ -3677,9 +3649,9 @@ export namespace Prisma {
   }
 
   /**
-   * Design.designOutputs
+   * Design.outputs
    */
-  export type Design$designOutputsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Design$outputsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the DesignOutput
      */
@@ -3701,65 +3673,46 @@ export namespace Prisma {
   }
 
   /**
-   * Design.feedback
+   * Design.parentDesign
    */
-  export type Design$feedbackArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Design$parentDesignArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Feedback
+     * Select specific fields to fetch from the Design
      */
-    select?: FeedbackSelect<ExtArgs> | null
+    select?: DesignSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Feedback
+     * Omit specific fields from the Design
      */
-    omit?: FeedbackOmit<ExtArgs> | null
+    omit?: DesignOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: FeedbackInclude<ExtArgs> | null
-    where?: FeedbackWhereInput
-    orderBy?: FeedbackOrderByWithRelationInput | FeedbackOrderByWithRelationInput[]
-    cursor?: FeedbackWhereUniqueInput
+    include?: DesignInclude<ExtArgs> | null
+    where?: DesignWhereInput
+  }
+
+  /**
+   * Design.childDesigns
+   */
+  export type Design$childDesignsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Design
+     */
+    select?: DesignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Design
+     */
+    omit?: DesignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DesignInclude<ExtArgs> | null
+    where?: DesignWhereInput
+    orderBy?: DesignOrderByWithRelationInput | DesignOrderByWithRelationInput[]
+    cursor?: DesignWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: FeedbackScalarFieldEnum | FeedbackScalarFieldEnum[]
-  }
-
-  /**
-   * Design.preferences
-   */
-  export type Design$preferencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    where?: PreferencesWhereInput
-  }
-
-  /**
-   * Design.roiCalculation
-   */
-  export type Design$roiCalculationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    where?: RoiCalculationWhereInput
+    distinct?: DesignScalarFieldEnum | DesignScalarFieldEnum[]
   }
 
   /**
@@ -3778,1176 +3731,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: DesignInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Preferences
-   */
-
-  export type AggregatePreferences = {
-    _count: PreferencesCountAggregateOutputType | null
-    _avg: PreferencesAvgAggregateOutputType | null
-    _sum: PreferencesSumAggregateOutputType | null
-    _min: PreferencesMinAggregateOutputType | null
-    _max: PreferencesMaxAggregateOutputType | null
-  }
-
-  export type PreferencesAvgAggregateOutputType = {
-    budget: number | null
-  }
-
-  export type PreferencesSumAggregateOutputType = {
-    budget: number | null
-  }
-
-  export type PreferencesMinAggregateOutputType = {
-    id: string | null
-    designId: string | null
-    roomType: string | null
-    size: string | null
-    stylePreference: string | null
-    budget: number | null
-    colorScheme: string | null
-    materialPreferences: string | null
-    otherRequirements: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type PreferencesMaxAggregateOutputType = {
-    id: string | null
-    designId: string | null
-    roomType: string | null
-    size: string | null
-    stylePreference: string | null
-    budget: number | null
-    colorScheme: string | null
-    materialPreferences: string | null
-    otherRequirements: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type PreferencesCountAggregateOutputType = {
-    id: number
-    designId: number
-    roomType: number
-    size: number
-    stylePreference: number
-    budget: number
-    colorScheme: number
-    materialPreferences: number
-    otherRequirements: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type PreferencesAvgAggregateInputType = {
-    budget?: true
-  }
-
-  export type PreferencesSumAggregateInputType = {
-    budget?: true
-  }
-
-  export type PreferencesMinAggregateInputType = {
-    id?: true
-    designId?: true
-    roomType?: true
-    size?: true
-    stylePreference?: true
-    budget?: true
-    colorScheme?: true
-    materialPreferences?: true
-    otherRequirements?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type PreferencesMaxAggregateInputType = {
-    id?: true
-    designId?: true
-    roomType?: true
-    size?: true
-    stylePreference?: true
-    budget?: true
-    colorScheme?: true
-    materialPreferences?: true
-    otherRequirements?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type PreferencesCountAggregateInputType = {
-    id?: true
-    designId?: true
-    roomType?: true
-    size?: true
-    stylePreference?: true
-    budget?: true
-    colorScheme?: true
-    materialPreferences?: true
-    otherRequirements?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type PreferencesAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Preferences to aggregate.
-     */
-    where?: PreferencesWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Preferences to fetch.
-     */
-    orderBy?: PreferencesOrderByWithRelationInput | PreferencesOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: PreferencesWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Preferences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Preferences.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Preferences
-    **/
-    _count?: true | PreferencesCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: PreferencesAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PreferencesSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: PreferencesMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: PreferencesMaxAggregateInputType
-  }
-
-  export type GetPreferencesAggregateType<T extends PreferencesAggregateArgs> = {
-        [P in keyof T & keyof AggregatePreferences]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregatePreferences[P]>
-      : GetScalarType<T[P], AggregatePreferences[P]>
-  }
-
-
-
-
-  export type PreferencesGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PreferencesWhereInput
-    orderBy?: PreferencesOrderByWithAggregationInput | PreferencesOrderByWithAggregationInput[]
-    by: PreferencesScalarFieldEnum[] | PreferencesScalarFieldEnum
-    having?: PreferencesScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: PreferencesCountAggregateInputType | true
-    _avg?: PreferencesAvgAggregateInputType
-    _sum?: PreferencesSumAggregateInputType
-    _min?: PreferencesMinAggregateInputType
-    _max?: PreferencesMaxAggregateInputType
-  }
-
-  export type PreferencesGroupByOutputType = {
-    id: string
-    designId: string
-    roomType: string
-    size: string
-    stylePreference: string
-    budget: number | null
-    colorScheme: string | null
-    materialPreferences: string | null
-    otherRequirements: string | null
-    createdAt: Date
-    updatedAt: Date
-    _count: PreferencesCountAggregateOutputType | null
-    _avg: PreferencesAvgAggregateOutputType | null
-    _sum: PreferencesSumAggregateOutputType | null
-    _min: PreferencesMinAggregateOutputType | null
-    _max: PreferencesMaxAggregateOutputType | null
-  }
-
-  type GetPreferencesGroupByPayload<T extends PreferencesGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<PreferencesGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof PreferencesGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], PreferencesGroupByOutputType[P]>
-            : GetScalarType<T[P], PreferencesGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type PreferencesSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    roomType?: boolean
-    size?: boolean
-    stylePreference?: boolean
-    budget?: boolean
-    colorScheme?: boolean
-    materialPreferences?: boolean
-    otherRequirements?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["preferences"]>
-
-  export type PreferencesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    roomType?: boolean
-    size?: boolean
-    stylePreference?: boolean
-    budget?: boolean
-    colorScheme?: boolean
-    materialPreferences?: boolean
-    otherRequirements?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["preferences"]>
-
-  export type PreferencesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    roomType?: boolean
-    size?: boolean
-    stylePreference?: boolean
-    budget?: boolean
-    colorScheme?: boolean
-    materialPreferences?: boolean
-    otherRequirements?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["preferences"]>
-
-  export type PreferencesSelectScalar = {
-    id?: boolean
-    designId?: boolean
-    roomType?: boolean
-    size?: boolean
-    stylePreference?: boolean
-    budget?: boolean
-    colorScheme?: boolean
-    materialPreferences?: boolean
-    otherRequirements?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type PreferencesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "designId" | "roomType" | "size" | "stylePreference" | "budget" | "colorScheme" | "materialPreferences" | "otherRequirements" | "createdAt" | "updatedAt", ExtArgs["result"]["preferences"]>
-  export type PreferencesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }
-  export type PreferencesIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }
-  export type PreferencesIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }
-
-  export type $PreferencesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Preferences"
-    objects: {
-      design: Prisma.$DesignPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      designId: string
-      roomType: string
-      size: string
-      stylePreference: string
-      budget: number | null
-      colorScheme: string | null
-      materialPreferences: string | null
-      otherRequirements: string | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["preferences"]>
-    composites: {}
-  }
-
-  type PreferencesGetPayload<S extends boolean | null | undefined | PreferencesDefaultArgs> = $Result.GetResult<Prisma.$PreferencesPayload, S>
-
-  type PreferencesCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<PreferencesFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: PreferencesCountAggregateInputType | true
-    }
-
-  export interface PreferencesDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Preferences'], meta: { name: 'Preferences' } }
-    /**
-     * Find zero or one Preferences that matches the filter.
-     * @param {PreferencesFindUniqueArgs} args - Arguments to find a Preferences
-     * @example
-     * // Get one Preferences
-     * const preferences = await prisma.preferences.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends PreferencesFindUniqueArgs>(args: SelectSubset<T, PreferencesFindUniqueArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Preferences that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {PreferencesFindUniqueOrThrowArgs} args - Arguments to find a Preferences
-     * @example
-     * // Get one Preferences
-     * const preferences = await prisma.preferences.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends PreferencesFindUniqueOrThrowArgs>(args: SelectSubset<T, PreferencesFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Preferences that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PreferencesFindFirstArgs} args - Arguments to find a Preferences
-     * @example
-     * // Get one Preferences
-     * const preferences = await prisma.preferences.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends PreferencesFindFirstArgs>(args?: SelectSubset<T, PreferencesFindFirstArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Preferences that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PreferencesFindFirstOrThrowArgs} args - Arguments to find a Preferences
-     * @example
-     * // Get one Preferences
-     * const preferences = await prisma.preferences.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends PreferencesFindFirstOrThrowArgs>(args?: SelectSubset<T, PreferencesFindFirstOrThrowArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Preferences that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PreferencesFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Preferences
-     * const preferences = await prisma.preferences.findMany()
-     * 
-     * // Get first 10 Preferences
-     * const preferences = await prisma.preferences.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const preferencesWithIdOnly = await prisma.preferences.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends PreferencesFindManyArgs>(args?: SelectSubset<T, PreferencesFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Preferences.
-     * @param {PreferencesCreateArgs} args - Arguments to create a Preferences.
-     * @example
-     * // Create one Preferences
-     * const Preferences = await prisma.preferences.create({
-     *   data: {
-     *     // ... data to create a Preferences
-     *   }
-     * })
-     * 
-     */
-    create<T extends PreferencesCreateArgs>(args: SelectSubset<T, PreferencesCreateArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Preferences.
-     * @param {PreferencesCreateManyArgs} args - Arguments to create many Preferences.
-     * @example
-     * // Create many Preferences
-     * const preferences = await prisma.preferences.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends PreferencesCreateManyArgs>(args?: SelectSubset<T, PreferencesCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Preferences and returns the data saved in the database.
-     * @param {PreferencesCreateManyAndReturnArgs} args - Arguments to create many Preferences.
-     * @example
-     * // Create many Preferences
-     * const preferences = await prisma.preferences.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Preferences and only return the `id`
-     * const preferencesWithIdOnly = await prisma.preferences.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends PreferencesCreateManyAndReturnArgs>(args?: SelectSubset<T, PreferencesCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Preferences.
-     * @param {PreferencesDeleteArgs} args - Arguments to delete one Preferences.
-     * @example
-     * // Delete one Preferences
-     * const Preferences = await prisma.preferences.delete({
-     *   where: {
-     *     // ... filter to delete one Preferences
-     *   }
-     * })
-     * 
-     */
-    delete<T extends PreferencesDeleteArgs>(args: SelectSubset<T, PreferencesDeleteArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Preferences.
-     * @param {PreferencesUpdateArgs} args - Arguments to update one Preferences.
-     * @example
-     * // Update one Preferences
-     * const preferences = await prisma.preferences.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends PreferencesUpdateArgs>(args: SelectSubset<T, PreferencesUpdateArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Preferences.
-     * @param {PreferencesDeleteManyArgs} args - Arguments to filter Preferences to delete.
-     * @example
-     * // Delete a few Preferences
-     * const { count } = await prisma.preferences.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends PreferencesDeleteManyArgs>(args?: SelectSubset<T, PreferencesDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Preferences.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PreferencesUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Preferences
-     * const preferences = await prisma.preferences.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends PreferencesUpdateManyArgs>(args: SelectSubset<T, PreferencesUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Preferences and returns the data updated in the database.
-     * @param {PreferencesUpdateManyAndReturnArgs} args - Arguments to update many Preferences.
-     * @example
-     * // Update many Preferences
-     * const preferences = await prisma.preferences.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Preferences and only return the `id`
-     * const preferencesWithIdOnly = await prisma.preferences.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends PreferencesUpdateManyAndReturnArgs>(args: SelectSubset<T, PreferencesUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Preferences.
-     * @param {PreferencesUpsertArgs} args - Arguments to update or create a Preferences.
-     * @example
-     * // Update or create a Preferences
-     * const preferences = await prisma.preferences.upsert({
-     *   create: {
-     *     // ... data to create a Preferences
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Preferences we want to update
-     *   }
-     * })
-     */
-    upsert<T extends PreferencesUpsertArgs>(args: SelectSubset<T, PreferencesUpsertArgs<ExtArgs>>): Prisma__PreferencesClient<$Result.GetResult<Prisma.$PreferencesPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Preferences.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PreferencesCountArgs} args - Arguments to filter Preferences to count.
-     * @example
-     * // Count the number of Preferences
-     * const count = await prisma.preferences.count({
-     *   where: {
-     *     // ... the filter for the Preferences we want to count
-     *   }
-     * })
-    **/
-    count<T extends PreferencesCountArgs>(
-      args?: Subset<T, PreferencesCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], PreferencesCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Preferences.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PreferencesAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends PreferencesAggregateArgs>(args: Subset<T, PreferencesAggregateArgs>): Prisma.PrismaPromise<GetPreferencesAggregateType<T>>
-
-    /**
-     * Group by Preferences.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PreferencesGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends PreferencesGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PreferencesGroupByArgs['orderBy'] }
-        : { orderBy?: PreferencesGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, PreferencesGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPreferencesGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Preferences model
-   */
-  readonly fields: PreferencesFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Preferences.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__PreferencesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    design<T extends DesignDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DesignDefaultArgs<ExtArgs>>): Prisma__DesignClient<$Result.GetResult<Prisma.$DesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Preferences model
-   */
-  interface PreferencesFieldRefs {
-    readonly id: FieldRef<"Preferences", 'String'>
-    readonly designId: FieldRef<"Preferences", 'String'>
-    readonly roomType: FieldRef<"Preferences", 'String'>
-    readonly size: FieldRef<"Preferences", 'String'>
-    readonly stylePreference: FieldRef<"Preferences", 'String'>
-    readonly budget: FieldRef<"Preferences", 'Float'>
-    readonly colorScheme: FieldRef<"Preferences", 'String'>
-    readonly materialPreferences: FieldRef<"Preferences", 'String'>
-    readonly otherRequirements: FieldRef<"Preferences", 'String'>
-    readonly createdAt: FieldRef<"Preferences", 'DateTime'>
-    readonly updatedAt: FieldRef<"Preferences", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Preferences findUnique
-   */
-  export type PreferencesFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * Filter, which Preferences to fetch.
-     */
-    where: PreferencesWhereUniqueInput
-  }
-
-  /**
-   * Preferences findUniqueOrThrow
-   */
-  export type PreferencesFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * Filter, which Preferences to fetch.
-     */
-    where: PreferencesWhereUniqueInput
-  }
-
-  /**
-   * Preferences findFirst
-   */
-  export type PreferencesFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * Filter, which Preferences to fetch.
-     */
-    where?: PreferencesWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Preferences to fetch.
-     */
-    orderBy?: PreferencesOrderByWithRelationInput | PreferencesOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Preferences.
-     */
-    cursor?: PreferencesWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Preferences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Preferences.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Preferences.
-     */
-    distinct?: PreferencesScalarFieldEnum | PreferencesScalarFieldEnum[]
-  }
-
-  /**
-   * Preferences findFirstOrThrow
-   */
-  export type PreferencesFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * Filter, which Preferences to fetch.
-     */
-    where?: PreferencesWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Preferences to fetch.
-     */
-    orderBy?: PreferencesOrderByWithRelationInput | PreferencesOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Preferences.
-     */
-    cursor?: PreferencesWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Preferences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Preferences.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Preferences.
-     */
-    distinct?: PreferencesScalarFieldEnum | PreferencesScalarFieldEnum[]
-  }
-
-  /**
-   * Preferences findMany
-   */
-  export type PreferencesFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * Filter, which Preferences to fetch.
-     */
-    where?: PreferencesWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Preferences to fetch.
-     */
-    orderBy?: PreferencesOrderByWithRelationInput | PreferencesOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Preferences.
-     */
-    cursor?: PreferencesWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Preferences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Preferences.
-     */
-    skip?: number
-    distinct?: PreferencesScalarFieldEnum | PreferencesScalarFieldEnum[]
-  }
-
-  /**
-   * Preferences create
-   */
-  export type PreferencesCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Preferences.
-     */
-    data: XOR<PreferencesCreateInput, PreferencesUncheckedCreateInput>
-  }
-
-  /**
-   * Preferences createMany
-   */
-  export type PreferencesCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Preferences.
-     */
-    data: PreferencesCreateManyInput | PreferencesCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Preferences createManyAndReturn
-   */
-  export type PreferencesCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * The data used to create many Preferences.
-     */
-    data: PreferencesCreateManyInput | PreferencesCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Preferences update
-   */
-  export type PreferencesUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Preferences.
-     */
-    data: XOR<PreferencesUpdateInput, PreferencesUncheckedUpdateInput>
-    /**
-     * Choose, which Preferences to update.
-     */
-    where: PreferencesWhereUniqueInput
-  }
-
-  /**
-   * Preferences updateMany
-   */
-  export type PreferencesUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Preferences.
-     */
-    data: XOR<PreferencesUpdateManyMutationInput, PreferencesUncheckedUpdateManyInput>
-    /**
-     * Filter which Preferences to update
-     */
-    where?: PreferencesWhereInput
-    /**
-     * Limit how many Preferences to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Preferences updateManyAndReturn
-   */
-  export type PreferencesUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * The data used to update Preferences.
-     */
-    data: XOR<PreferencesUpdateManyMutationInput, PreferencesUncheckedUpdateManyInput>
-    /**
-     * Filter which Preferences to update
-     */
-    where?: PreferencesWhereInput
-    /**
-     * Limit how many Preferences to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Preferences upsert
-   */
-  export type PreferencesUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Preferences to update in case it exists.
-     */
-    where: PreferencesWhereUniqueInput
-    /**
-     * In case the Preferences found by the `where` argument doesn't exist, create a new Preferences with this data.
-     */
-    create: XOR<PreferencesCreateInput, PreferencesUncheckedCreateInput>
-    /**
-     * In case the Preferences was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<PreferencesUpdateInput, PreferencesUncheckedUpdateInput>
-  }
-
-  /**
-   * Preferences delete
-   */
-  export type PreferencesDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
-    /**
-     * Filter which Preferences to delete.
-     */
-    where: PreferencesWhereUniqueInput
-  }
-
-  /**
-   * Preferences deleteMany
-   */
-  export type PreferencesDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Preferences to delete
-     */
-    where?: PreferencesWhereInput
-    /**
-     * Limit how many Preferences to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Preferences without action
-   */
-  export type PreferencesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Preferences
-     */
-    select?: PreferencesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Preferences
-     */
-    omit?: PreferencesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PreferencesInclude<ExtArgs> | null
   }
 
 
@@ -6019,2311 +4802,6 @@ export namespace Prisma {
 
 
   /**
-   * Model RoiCalculation
-   */
-
-  export type AggregateRoiCalculation = {
-    _count: RoiCalculationCountAggregateOutputType | null
-    _avg: RoiCalculationAvgAggregateOutputType | null
-    _sum: RoiCalculationSumAggregateOutputType | null
-    _min: RoiCalculationMinAggregateOutputType | null
-    _max: RoiCalculationMaxAggregateOutputType | null
-  }
-
-  export type RoiCalculationAvgAggregateOutputType = {
-    estimatedCost: number | null
-    roiPercentage: number | null
-  }
-
-  export type RoiCalculationSumAggregateOutputType = {
-    estimatedCost: number | null
-    roiPercentage: number | null
-  }
-
-  export type RoiCalculationMinAggregateOutputType = {
-    id: string | null
-    designId: string | null
-    estimatedCost: number | null
-    roiPercentage: number | null
-    paybackTimeline: string | null
-    notes: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type RoiCalculationMaxAggregateOutputType = {
-    id: string | null
-    designId: string | null
-    estimatedCost: number | null
-    roiPercentage: number | null
-    paybackTimeline: string | null
-    notes: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type RoiCalculationCountAggregateOutputType = {
-    id: number
-    designId: number
-    estimatedCost: number
-    roiPercentage: number
-    paybackTimeline: number
-    costBreakdown: number
-    notes: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type RoiCalculationAvgAggregateInputType = {
-    estimatedCost?: true
-    roiPercentage?: true
-  }
-
-  export type RoiCalculationSumAggregateInputType = {
-    estimatedCost?: true
-    roiPercentage?: true
-  }
-
-  export type RoiCalculationMinAggregateInputType = {
-    id?: true
-    designId?: true
-    estimatedCost?: true
-    roiPercentage?: true
-    paybackTimeline?: true
-    notes?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type RoiCalculationMaxAggregateInputType = {
-    id?: true
-    designId?: true
-    estimatedCost?: true
-    roiPercentage?: true
-    paybackTimeline?: true
-    notes?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type RoiCalculationCountAggregateInputType = {
-    id?: true
-    designId?: true
-    estimatedCost?: true
-    roiPercentage?: true
-    paybackTimeline?: true
-    costBreakdown?: true
-    notes?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type RoiCalculationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which RoiCalculation to aggregate.
-     */
-    where?: RoiCalculationWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of RoiCalculations to fetch.
-     */
-    orderBy?: RoiCalculationOrderByWithRelationInput | RoiCalculationOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: RoiCalculationWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` RoiCalculations from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` RoiCalculations.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned RoiCalculations
-    **/
-    _count?: true | RoiCalculationCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: RoiCalculationAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: RoiCalculationSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: RoiCalculationMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: RoiCalculationMaxAggregateInputType
-  }
-
-  export type GetRoiCalculationAggregateType<T extends RoiCalculationAggregateArgs> = {
-        [P in keyof T & keyof AggregateRoiCalculation]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateRoiCalculation[P]>
-      : GetScalarType<T[P], AggregateRoiCalculation[P]>
-  }
-
-
-
-
-  export type RoiCalculationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: RoiCalculationWhereInput
-    orderBy?: RoiCalculationOrderByWithAggregationInput | RoiCalculationOrderByWithAggregationInput[]
-    by: RoiCalculationScalarFieldEnum[] | RoiCalculationScalarFieldEnum
-    having?: RoiCalculationScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: RoiCalculationCountAggregateInputType | true
-    _avg?: RoiCalculationAvgAggregateInputType
-    _sum?: RoiCalculationSumAggregateInputType
-    _min?: RoiCalculationMinAggregateInputType
-    _max?: RoiCalculationMaxAggregateInputType
-  }
-
-  export type RoiCalculationGroupByOutputType = {
-    id: string
-    designId: string
-    estimatedCost: number
-    roiPercentage: number
-    paybackTimeline: string | null
-    costBreakdown: JsonValue | null
-    notes: string | null
-    createdAt: Date
-    updatedAt: Date
-    _count: RoiCalculationCountAggregateOutputType | null
-    _avg: RoiCalculationAvgAggregateOutputType | null
-    _sum: RoiCalculationSumAggregateOutputType | null
-    _min: RoiCalculationMinAggregateOutputType | null
-    _max: RoiCalculationMaxAggregateOutputType | null
-  }
-
-  type GetRoiCalculationGroupByPayload<T extends RoiCalculationGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<RoiCalculationGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof RoiCalculationGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], RoiCalculationGroupByOutputType[P]>
-            : GetScalarType<T[P], RoiCalculationGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type RoiCalculationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    estimatedCost?: boolean
-    roiPercentage?: boolean
-    paybackTimeline?: boolean
-    costBreakdown?: boolean
-    notes?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["roiCalculation"]>
-
-  export type RoiCalculationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    estimatedCost?: boolean
-    roiPercentage?: boolean
-    paybackTimeline?: boolean
-    costBreakdown?: boolean
-    notes?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["roiCalculation"]>
-
-  export type RoiCalculationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    estimatedCost?: boolean
-    roiPercentage?: boolean
-    paybackTimeline?: boolean
-    costBreakdown?: boolean
-    notes?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["roiCalculation"]>
-
-  export type RoiCalculationSelectScalar = {
-    id?: boolean
-    designId?: boolean
-    estimatedCost?: boolean
-    roiPercentage?: boolean
-    paybackTimeline?: boolean
-    costBreakdown?: boolean
-    notes?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type RoiCalculationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "designId" | "estimatedCost" | "roiPercentage" | "paybackTimeline" | "costBreakdown" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["roiCalculation"]>
-  export type RoiCalculationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }
-  export type RoiCalculationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }
-  export type RoiCalculationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-  }
-
-  export type $RoiCalculationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "RoiCalculation"
-    objects: {
-      design: Prisma.$DesignPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      designId: string
-      estimatedCost: number
-      roiPercentage: number
-      paybackTimeline: string | null
-      costBreakdown: Prisma.JsonValue | null
-      notes: string | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["roiCalculation"]>
-    composites: {}
-  }
-
-  type RoiCalculationGetPayload<S extends boolean | null | undefined | RoiCalculationDefaultArgs> = $Result.GetResult<Prisma.$RoiCalculationPayload, S>
-
-  type RoiCalculationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<RoiCalculationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: RoiCalculationCountAggregateInputType | true
-    }
-
-  export interface RoiCalculationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RoiCalculation'], meta: { name: 'RoiCalculation' } }
-    /**
-     * Find zero or one RoiCalculation that matches the filter.
-     * @param {RoiCalculationFindUniqueArgs} args - Arguments to find a RoiCalculation
-     * @example
-     * // Get one RoiCalculation
-     * const roiCalculation = await prisma.roiCalculation.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends RoiCalculationFindUniqueArgs>(args: SelectSubset<T, RoiCalculationFindUniqueArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one RoiCalculation that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {RoiCalculationFindUniqueOrThrowArgs} args - Arguments to find a RoiCalculation
-     * @example
-     * // Get one RoiCalculation
-     * const roiCalculation = await prisma.roiCalculation.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends RoiCalculationFindUniqueOrThrowArgs>(args: SelectSubset<T, RoiCalculationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first RoiCalculation that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoiCalculationFindFirstArgs} args - Arguments to find a RoiCalculation
-     * @example
-     * // Get one RoiCalculation
-     * const roiCalculation = await prisma.roiCalculation.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends RoiCalculationFindFirstArgs>(args?: SelectSubset<T, RoiCalculationFindFirstArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first RoiCalculation that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoiCalculationFindFirstOrThrowArgs} args - Arguments to find a RoiCalculation
-     * @example
-     * // Get one RoiCalculation
-     * const roiCalculation = await prisma.roiCalculation.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends RoiCalculationFindFirstOrThrowArgs>(args?: SelectSubset<T, RoiCalculationFindFirstOrThrowArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more RoiCalculations that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoiCalculationFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all RoiCalculations
-     * const roiCalculations = await prisma.roiCalculation.findMany()
-     * 
-     * // Get first 10 RoiCalculations
-     * const roiCalculations = await prisma.roiCalculation.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const roiCalculationWithIdOnly = await prisma.roiCalculation.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends RoiCalculationFindManyArgs>(args?: SelectSubset<T, RoiCalculationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a RoiCalculation.
-     * @param {RoiCalculationCreateArgs} args - Arguments to create a RoiCalculation.
-     * @example
-     * // Create one RoiCalculation
-     * const RoiCalculation = await prisma.roiCalculation.create({
-     *   data: {
-     *     // ... data to create a RoiCalculation
-     *   }
-     * })
-     * 
-     */
-    create<T extends RoiCalculationCreateArgs>(args: SelectSubset<T, RoiCalculationCreateArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many RoiCalculations.
-     * @param {RoiCalculationCreateManyArgs} args - Arguments to create many RoiCalculations.
-     * @example
-     * // Create many RoiCalculations
-     * const roiCalculation = await prisma.roiCalculation.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends RoiCalculationCreateManyArgs>(args?: SelectSubset<T, RoiCalculationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many RoiCalculations and returns the data saved in the database.
-     * @param {RoiCalculationCreateManyAndReturnArgs} args - Arguments to create many RoiCalculations.
-     * @example
-     * // Create many RoiCalculations
-     * const roiCalculation = await prisma.roiCalculation.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many RoiCalculations and only return the `id`
-     * const roiCalculationWithIdOnly = await prisma.roiCalculation.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends RoiCalculationCreateManyAndReturnArgs>(args?: SelectSubset<T, RoiCalculationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a RoiCalculation.
-     * @param {RoiCalculationDeleteArgs} args - Arguments to delete one RoiCalculation.
-     * @example
-     * // Delete one RoiCalculation
-     * const RoiCalculation = await prisma.roiCalculation.delete({
-     *   where: {
-     *     // ... filter to delete one RoiCalculation
-     *   }
-     * })
-     * 
-     */
-    delete<T extends RoiCalculationDeleteArgs>(args: SelectSubset<T, RoiCalculationDeleteArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one RoiCalculation.
-     * @param {RoiCalculationUpdateArgs} args - Arguments to update one RoiCalculation.
-     * @example
-     * // Update one RoiCalculation
-     * const roiCalculation = await prisma.roiCalculation.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends RoiCalculationUpdateArgs>(args: SelectSubset<T, RoiCalculationUpdateArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more RoiCalculations.
-     * @param {RoiCalculationDeleteManyArgs} args - Arguments to filter RoiCalculations to delete.
-     * @example
-     * // Delete a few RoiCalculations
-     * const { count } = await prisma.roiCalculation.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends RoiCalculationDeleteManyArgs>(args?: SelectSubset<T, RoiCalculationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more RoiCalculations.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoiCalculationUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many RoiCalculations
-     * const roiCalculation = await prisma.roiCalculation.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends RoiCalculationUpdateManyArgs>(args: SelectSubset<T, RoiCalculationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more RoiCalculations and returns the data updated in the database.
-     * @param {RoiCalculationUpdateManyAndReturnArgs} args - Arguments to update many RoiCalculations.
-     * @example
-     * // Update many RoiCalculations
-     * const roiCalculation = await prisma.roiCalculation.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more RoiCalculations and only return the `id`
-     * const roiCalculationWithIdOnly = await prisma.roiCalculation.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends RoiCalculationUpdateManyAndReturnArgs>(args: SelectSubset<T, RoiCalculationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one RoiCalculation.
-     * @param {RoiCalculationUpsertArgs} args - Arguments to update or create a RoiCalculation.
-     * @example
-     * // Update or create a RoiCalculation
-     * const roiCalculation = await prisma.roiCalculation.upsert({
-     *   create: {
-     *     // ... data to create a RoiCalculation
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the RoiCalculation we want to update
-     *   }
-     * })
-     */
-    upsert<T extends RoiCalculationUpsertArgs>(args: SelectSubset<T, RoiCalculationUpsertArgs<ExtArgs>>): Prisma__RoiCalculationClient<$Result.GetResult<Prisma.$RoiCalculationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of RoiCalculations.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoiCalculationCountArgs} args - Arguments to filter RoiCalculations to count.
-     * @example
-     * // Count the number of RoiCalculations
-     * const count = await prisma.roiCalculation.count({
-     *   where: {
-     *     // ... the filter for the RoiCalculations we want to count
-     *   }
-     * })
-    **/
-    count<T extends RoiCalculationCountArgs>(
-      args?: Subset<T, RoiCalculationCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], RoiCalculationCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a RoiCalculation.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoiCalculationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends RoiCalculationAggregateArgs>(args: Subset<T, RoiCalculationAggregateArgs>): Prisma.PrismaPromise<GetRoiCalculationAggregateType<T>>
-
-    /**
-     * Group by RoiCalculation.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {RoiCalculationGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends RoiCalculationGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: RoiCalculationGroupByArgs['orderBy'] }
-        : { orderBy?: RoiCalculationGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, RoiCalculationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRoiCalculationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the RoiCalculation model
-   */
-  readonly fields: RoiCalculationFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for RoiCalculation.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__RoiCalculationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    design<T extends DesignDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DesignDefaultArgs<ExtArgs>>): Prisma__DesignClient<$Result.GetResult<Prisma.$DesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the RoiCalculation model
-   */
-  interface RoiCalculationFieldRefs {
-    readonly id: FieldRef<"RoiCalculation", 'String'>
-    readonly designId: FieldRef<"RoiCalculation", 'String'>
-    readonly estimatedCost: FieldRef<"RoiCalculation", 'Float'>
-    readonly roiPercentage: FieldRef<"RoiCalculation", 'Float'>
-    readonly paybackTimeline: FieldRef<"RoiCalculation", 'String'>
-    readonly costBreakdown: FieldRef<"RoiCalculation", 'Json'>
-    readonly notes: FieldRef<"RoiCalculation", 'String'>
-    readonly createdAt: FieldRef<"RoiCalculation", 'DateTime'>
-    readonly updatedAt: FieldRef<"RoiCalculation", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * RoiCalculation findUnique
-   */
-  export type RoiCalculationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * Filter, which RoiCalculation to fetch.
-     */
-    where: RoiCalculationWhereUniqueInput
-  }
-
-  /**
-   * RoiCalculation findUniqueOrThrow
-   */
-  export type RoiCalculationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * Filter, which RoiCalculation to fetch.
-     */
-    where: RoiCalculationWhereUniqueInput
-  }
-
-  /**
-   * RoiCalculation findFirst
-   */
-  export type RoiCalculationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * Filter, which RoiCalculation to fetch.
-     */
-    where?: RoiCalculationWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of RoiCalculations to fetch.
-     */
-    orderBy?: RoiCalculationOrderByWithRelationInput | RoiCalculationOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for RoiCalculations.
-     */
-    cursor?: RoiCalculationWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` RoiCalculations from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` RoiCalculations.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of RoiCalculations.
-     */
-    distinct?: RoiCalculationScalarFieldEnum | RoiCalculationScalarFieldEnum[]
-  }
-
-  /**
-   * RoiCalculation findFirstOrThrow
-   */
-  export type RoiCalculationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * Filter, which RoiCalculation to fetch.
-     */
-    where?: RoiCalculationWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of RoiCalculations to fetch.
-     */
-    orderBy?: RoiCalculationOrderByWithRelationInput | RoiCalculationOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for RoiCalculations.
-     */
-    cursor?: RoiCalculationWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` RoiCalculations from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` RoiCalculations.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of RoiCalculations.
-     */
-    distinct?: RoiCalculationScalarFieldEnum | RoiCalculationScalarFieldEnum[]
-  }
-
-  /**
-   * RoiCalculation findMany
-   */
-  export type RoiCalculationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * Filter, which RoiCalculations to fetch.
-     */
-    where?: RoiCalculationWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of RoiCalculations to fetch.
-     */
-    orderBy?: RoiCalculationOrderByWithRelationInput | RoiCalculationOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing RoiCalculations.
-     */
-    cursor?: RoiCalculationWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` RoiCalculations from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` RoiCalculations.
-     */
-    skip?: number
-    distinct?: RoiCalculationScalarFieldEnum | RoiCalculationScalarFieldEnum[]
-  }
-
-  /**
-   * RoiCalculation create
-   */
-  export type RoiCalculationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * The data needed to create a RoiCalculation.
-     */
-    data: XOR<RoiCalculationCreateInput, RoiCalculationUncheckedCreateInput>
-  }
-
-  /**
-   * RoiCalculation createMany
-   */
-  export type RoiCalculationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many RoiCalculations.
-     */
-    data: RoiCalculationCreateManyInput | RoiCalculationCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * RoiCalculation createManyAndReturn
-   */
-  export type RoiCalculationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * The data used to create many RoiCalculations.
-     */
-    data: RoiCalculationCreateManyInput | RoiCalculationCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * RoiCalculation update
-   */
-  export type RoiCalculationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * The data needed to update a RoiCalculation.
-     */
-    data: XOR<RoiCalculationUpdateInput, RoiCalculationUncheckedUpdateInput>
-    /**
-     * Choose, which RoiCalculation to update.
-     */
-    where: RoiCalculationWhereUniqueInput
-  }
-
-  /**
-   * RoiCalculation updateMany
-   */
-  export type RoiCalculationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update RoiCalculations.
-     */
-    data: XOR<RoiCalculationUpdateManyMutationInput, RoiCalculationUncheckedUpdateManyInput>
-    /**
-     * Filter which RoiCalculations to update
-     */
-    where?: RoiCalculationWhereInput
-    /**
-     * Limit how many RoiCalculations to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * RoiCalculation updateManyAndReturn
-   */
-  export type RoiCalculationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * The data used to update RoiCalculations.
-     */
-    data: XOR<RoiCalculationUpdateManyMutationInput, RoiCalculationUncheckedUpdateManyInput>
-    /**
-     * Filter which RoiCalculations to update
-     */
-    where?: RoiCalculationWhereInput
-    /**
-     * Limit how many RoiCalculations to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * RoiCalculation upsert
-   */
-  export type RoiCalculationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * The filter to search for the RoiCalculation to update in case it exists.
-     */
-    where: RoiCalculationWhereUniqueInput
-    /**
-     * In case the RoiCalculation found by the `where` argument doesn't exist, create a new RoiCalculation with this data.
-     */
-    create: XOR<RoiCalculationCreateInput, RoiCalculationUncheckedCreateInput>
-    /**
-     * In case the RoiCalculation was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<RoiCalculationUpdateInput, RoiCalculationUncheckedUpdateInput>
-  }
-
-  /**
-   * RoiCalculation delete
-   */
-  export type RoiCalculationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-    /**
-     * Filter which RoiCalculation to delete.
-     */
-    where: RoiCalculationWhereUniqueInput
-  }
-
-  /**
-   * RoiCalculation deleteMany
-   */
-  export type RoiCalculationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which RoiCalculations to delete
-     */
-    where?: RoiCalculationWhereInput
-    /**
-     * Limit how many RoiCalculations to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * RoiCalculation without action
-   */
-  export type RoiCalculationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RoiCalculation
-     */
-    select?: RoiCalculationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RoiCalculation
-     */
-    omit?: RoiCalculationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RoiCalculationInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Feedback
-   */
-
-  export type AggregateFeedback = {
-    _count: FeedbackCountAggregateOutputType | null
-    _avg: FeedbackAvgAggregateOutputType | null
-    _sum: FeedbackSumAggregateOutputType | null
-    _min: FeedbackMinAggregateOutputType | null
-    _max: FeedbackMaxAggregateOutputType | null
-  }
-
-  export type FeedbackAvgAggregateOutputType = {
-    rating: number | null
-  }
-
-  export type FeedbackSumAggregateOutputType = {
-    rating: number | null
-  }
-
-  export type FeedbackMinAggregateOutputType = {
-    id: string | null
-    designId: string | null
-    userId: string | null
-    rating: number | null
-    comments: string | null
-    type: $Enums.FeedbackType | null
-    helpful: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type FeedbackMaxAggregateOutputType = {
-    id: string | null
-    designId: string | null
-    userId: string | null
-    rating: number | null
-    comments: string | null
-    type: $Enums.FeedbackType | null
-    helpful: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type FeedbackCountAggregateOutputType = {
-    id: number
-    designId: number
-    userId: number
-    rating: number
-    comments: number
-    type: number
-    helpful: number
-    metadata: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type FeedbackAvgAggregateInputType = {
-    rating?: true
-  }
-
-  export type FeedbackSumAggregateInputType = {
-    rating?: true
-  }
-
-  export type FeedbackMinAggregateInputType = {
-    id?: true
-    designId?: true
-    userId?: true
-    rating?: true
-    comments?: true
-    type?: true
-    helpful?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type FeedbackMaxAggregateInputType = {
-    id?: true
-    designId?: true
-    userId?: true
-    rating?: true
-    comments?: true
-    type?: true
-    helpful?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type FeedbackCountAggregateInputType = {
-    id?: true
-    designId?: true
-    userId?: true
-    rating?: true
-    comments?: true
-    type?: true
-    helpful?: true
-    metadata?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type FeedbackAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Feedback to aggregate.
-     */
-    where?: FeedbackWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Feedbacks to fetch.
-     */
-    orderBy?: FeedbackOrderByWithRelationInput | FeedbackOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: FeedbackWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Feedbacks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Feedbacks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Feedbacks
-    **/
-    _count?: true | FeedbackCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: FeedbackAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: FeedbackSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: FeedbackMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: FeedbackMaxAggregateInputType
-  }
-
-  export type GetFeedbackAggregateType<T extends FeedbackAggregateArgs> = {
-        [P in keyof T & keyof AggregateFeedback]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateFeedback[P]>
-      : GetScalarType<T[P], AggregateFeedback[P]>
-  }
-
-
-
-
-  export type FeedbackGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FeedbackWhereInput
-    orderBy?: FeedbackOrderByWithAggregationInput | FeedbackOrderByWithAggregationInput[]
-    by: FeedbackScalarFieldEnum[] | FeedbackScalarFieldEnum
-    having?: FeedbackScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: FeedbackCountAggregateInputType | true
-    _avg?: FeedbackAvgAggregateInputType
-    _sum?: FeedbackSumAggregateInputType
-    _min?: FeedbackMinAggregateInputType
-    _max?: FeedbackMaxAggregateInputType
-  }
-
-  export type FeedbackGroupByOutputType = {
-    id: string
-    designId: string
-    userId: string
-    rating: number
-    comments: string | null
-    type: $Enums.FeedbackType
-    helpful: boolean | null
-    metadata: JsonValue | null
-    createdAt: Date
-    updatedAt: Date
-    _count: FeedbackCountAggregateOutputType | null
-    _avg: FeedbackAvgAggregateOutputType | null
-    _sum: FeedbackSumAggregateOutputType | null
-    _min: FeedbackMinAggregateOutputType | null
-    _max: FeedbackMaxAggregateOutputType | null
-  }
-
-  type GetFeedbackGroupByPayload<T extends FeedbackGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<FeedbackGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof FeedbackGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], FeedbackGroupByOutputType[P]>
-            : GetScalarType<T[P], FeedbackGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type FeedbackSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    userId?: boolean
-    rating?: boolean
-    comments?: boolean
-    type?: boolean
-    helpful?: boolean
-    metadata?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-    profile?: boolean | ProfileDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["feedback"]>
-
-  export type FeedbackSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    userId?: boolean
-    rating?: boolean
-    comments?: boolean
-    type?: boolean
-    helpful?: boolean
-    metadata?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-    profile?: boolean | ProfileDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["feedback"]>
-
-  export type FeedbackSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    designId?: boolean
-    userId?: boolean
-    rating?: boolean
-    comments?: boolean
-    type?: boolean
-    helpful?: boolean
-    metadata?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-    profile?: boolean | ProfileDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["feedback"]>
-
-  export type FeedbackSelectScalar = {
-    id?: boolean
-    designId?: boolean
-    userId?: boolean
-    rating?: boolean
-    comments?: boolean
-    type?: boolean
-    helpful?: boolean
-    metadata?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type FeedbackOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "designId" | "userId" | "rating" | "comments" | "type" | "helpful" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["feedback"]>
-  export type FeedbackInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-    profile?: boolean | ProfileDefaultArgs<ExtArgs>
-  }
-  export type FeedbackIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-    profile?: boolean | ProfileDefaultArgs<ExtArgs>
-  }
-  export type FeedbackIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    design?: boolean | DesignDefaultArgs<ExtArgs>
-    profile?: boolean | ProfileDefaultArgs<ExtArgs>
-  }
-
-  export type $FeedbackPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Feedback"
-    objects: {
-      design: Prisma.$DesignPayload<ExtArgs>
-      profile: Prisma.$ProfilePayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      designId: string
-      userId: string
-      rating: number
-      comments: string | null
-      type: $Enums.FeedbackType
-      helpful: boolean | null
-      metadata: Prisma.JsonValue | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["feedback"]>
-    composites: {}
-  }
-
-  type FeedbackGetPayload<S extends boolean | null | undefined | FeedbackDefaultArgs> = $Result.GetResult<Prisma.$FeedbackPayload, S>
-
-  type FeedbackCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<FeedbackFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: FeedbackCountAggregateInputType | true
-    }
-
-  export interface FeedbackDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Feedback'], meta: { name: 'Feedback' } }
-    /**
-     * Find zero or one Feedback that matches the filter.
-     * @param {FeedbackFindUniqueArgs} args - Arguments to find a Feedback
-     * @example
-     * // Get one Feedback
-     * const feedback = await prisma.feedback.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends FeedbackFindUniqueArgs>(args: SelectSubset<T, FeedbackFindUniqueArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Feedback that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {FeedbackFindUniqueOrThrowArgs} args - Arguments to find a Feedback
-     * @example
-     * // Get one Feedback
-     * const feedback = await prisma.feedback.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends FeedbackFindUniqueOrThrowArgs>(args: SelectSubset<T, FeedbackFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Feedback that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FeedbackFindFirstArgs} args - Arguments to find a Feedback
-     * @example
-     * // Get one Feedback
-     * const feedback = await prisma.feedback.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends FeedbackFindFirstArgs>(args?: SelectSubset<T, FeedbackFindFirstArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Feedback that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FeedbackFindFirstOrThrowArgs} args - Arguments to find a Feedback
-     * @example
-     * // Get one Feedback
-     * const feedback = await prisma.feedback.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends FeedbackFindFirstOrThrowArgs>(args?: SelectSubset<T, FeedbackFindFirstOrThrowArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Feedbacks that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FeedbackFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Feedbacks
-     * const feedbacks = await prisma.feedback.findMany()
-     * 
-     * // Get first 10 Feedbacks
-     * const feedbacks = await prisma.feedback.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const feedbackWithIdOnly = await prisma.feedback.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends FeedbackFindManyArgs>(args?: SelectSubset<T, FeedbackFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Feedback.
-     * @param {FeedbackCreateArgs} args - Arguments to create a Feedback.
-     * @example
-     * // Create one Feedback
-     * const Feedback = await prisma.feedback.create({
-     *   data: {
-     *     // ... data to create a Feedback
-     *   }
-     * })
-     * 
-     */
-    create<T extends FeedbackCreateArgs>(args: SelectSubset<T, FeedbackCreateArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Feedbacks.
-     * @param {FeedbackCreateManyArgs} args - Arguments to create many Feedbacks.
-     * @example
-     * // Create many Feedbacks
-     * const feedback = await prisma.feedback.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends FeedbackCreateManyArgs>(args?: SelectSubset<T, FeedbackCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Feedbacks and returns the data saved in the database.
-     * @param {FeedbackCreateManyAndReturnArgs} args - Arguments to create many Feedbacks.
-     * @example
-     * // Create many Feedbacks
-     * const feedback = await prisma.feedback.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Feedbacks and only return the `id`
-     * const feedbackWithIdOnly = await prisma.feedback.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends FeedbackCreateManyAndReturnArgs>(args?: SelectSubset<T, FeedbackCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Feedback.
-     * @param {FeedbackDeleteArgs} args - Arguments to delete one Feedback.
-     * @example
-     * // Delete one Feedback
-     * const Feedback = await prisma.feedback.delete({
-     *   where: {
-     *     // ... filter to delete one Feedback
-     *   }
-     * })
-     * 
-     */
-    delete<T extends FeedbackDeleteArgs>(args: SelectSubset<T, FeedbackDeleteArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Feedback.
-     * @param {FeedbackUpdateArgs} args - Arguments to update one Feedback.
-     * @example
-     * // Update one Feedback
-     * const feedback = await prisma.feedback.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends FeedbackUpdateArgs>(args: SelectSubset<T, FeedbackUpdateArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Feedbacks.
-     * @param {FeedbackDeleteManyArgs} args - Arguments to filter Feedbacks to delete.
-     * @example
-     * // Delete a few Feedbacks
-     * const { count } = await prisma.feedback.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends FeedbackDeleteManyArgs>(args?: SelectSubset<T, FeedbackDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Feedbacks.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FeedbackUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Feedbacks
-     * const feedback = await prisma.feedback.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends FeedbackUpdateManyArgs>(args: SelectSubset<T, FeedbackUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Feedbacks and returns the data updated in the database.
-     * @param {FeedbackUpdateManyAndReturnArgs} args - Arguments to update many Feedbacks.
-     * @example
-     * // Update many Feedbacks
-     * const feedback = await prisma.feedback.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Feedbacks and only return the `id`
-     * const feedbackWithIdOnly = await prisma.feedback.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends FeedbackUpdateManyAndReturnArgs>(args: SelectSubset<T, FeedbackUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Feedback.
-     * @param {FeedbackUpsertArgs} args - Arguments to update or create a Feedback.
-     * @example
-     * // Update or create a Feedback
-     * const feedback = await prisma.feedback.upsert({
-     *   create: {
-     *     // ... data to create a Feedback
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Feedback we want to update
-     *   }
-     * })
-     */
-    upsert<T extends FeedbackUpsertArgs>(args: SelectSubset<T, FeedbackUpsertArgs<ExtArgs>>): Prisma__FeedbackClient<$Result.GetResult<Prisma.$FeedbackPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Feedbacks.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FeedbackCountArgs} args - Arguments to filter Feedbacks to count.
-     * @example
-     * // Count the number of Feedbacks
-     * const count = await prisma.feedback.count({
-     *   where: {
-     *     // ... the filter for the Feedbacks we want to count
-     *   }
-     * })
-    **/
-    count<T extends FeedbackCountArgs>(
-      args?: Subset<T, FeedbackCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], FeedbackCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Feedback.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FeedbackAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends FeedbackAggregateArgs>(args: Subset<T, FeedbackAggregateArgs>): Prisma.PrismaPromise<GetFeedbackAggregateType<T>>
-
-    /**
-     * Group by Feedback.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FeedbackGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends FeedbackGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: FeedbackGroupByArgs['orderBy'] }
-        : { orderBy?: FeedbackGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, FeedbackGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFeedbackGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Feedback model
-   */
-  readonly fields: FeedbackFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Feedback.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__FeedbackClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    design<T extends DesignDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DesignDefaultArgs<ExtArgs>>): Prisma__DesignClient<$Result.GetResult<Prisma.$DesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    profile<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Feedback model
-   */
-  interface FeedbackFieldRefs {
-    readonly id: FieldRef<"Feedback", 'String'>
-    readonly designId: FieldRef<"Feedback", 'String'>
-    readonly userId: FieldRef<"Feedback", 'String'>
-    readonly rating: FieldRef<"Feedback", 'Int'>
-    readonly comments: FieldRef<"Feedback", 'String'>
-    readonly type: FieldRef<"Feedback", 'FeedbackType'>
-    readonly helpful: FieldRef<"Feedback", 'Boolean'>
-    readonly metadata: FieldRef<"Feedback", 'Json'>
-    readonly createdAt: FieldRef<"Feedback", 'DateTime'>
-    readonly updatedAt: FieldRef<"Feedback", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Feedback findUnique
-   */
-  export type FeedbackFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * Filter, which Feedback to fetch.
-     */
-    where: FeedbackWhereUniqueInput
-  }
-
-  /**
-   * Feedback findUniqueOrThrow
-   */
-  export type FeedbackFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * Filter, which Feedback to fetch.
-     */
-    where: FeedbackWhereUniqueInput
-  }
-
-  /**
-   * Feedback findFirst
-   */
-  export type FeedbackFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * Filter, which Feedback to fetch.
-     */
-    where?: FeedbackWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Feedbacks to fetch.
-     */
-    orderBy?: FeedbackOrderByWithRelationInput | FeedbackOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Feedbacks.
-     */
-    cursor?: FeedbackWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Feedbacks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Feedbacks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Feedbacks.
-     */
-    distinct?: FeedbackScalarFieldEnum | FeedbackScalarFieldEnum[]
-  }
-
-  /**
-   * Feedback findFirstOrThrow
-   */
-  export type FeedbackFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * Filter, which Feedback to fetch.
-     */
-    where?: FeedbackWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Feedbacks to fetch.
-     */
-    orderBy?: FeedbackOrderByWithRelationInput | FeedbackOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Feedbacks.
-     */
-    cursor?: FeedbackWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Feedbacks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Feedbacks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Feedbacks.
-     */
-    distinct?: FeedbackScalarFieldEnum | FeedbackScalarFieldEnum[]
-  }
-
-  /**
-   * Feedback findMany
-   */
-  export type FeedbackFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * Filter, which Feedbacks to fetch.
-     */
-    where?: FeedbackWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Feedbacks to fetch.
-     */
-    orderBy?: FeedbackOrderByWithRelationInput | FeedbackOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Feedbacks.
-     */
-    cursor?: FeedbackWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Feedbacks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Feedbacks.
-     */
-    skip?: number
-    distinct?: FeedbackScalarFieldEnum | FeedbackScalarFieldEnum[]
-  }
-
-  /**
-   * Feedback create
-   */
-  export type FeedbackCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Feedback.
-     */
-    data: XOR<FeedbackCreateInput, FeedbackUncheckedCreateInput>
-  }
-
-  /**
-   * Feedback createMany
-   */
-  export type FeedbackCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Feedbacks.
-     */
-    data: FeedbackCreateManyInput | FeedbackCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Feedback createManyAndReturn
-   */
-  export type FeedbackCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * The data used to create many Feedbacks.
-     */
-    data: FeedbackCreateManyInput | FeedbackCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Feedback update
-   */
-  export type FeedbackUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Feedback.
-     */
-    data: XOR<FeedbackUpdateInput, FeedbackUncheckedUpdateInput>
-    /**
-     * Choose, which Feedback to update.
-     */
-    where: FeedbackWhereUniqueInput
-  }
-
-  /**
-   * Feedback updateMany
-   */
-  export type FeedbackUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Feedbacks.
-     */
-    data: XOR<FeedbackUpdateManyMutationInput, FeedbackUncheckedUpdateManyInput>
-    /**
-     * Filter which Feedbacks to update
-     */
-    where?: FeedbackWhereInput
-    /**
-     * Limit how many Feedbacks to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Feedback updateManyAndReturn
-   */
-  export type FeedbackUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * The data used to update Feedbacks.
-     */
-    data: XOR<FeedbackUpdateManyMutationInput, FeedbackUncheckedUpdateManyInput>
-    /**
-     * Filter which Feedbacks to update
-     */
-    where?: FeedbackWhereInput
-    /**
-     * Limit how many Feedbacks to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Feedback upsert
-   */
-  export type FeedbackUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Feedback to update in case it exists.
-     */
-    where: FeedbackWhereUniqueInput
-    /**
-     * In case the Feedback found by the `where` argument doesn't exist, create a new Feedback with this data.
-     */
-    create: XOR<FeedbackCreateInput, FeedbackUncheckedCreateInput>
-    /**
-     * In case the Feedback was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<FeedbackUpdateInput, FeedbackUncheckedUpdateInput>
-  }
-
-  /**
-   * Feedback delete
-   */
-  export type FeedbackDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-    /**
-     * Filter which Feedback to delete.
-     */
-    where: FeedbackWhereUniqueInput
-  }
-
-  /**
-   * Feedback deleteMany
-   */
-  export type FeedbackDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Feedbacks to delete
-     */
-    where?: FeedbackWhereInput
-    /**
-     * Limit how many Feedbacks to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Feedback without action
-   */
-  export type FeedbackDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Feedback
-     */
-    select?: FeedbackSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Feedback
-     */
-    omit?: FeedbackOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FeedbackInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Enums
    */
 
@@ -8354,32 +4832,35 @@ export namespace Prisma {
   export const DesignScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    inputPrompt: 'inputPrompt',
-    uploadedImageUrl: 'uploadedImageUrl',
-    aiModelUsed: 'aiModelUsed',
+    description: 'description',
+    imageUrl: 'imageUrl',
+    customRequirements: 'customRequirements',
     status: 'status',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    generationNumber: 'generationNumber',
+    parentId: 'parentId',
+    budget: 'budget',
+    colorPalette: 'colorPalette',
+    colorScheme: 'colorScheme',
+    isPublic: 'isPublic',
+    materialPreferences: 'materialPreferences',
+    mood: 'mood',
+    otherRequirements: 'otherRequirements',
+    priority: 'priority',
+    roomType: 'roomType',
+    size: 'size',
+    style: 'style',
+    stylePreference: 'stylePreference',
+    title: 'title',
+    costBreakdown: 'costBreakdown',
+    estimatedCost: 'estimatedCost',
+    paybackTimeline: 'paybackTimeline',
+    roiNotes: 'roiNotes',
+    roiPercentage: 'roiPercentage'
   };
 
   export type DesignScalarFieldEnum = (typeof DesignScalarFieldEnum)[keyof typeof DesignScalarFieldEnum]
-
-
-  export const PreferencesScalarFieldEnum: {
-    id: 'id',
-    designId: 'designId',
-    roomType: 'roomType',
-    size: 'size',
-    stylePreference: 'stylePreference',
-    budget: 'budget',
-    colorScheme: 'colorScheme',
-    materialPreferences: 'materialPreferences',
-    otherRequirements: 'otherRequirements',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type PreferencesScalarFieldEnum = (typeof PreferencesScalarFieldEnum)[keyof typeof PreferencesScalarFieldEnum]
 
 
   export const DesignOutputScalarFieldEnum: {
@@ -8392,37 +4873,6 @@ export namespace Prisma {
   };
 
   export type DesignOutputScalarFieldEnum = (typeof DesignOutputScalarFieldEnum)[keyof typeof DesignOutputScalarFieldEnum]
-
-
-  export const RoiCalculationScalarFieldEnum: {
-    id: 'id',
-    designId: 'designId',
-    estimatedCost: 'estimatedCost',
-    roiPercentage: 'roiPercentage',
-    paybackTimeline: 'paybackTimeline',
-    costBreakdown: 'costBreakdown',
-    notes: 'notes',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type RoiCalculationScalarFieldEnum = (typeof RoiCalculationScalarFieldEnum)[keyof typeof RoiCalculationScalarFieldEnum]
-
-
-  export const FeedbackScalarFieldEnum: {
-    id: 'id',
-    designId: 'designId',
-    userId: 'userId',
-    rating: 'rating',
-    comments: 'comments',
-    type: 'type',
-    helpful: 'helpful',
-    metadata: 'metadata',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type FeedbackScalarFieldEnum = (typeof FeedbackScalarFieldEnum)[keyof typeof FeedbackScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -8528,16 +4978,30 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
+   * Reference to a field of type 'Int'
    */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
   /**
-   * Reference to a field of type 'Float[]'
+   * Reference to a field of type 'Int[]'
    */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -8556,37 +5020,23 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'FeedbackType'
-   */
-  export type EnumFeedbackTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedbackType'>
-    
-
-
-  /**
-   * Reference to a field of type 'FeedbackType[]'
-   */
-  export type ListEnumFeedbackTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedbackType[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -8606,7 +5056,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
     designs?: DesignListRelationFilter
-    feedback?: FeedbackListRelationFilter
   }
 
   export type ProfileOrderByWithRelationInput = {
@@ -8619,7 +5068,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     designs?: DesignOrderByRelationAggregateInput
-    feedback?: FeedbackOrderByRelationAggregateInput
   }
 
   export type ProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -8635,7 +5083,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
     designs?: DesignListRelationFilter
-    feedback?: FeedbackListRelationFilter
   }, "id" | "userId">
 
   export type ProfileOrderByWithAggregationInput = {
@@ -8672,33 +5119,71 @@ export namespace Prisma {
     NOT?: DesignWhereInput | DesignWhereInput[]
     id?: UuidFilter<"Design"> | string
     userId?: UuidFilter<"Design"> | string
-    inputPrompt?: StringFilter<"Design"> | string
-    uploadedImageUrl?: StringNullableFilter<"Design"> | string | null
-    aiModelUsed?: StringFilter<"Design"> | string
+    description?: StringNullableFilter<"Design"> | string | null
+    imageUrl?: StringNullableFilter<"Design"> | string | null
+    customRequirements?: StringNullableFilter<"Design"> | string | null
     status?: EnumDesignStatusFilter<"Design"> | $Enums.DesignStatus
     createdAt?: DateTimeFilter<"Design"> | Date | string
     updatedAt?: DateTimeFilter<"Design"> | Date | string
-    designOutputs?: DesignOutputListRelationFilter
+    generationNumber?: IntFilter<"Design"> | number
+    parentId?: UuidNullableFilter<"Design"> | string | null
+    budget?: DecimalNullableFilter<"Design"> | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: JsonNullableFilter<"Design">
+    colorScheme?: StringNullableFilter<"Design"> | string | null
+    isPublic?: BoolFilter<"Design"> | boolean
+    materialPreferences?: StringNullableFilter<"Design"> | string | null
+    mood?: StringNullableFilter<"Design"> | string | null
+    otherRequirements?: StringNullableFilter<"Design"> | string | null
+    priority?: StringNullableFilter<"Design"> | string | null
+    roomType?: StringNullableFilter<"Design"> | string | null
+    size?: StringNullableFilter<"Design"> | string | null
+    style?: StringNullableFilter<"Design"> | string | null
+    stylePreference?: StringNullableFilter<"Design"> | string | null
+    title?: StringNullableFilter<"Design"> | string | null
+    costBreakdown?: JsonNullableFilter<"Design">
+    estimatedCost?: FloatNullableFilter<"Design"> | number | null
+    paybackTimeline?: StringNullableFilter<"Design"> | string | null
+    roiNotes?: StringNullableFilter<"Design"> | string | null
+    roiPercentage?: FloatNullableFilter<"Design"> | number | null
+    outputs?: DesignOutputListRelationFilter
+    parentDesign?: XOR<DesignNullableScalarRelationFilter, DesignWhereInput> | null
+    childDesigns?: DesignListRelationFilter
     profile?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
-    feedback?: FeedbackListRelationFilter
-    preferences?: XOR<PreferencesNullableScalarRelationFilter, PreferencesWhereInput> | null
-    roiCalculation?: XOR<RoiCalculationNullableScalarRelationFilter, RoiCalculationWhereInput> | null
   }
 
   export type DesignOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    inputPrompt?: SortOrder
-    uploadedImageUrl?: SortOrderInput | SortOrder
-    aiModelUsed?: SortOrder
+    description?: SortOrderInput | SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    customRequirements?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    designOutputs?: DesignOutputOrderByRelationAggregateInput
+    generationNumber?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    budget?: SortOrderInput | SortOrder
+    colorPalette?: SortOrderInput | SortOrder
+    colorScheme?: SortOrderInput | SortOrder
+    isPublic?: SortOrder
+    materialPreferences?: SortOrderInput | SortOrder
+    mood?: SortOrderInput | SortOrder
+    otherRequirements?: SortOrderInput | SortOrder
+    priority?: SortOrderInput | SortOrder
+    roomType?: SortOrderInput | SortOrder
+    size?: SortOrderInput | SortOrder
+    style?: SortOrderInput | SortOrder
+    stylePreference?: SortOrderInput | SortOrder
+    title?: SortOrderInput | SortOrder
+    costBreakdown?: SortOrderInput | SortOrder
+    estimatedCost?: SortOrderInput | SortOrder
+    paybackTimeline?: SortOrderInput | SortOrder
+    roiNotes?: SortOrderInput | SortOrder
+    roiPercentage?: SortOrderInput | SortOrder
+    outputs?: DesignOutputOrderByRelationAggregateInput
+    parentDesign?: DesignOrderByWithRelationInput
+    childDesigns?: DesignOrderByRelationAggregateInput
     profile?: ProfileOrderByWithRelationInput
-    feedback?: FeedbackOrderByRelationAggregateInput
-    preferences?: PreferencesOrderByWithRelationInput
-    roiCalculation?: RoiCalculationOrderByWithRelationInput
   }
 
   export type DesignWhereUniqueInput = Prisma.AtLeast<{
@@ -8707,31 +5192,72 @@ export namespace Prisma {
     OR?: DesignWhereInput[]
     NOT?: DesignWhereInput | DesignWhereInput[]
     userId?: UuidFilter<"Design"> | string
-    inputPrompt?: StringFilter<"Design"> | string
-    uploadedImageUrl?: StringNullableFilter<"Design"> | string | null
-    aiModelUsed?: StringFilter<"Design"> | string
+    description?: StringNullableFilter<"Design"> | string | null
+    imageUrl?: StringNullableFilter<"Design"> | string | null
+    customRequirements?: StringNullableFilter<"Design"> | string | null
     status?: EnumDesignStatusFilter<"Design"> | $Enums.DesignStatus
     createdAt?: DateTimeFilter<"Design"> | Date | string
     updatedAt?: DateTimeFilter<"Design"> | Date | string
-    designOutputs?: DesignOutputListRelationFilter
+    generationNumber?: IntFilter<"Design"> | number
+    parentId?: UuidNullableFilter<"Design"> | string | null
+    budget?: DecimalNullableFilter<"Design"> | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: JsonNullableFilter<"Design">
+    colorScheme?: StringNullableFilter<"Design"> | string | null
+    isPublic?: BoolFilter<"Design"> | boolean
+    materialPreferences?: StringNullableFilter<"Design"> | string | null
+    mood?: StringNullableFilter<"Design"> | string | null
+    otherRequirements?: StringNullableFilter<"Design"> | string | null
+    priority?: StringNullableFilter<"Design"> | string | null
+    roomType?: StringNullableFilter<"Design"> | string | null
+    size?: StringNullableFilter<"Design"> | string | null
+    style?: StringNullableFilter<"Design"> | string | null
+    stylePreference?: StringNullableFilter<"Design"> | string | null
+    title?: StringNullableFilter<"Design"> | string | null
+    costBreakdown?: JsonNullableFilter<"Design">
+    estimatedCost?: FloatNullableFilter<"Design"> | number | null
+    paybackTimeline?: StringNullableFilter<"Design"> | string | null
+    roiNotes?: StringNullableFilter<"Design"> | string | null
+    roiPercentage?: FloatNullableFilter<"Design"> | number | null
+    outputs?: DesignOutputListRelationFilter
+    parentDesign?: XOR<DesignNullableScalarRelationFilter, DesignWhereInput> | null
+    childDesigns?: DesignListRelationFilter
     profile?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
-    feedback?: FeedbackListRelationFilter
-    preferences?: XOR<PreferencesNullableScalarRelationFilter, PreferencesWhereInput> | null
-    roiCalculation?: XOR<RoiCalculationNullableScalarRelationFilter, RoiCalculationWhereInput> | null
   }, "id">
 
   export type DesignOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    inputPrompt?: SortOrder
-    uploadedImageUrl?: SortOrderInput | SortOrder
-    aiModelUsed?: SortOrder
+    description?: SortOrderInput | SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    customRequirements?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    generationNumber?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    budget?: SortOrderInput | SortOrder
+    colorPalette?: SortOrderInput | SortOrder
+    colorScheme?: SortOrderInput | SortOrder
+    isPublic?: SortOrder
+    materialPreferences?: SortOrderInput | SortOrder
+    mood?: SortOrderInput | SortOrder
+    otherRequirements?: SortOrderInput | SortOrder
+    priority?: SortOrderInput | SortOrder
+    roomType?: SortOrderInput | SortOrder
+    size?: SortOrderInput | SortOrder
+    style?: SortOrderInput | SortOrder
+    stylePreference?: SortOrderInput | SortOrder
+    title?: SortOrderInput | SortOrder
+    costBreakdown?: SortOrderInput | SortOrder
+    estimatedCost?: SortOrderInput | SortOrder
+    paybackTimeline?: SortOrderInput | SortOrder
+    roiNotes?: SortOrderInput | SortOrder
+    roiPercentage?: SortOrderInput | SortOrder
     _count?: DesignCountOrderByAggregateInput
+    _avg?: DesignAvgOrderByAggregateInput
     _max?: DesignMaxOrderByAggregateInput
     _min?: DesignMinOrderByAggregateInput
+    _sum?: DesignSumOrderByAggregateInput
   }
 
   export type DesignScalarWhereWithAggregatesInput = {
@@ -8740,99 +5266,32 @@ export namespace Prisma {
     NOT?: DesignScalarWhereWithAggregatesInput | DesignScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"Design"> | string
     userId?: UuidWithAggregatesFilter<"Design"> | string
-    inputPrompt?: StringWithAggregatesFilter<"Design"> | string
-    uploadedImageUrl?: StringNullableWithAggregatesFilter<"Design"> | string | null
-    aiModelUsed?: StringWithAggregatesFilter<"Design"> | string
+    description?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    imageUrl?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    customRequirements?: StringNullableWithAggregatesFilter<"Design"> | string | null
     status?: EnumDesignStatusWithAggregatesFilter<"Design"> | $Enums.DesignStatus
     createdAt?: DateTimeWithAggregatesFilter<"Design"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Design"> | Date | string
-  }
-
-  export type PreferencesWhereInput = {
-    AND?: PreferencesWhereInput | PreferencesWhereInput[]
-    OR?: PreferencesWhereInput[]
-    NOT?: PreferencesWhereInput | PreferencesWhereInput[]
-    id?: UuidFilter<"Preferences"> | string
-    designId?: UuidFilter<"Preferences"> | string
-    roomType?: StringFilter<"Preferences"> | string
-    size?: StringFilter<"Preferences"> | string
-    stylePreference?: StringFilter<"Preferences"> | string
-    budget?: FloatNullableFilter<"Preferences"> | number | null
-    colorScheme?: StringNullableFilter<"Preferences"> | string | null
-    materialPreferences?: StringNullableFilter<"Preferences"> | string | null
-    otherRequirements?: StringNullableFilter<"Preferences"> | string | null
-    createdAt?: DateTimeFilter<"Preferences"> | Date | string
-    updatedAt?: DateTimeFilter<"Preferences"> | Date | string
-    design?: XOR<DesignScalarRelationFilter, DesignWhereInput>
-  }
-
-  export type PreferencesOrderByWithRelationInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    roomType?: SortOrder
-    size?: SortOrder
-    stylePreference?: SortOrder
-    budget?: SortOrderInput | SortOrder
-    colorScheme?: SortOrderInput | SortOrder
-    materialPreferences?: SortOrderInput | SortOrder
-    otherRequirements?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    design?: DesignOrderByWithRelationInput
-  }
-
-  export type PreferencesWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    designId?: string
-    AND?: PreferencesWhereInput | PreferencesWhereInput[]
-    OR?: PreferencesWhereInput[]
-    NOT?: PreferencesWhereInput | PreferencesWhereInput[]
-    roomType?: StringFilter<"Preferences"> | string
-    size?: StringFilter<"Preferences"> | string
-    stylePreference?: StringFilter<"Preferences"> | string
-    budget?: FloatNullableFilter<"Preferences"> | number | null
-    colorScheme?: StringNullableFilter<"Preferences"> | string | null
-    materialPreferences?: StringNullableFilter<"Preferences"> | string | null
-    otherRequirements?: StringNullableFilter<"Preferences"> | string | null
-    createdAt?: DateTimeFilter<"Preferences"> | Date | string
-    updatedAt?: DateTimeFilter<"Preferences"> | Date | string
-    design?: XOR<DesignScalarRelationFilter, DesignWhereInput>
-  }, "id" | "designId">
-
-  export type PreferencesOrderByWithAggregationInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    roomType?: SortOrder
-    size?: SortOrder
-    stylePreference?: SortOrder
-    budget?: SortOrderInput | SortOrder
-    colorScheme?: SortOrderInput | SortOrder
-    materialPreferences?: SortOrderInput | SortOrder
-    otherRequirements?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: PreferencesCountOrderByAggregateInput
-    _avg?: PreferencesAvgOrderByAggregateInput
-    _max?: PreferencesMaxOrderByAggregateInput
-    _min?: PreferencesMinOrderByAggregateInput
-    _sum?: PreferencesSumOrderByAggregateInput
-  }
-
-  export type PreferencesScalarWhereWithAggregatesInput = {
-    AND?: PreferencesScalarWhereWithAggregatesInput | PreferencesScalarWhereWithAggregatesInput[]
-    OR?: PreferencesScalarWhereWithAggregatesInput[]
-    NOT?: PreferencesScalarWhereWithAggregatesInput | PreferencesScalarWhereWithAggregatesInput[]
-    id?: UuidWithAggregatesFilter<"Preferences"> | string
-    designId?: UuidWithAggregatesFilter<"Preferences"> | string
-    roomType?: StringWithAggregatesFilter<"Preferences"> | string
-    size?: StringWithAggregatesFilter<"Preferences"> | string
-    stylePreference?: StringWithAggregatesFilter<"Preferences"> | string
-    budget?: FloatNullableWithAggregatesFilter<"Preferences"> | number | null
-    colorScheme?: StringNullableWithAggregatesFilter<"Preferences"> | string | null
-    materialPreferences?: StringNullableWithAggregatesFilter<"Preferences"> | string | null
-    otherRequirements?: StringNullableWithAggregatesFilter<"Preferences"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"Preferences"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Preferences"> | Date | string
+    generationNumber?: IntWithAggregatesFilter<"Design"> | number
+    parentId?: UuidNullableWithAggregatesFilter<"Design"> | string | null
+    budget?: DecimalNullableWithAggregatesFilter<"Design"> | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: JsonNullableWithAggregatesFilter<"Design">
+    colorScheme?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    isPublic?: BoolWithAggregatesFilter<"Design"> | boolean
+    materialPreferences?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    mood?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    otherRequirements?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    priority?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    roomType?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    size?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    style?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    stylePreference?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    title?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    costBreakdown?: JsonNullableWithAggregatesFilter<"Design">
+    estimatedCost?: FloatNullableWithAggregatesFilter<"Design"> | number | null
+    paybackTimeline?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    roiNotes?: StringNullableWithAggregatesFilter<"Design"> | string | null
+    roiPercentage?: FloatNullableWithAggregatesFilter<"Design"> | number | null
   }
 
   export type DesignOutputWhereInput = {
@@ -8895,168 +5354,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"DesignOutput"> | Date | string
   }
 
-  export type RoiCalculationWhereInput = {
-    AND?: RoiCalculationWhereInput | RoiCalculationWhereInput[]
-    OR?: RoiCalculationWhereInput[]
-    NOT?: RoiCalculationWhereInput | RoiCalculationWhereInput[]
-    id?: UuidFilter<"RoiCalculation"> | string
-    designId?: UuidFilter<"RoiCalculation"> | string
-    estimatedCost?: FloatFilter<"RoiCalculation"> | number
-    roiPercentage?: FloatFilter<"RoiCalculation"> | number
-    paybackTimeline?: StringNullableFilter<"RoiCalculation"> | string | null
-    costBreakdown?: JsonNullableFilter<"RoiCalculation">
-    notes?: StringNullableFilter<"RoiCalculation"> | string | null
-    createdAt?: DateTimeFilter<"RoiCalculation"> | Date | string
-    updatedAt?: DateTimeFilter<"RoiCalculation"> | Date | string
-    design?: XOR<DesignScalarRelationFilter, DesignWhereInput>
-  }
-
-  export type RoiCalculationOrderByWithRelationInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    estimatedCost?: SortOrder
-    roiPercentage?: SortOrder
-    paybackTimeline?: SortOrderInput | SortOrder
-    costBreakdown?: SortOrderInput | SortOrder
-    notes?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    design?: DesignOrderByWithRelationInput
-  }
-
-  export type RoiCalculationWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    designId?: string
-    AND?: RoiCalculationWhereInput | RoiCalculationWhereInput[]
-    OR?: RoiCalculationWhereInput[]
-    NOT?: RoiCalculationWhereInput | RoiCalculationWhereInput[]
-    estimatedCost?: FloatFilter<"RoiCalculation"> | number
-    roiPercentage?: FloatFilter<"RoiCalculation"> | number
-    paybackTimeline?: StringNullableFilter<"RoiCalculation"> | string | null
-    costBreakdown?: JsonNullableFilter<"RoiCalculation">
-    notes?: StringNullableFilter<"RoiCalculation"> | string | null
-    createdAt?: DateTimeFilter<"RoiCalculation"> | Date | string
-    updatedAt?: DateTimeFilter<"RoiCalculation"> | Date | string
-    design?: XOR<DesignScalarRelationFilter, DesignWhereInput>
-  }, "id" | "designId">
-
-  export type RoiCalculationOrderByWithAggregationInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    estimatedCost?: SortOrder
-    roiPercentage?: SortOrder
-    paybackTimeline?: SortOrderInput | SortOrder
-    costBreakdown?: SortOrderInput | SortOrder
-    notes?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: RoiCalculationCountOrderByAggregateInput
-    _avg?: RoiCalculationAvgOrderByAggregateInput
-    _max?: RoiCalculationMaxOrderByAggregateInput
-    _min?: RoiCalculationMinOrderByAggregateInput
-    _sum?: RoiCalculationSumOrderByAggregateInput
-  }
-
-  export type RoiCalculationScalarWhereWithAggregatesInput = {
-    AND?: RoiCalculationScalarWhereWithAggregatesInput | RoiCalculationScalarWhereWithAggregatesInput[]
-    OR?: RoiCalculationScalarWhereWithAggregatesInput[]
-    NOT?: RoiCalculationScalarWhereWithAggregatesInput | RoiCalculationScalarWhereWithAggregatesInput[]
-    id?: UuidWithAggregatesFilter<"RoiCalculation"> | string
-    designId?: UuidWithAggregatesFilter<"RoiCalculation"> | string
-    estimatedCost?: FloatWithAggregatesFilter<"RoiCalculation"> | number
-    roiPercentage?: FloatWithAggregatesFilter<"RoiCalculation"> | number
-    paybackTimeline?: StringNullableWithAggregatesFilter<"RoiCalculation"> | string | null
-    costBreakdown?: JsonNullableWithAggregatesFilter<"RoiCalculation">
-    notes?: StringNullableWithAggregatesFilter<"RoiCalculation"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"RoiCalculation"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"RoiCalculation"> | Date | string
-  }
-
-  export type FeedbackWhereInput = {
-    AND?: FeedbackWhereInput | FeedbackWhereInput[]
-    OR?: FeedbackWhereInput[]
-    NOT?: FeedbackWhereInput | FeedbackWhereInput[]
-    id?: UuidFilter<"Feedback"> | string
-    designId?: UuidFilter<"Feedback"> | string
-    userId?: UuidFilter<"Feedback"> | string
-    rating?: IntFilter<"Feedback"> | number
-    comments?: StringNullableFilter<"Feedback"> | string | null
-    type?: EnumFeedbackTypeFilter<"Feedback"> | $Enums.FeedbackType
-    helpful?: BoolNullableFilter<"Feedback"> | boolean | null
-    metadata?: JsonNullableFilter<"Feedback">
-    createdAt?: DateTimeFilter<"Feedback"> | Date | string
-    updatedAt?: DateTimeFilter<"Feedback"> | Date | string
-    design?: XOR<DesignScalarRelationFilter, DesignWhereInput>
-    profile?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
-  }
-
-  export type FeedbackOrderByWithRelationInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    userId?: SortOrder
-    rating?: SortOrder
-    comments?: SortOrderInput | SortOrder
-    type?: SortOrder
-    helpful?: SortOrderInput | SortOrder
-    metadata?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    design?: DesignOrderByWithRelationInput
-    profile?: ProfileOrderByWithRelationInput
-  }
-
-  export type FeedbackWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: FeedbackWhereInput | FeedbackWhereInput[]
-    OR?: FeedbackWhereInput[]
-    NOT?: FeedbackWhereInput | FeedbackWhereInput[]
-    designId?: UuidFilter<"Feedback"> | string
-    userId?: UuidFilter<"Feedback"> | string
-    rating?: IntFilter<"Feedback"> | number
-    comments?: StringNullableFilter<"Feedback"> | string | null
-    type?: EnumFeedbackTypeFilter<"Feedback"> | $Enums.FeedbackType
-    helpful?: BoolNullableFilter<"Feedback"> | boolean | null
-    metadata?: JsonNullableFilter<"Feedback">
-    createdAt?: DateTimeFilter<"Feedback"> | Date | string
-    updatedAt?: DateTimeFilter<"Feedback"> | Date | string
-    design?: XOR<DesignScalarRelationFilter, DesignWhereInput>
-    profile?: XOR<ProfileScalarRelationFilter, ProfileWhereInput>
-  }, "id">
-
-  export type FeedbackOrderByWithAggregationInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    userId?: SortOrder
-    rating?: SortOrder
-    comments?: SortOrderInput | SortOrder
-    type?: SortOrder
-    helpful?: SortOrderInput | SortOrder
-    metadata?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: FeedbackCountOrderByAggregateInput
-    _avg?: FeedbackAvgOrderByAggregateInput
-    _max?: FeedbackMaxOrderByAggregateInput
-    _min?: FeedbackMinOrderByAggregateInput
-    _sum?: FeedbackSumOrderByAggregateInput
-  }
-
-  export type FeedbackScalarWhereWithAggregatesInput = {
-    AND?: FeedbackScalarWhereWithAggregatesInput | FeedbackScalarWhereWithAggregatesInput[]
-    OR?: FeedbackScalarWhereWithAggregatesInput[]
-    NOT?: FeedbackScalarWhereWithAggregatesInput | FeedbackScalarWhereWithAggregatesInput[]
-    id?: UuidWithAggregatesFilter<"Feedback"> | string
-    designId?: UuidWithAggregatesFilter<"Feedback"> | string
-    userId?: UuidWithAggregatesFilter<"Feedback"> | string
-    rating?: IntWithAggregatesFilter<"Feedback"> | number
-    comments?: StringNullableWithAggregatesFilter<"Feedback"> | string | null
-    type?: EnumFeedbackTypeWithAggregatesFilter<"Feedback"> | $Enums.FeedbackType
-    helpful?: BoolNullableWithAggregatesFilter<"Feedback"> | boolean | null
-    metadata?: JsonNullableWithAggregatesFilter<"Feedback">
-    createdAt?: DateTimeWithAggregatesFilter<"Feedback"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Feedback"> | Date | string
-  }
-
   export type ProfileCreateInput = {
     id?: string
     userId: string
@@ -9067,7 +5364,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     designs?: DesignCreateNestedManyWithoutProfileInput
-    feedback?: FeedbackCreateNestedManyWithoutProfileInput
   }
 
   export type ProfileUncheckedCreateInput = {
@@ -9080,7 +5376,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     designs?: DesignUncheckedCreateNestedManyWithoutProfileInput
-    feedback?: FeedbackUncheckedCreateNestedManyWithoutProfileInput
   }
 
   export type ProfileUpdateInput = {
@@ -9093,7 +5388,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     designs?: DesignUpdateManyWithoutProfileNestedInput
-    feedback?: FeedbackUpdateManyWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateInput = {
@@ -9106,7 +5400,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     designs?: DesignUncheckedUpdateManyWithoutProfileNestedInput
-    feedback?: FeedbackUncheckedUpdateManyWithoutProfileNestedInput
   }
 
   export type ProfileCreateManyInput = {
@@ -9144,191 +5437,225 @@ export namespace Prisma {
 
   export type DesignCreateInput = {
     id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
     status?: $Enums.DesignStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-    designOutputs?: DesignOutputCreateNestedManyWithoutDesignInput
+    generationNumber?: number
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputCreateNestedManyWithoutDesignInput
+    parentDesign?: DesignCreateNestedOneWithoutChildDesignsInput
+    childDesigns?: DesignCreateNestedManyWithoutParentDesignInput
     profile: ProfileCreateNestedOneWithoutDesignsInput
-    feedback?: FeedbackCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationCreateNestedOneWithoutDesignInput
   }
 
   export type DesignUncheckedCreateInput = {
     id?: string
     userId: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
     status?: $Enums.DesignStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-    designOutputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
-    feedback?: FeedbackUncheckedCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesUncheckedCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationUncheckedCreateNestedOneWithoutDesignInput
+    generationNumber?: number
+    parentId?: string | null
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
+    childDesigns?: DesignUncheckedCreateNestedManyWithoutParentDesignInput
   }
 
   export type DesignUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUpdateManyWithoutDesignNestedInput
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUpdateManyWithoutDesignNestedInput
+    parentDesign?: DesignUpdateOneWithoutChildDesignsNestedInput
+    childDesigns?: DesignUpdateManyWithoutParentDesignNestedInput
     profile?: ProfileUpdateOneRequiredWithoutDesignsNestedInput
-    feedback?: FeedbackUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUpdateOneWithoutDesignNestedInput
   }
 
   export type DesignUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
-    feedback?: FeedbackUncheckedUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUncheckedUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUncheckedUpdateOneWithoutDesignNestedInput
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
+    childDesigns?: DesignUncheckedUpdateManyWithoutParentDesignNestedInput
   }
 
   export type DesignCreateManyInput = {
     id?: string
     userId: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
     status?: $Enums.DesignStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    generationNumber?: number
+    parentId?: string | null
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
   }
 
   export type DesignUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type DesignUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PreferencesCreateInput = {
-    id?: string
-    roomType: string
-    size: string
-    stylePreference: string
-    budget?: number | null
-    colorScheme?: string | null
-    materialPreferences?: string | null
-    otherRequirements?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    design: DesignCreateNestedOneWithoutPreferencesInput
-  }
-
-  export type PreferencesUncheckedCreateInput = {
-    id?: string
-    designId: string
-    roomType: string
-    size: string
-    stylePreference: string
-    budget?: number | null
-    colorScheme?: string | null
-    materialPreferences?: string | null
-    otherRequirements?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type PreferencesUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    roomType?: StringFieldUpdateOperationsInput | string
-    size?: StringFieldUpdateOperationsInput | string
-    stylePreference?: StringFieldUpdateOperationsInput | string
-    budget?: NullableFloatFieldUpdateOperationsInput | number | null
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
     colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
     otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    design?: DesignUpdateOneRequiredWithoutPreferencesNestedInput
-  }
-
-  export type PreferencesUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    roomType?: StringFieldUpdateOperationsInput | string
-    size?: StringFieldUpdateOperationsInput | string
-    stylePreference?: StringFieldUpdateOperationsInput | string
-    budget?: NullableFloatFieldUpdateOperationsInput | number | null
-    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
-    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
-    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PreferencesCreateManyInput = {
-    id?: string
-    designId: string
-    roomType: string
-    size: string
-    stylePreference: string
-    budget?: number | null
-    colorScheme?: string | null
-    materialPreferences?: string | null
-    otherRequirements?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type PreferencesUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    roomType?: StringFieldUpdateOperationsInput | string
-    size?: StringFieldUpdateOperationsInput | string
-    stylePreference?: StringFieldUpdateOperationsInput | string
-    budget?: NullableFloatFieldUpdateOperationsInput | number | null
-    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
-    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
-    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PreferencesUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    roomType?: StringFieldUpdateOperationsInput | string
-    size?: StringFieldUpdateOperationsInput | string
-    stylePreference?: StringFieldUpdateOperationsInput | string
-    budget?: NullableFloatFieldUpdateOperationsInput | number | null
-    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
-    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
-    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type DesignOutputCreateInput = {
@@ -9337,7 +5664,7 @@ export namespace Prisma {
     variationName?: string | null
     generationParameters?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-    design: DesignCreateNestedOneWithoutDesignOutputsInput
+    design: DesignCreateNestedOneWithoutOutputsInput
   }
 
   export type DesignOutputUncheckedCreateInput = {
@@ -9355,7 +5682,7 @@ export namespace Prisma {
     variationName?: NullableStringFieldUpdateOperationsInput | string | null
     generationParameters?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    design?: DesignUpdateOneRequiredWithoutDesignOutputsNestedInput
+    design?: DesignUpdateOneRequiredWithoutOutputsNestedInput
   }
 
   export type DesignOutputUncheckedUpdateInput = {
@@ -9391,178 +5718,6 @@ export namespace Prisma {
     variationName?: NullableStringFieldUpdateOperationsInput | string | null
     generationParameters?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type RoiCalculationCreateInput = {
-    id?: string
-    estimatedCost: number
-    roiPercentage: number
-    paybackTimeline?: string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    design: DesignCreateNestedOneWithoutRoiCalculationInput
-  }
-
-  export type RoiCalculationUncheckedCreateInput = {
-    id?: string
-    designId: string
-    estimatedCost: number
-    roiPercentage: number
-    paybackTimeline?: string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type RoiCalculationUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    estimatedCost?: FloatFieldUpdateOperationsInput | number
-    roiPercentage?: FloatFieldUpdateOperationsInput | number
-    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    design?: DesignUpdateOneRequiredWithoutRoiCalculationNestedInput
-  }
-
-  export type RoiCalculationUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    estimatedCost?: FloatFieldUpdateOperationsInput | number
-    roiPercentage?: FloatFieldUpdateOperationsInput | number
-    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type RoiCalculationCreateManyInput = {
-    id?: string
-    designId: string
-    estimatedCost: number
-    roiPercentage: number
-    paybackTimeline?: string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type RoiCalculationUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    estimatedCost?: FloatFieldUpdateOperationsInput | number
-    roiPercentage?: FloatFieldUpdateOperationsInput | number
-    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type RoiCalculationUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    estimatedCost?: FloatFieldUpdateOperationsInput | number
-    roiPercentage?: FloatFieldUpdateOperationsInput | number
-    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FeedbackCreateInput = {
-    id?: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    design: DesignCreateNestedOneWithoutFeedbackInput
-    profile: ProfileCreateNestedOneWithoutFeedbackInput
-  }
-
-  export type FeedbackUncheckedCreateInput = {
-    id?: string
-    designId: string
-    userId: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type FeedbackUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    design?: DesignUpdateOneRequiredWithoutFeedbackNestedInput
-    profile?: ProfileUpdateOneRequiredWithoutFeedbackNestedInput
-  }
-
-  export type FeedbackUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FeedbackCreateManyInput = {
-    id?: string
-    designId: string
-    userId: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type FeedbackUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FeedbackUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -9616,22 +5771,12 @@ export namespace Prisma {
     none?: DesignWhereInput
   }
 
-  export type FeedbackListRelationFilter = {
-    every?: FeedbackWhereInput
-    some?: FeedbackWhereInput
-    none?: FeedbackWhereInput
-  }
-
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
   }
 
   export type DesignOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type FeedbackOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9725,21 +5870,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type StringFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringFilter<$PrismaModel> | string
-  }
-
   export type EnumDesignStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.DesignStatus | EnumDesignStatusFieldRefInput<$PrismaModel>
     in?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
@@ -9747,172 +5877,38 @@ export namespace Prisma {
     not?: NestedEnumDesignStatusFilter<$PrismaModel> | $Enums.DesignStatus
   }
 
-  export type DesignOutputListRelationFilter = {
-    every?: DesignOutputWhereInput
-    some?: DesignOutputWhereInput
-    none?: DesignOutputWhereInput
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type ProfileScalarRelationFilter = {
-    is?: ProfileWhereInput
-    isNot?: ProfileWhereInput
-  }
-
-  export type PreferencesNullableScalarRelationFilter = {
-    is?: PreferencesWhereInput | null
-    isNot?: PreferencesWhereInput | null
-  }
-
-  export type RoiCalculationNullableScalarRelationFilter = {
-    is?: RoiCalculationWhereInput | null
-    isNot?: RoiCalculationWhereInput | null
-  }
-
-  export type DesignOutputOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type DesignCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    inputPrompt?: SortOrder
-    uploadedImageUrl?: SortOrder
-    aiModelUsed?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type DesignMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    inputPrompt?: SortOrder
-    uploadedImageUrl?: SortOrder
-    aiModelUsed?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type DesignMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    inputPrompt?: SortOrder
-    uploadedImageUrl?: SortOrder
-    aiModelUsed?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type StringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+  export type UuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
     gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
   }
 
-  export type EnumDesignStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.DesignStatus | EnumDesignStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDesignStatusWithAggregatesFilter<$PrismaModel> | $Enums.DesignStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumDesignStatusFilter<$PrismaModel>
-    _max?: NestedEnumDesignStatusFilter<$PrismaModel>
-  }
-
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type DesignScalarRelationFilter = {
-    is?: DesignWhereInput
-    isNot?: DesignWhereInput
-  }
-
-  export type PreferencesCountOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    roomType?: SortOrder
-    size?: SortOrder
-    stylePreference?: SortOrder
-    budget?: SortOrder
-    colorScheme?: SortOrder
-    materialPreferences?: SortOrder
-    otherRequirements?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PreferencesAvgOrderByAggregateInput = {
-    budget?: SortOrder
-  }
-
-  export type PreferencesMaxOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    roomType?: SortOrder
-    size?: SortOrder
-    stylePreference?: SortOrder
-    budget?: SortOrder
-    colorScheme?: SortOrder
-    materialPreferences?: SortOrder
-    otherRequirements?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PreferencesMinOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    roomType?: SortOrder
-    size?: SortOrder
-    stylePreference?: SortOrder
-    budget?: SortOrder
-    colorScheme?: SortOrder
-    materialPreferences?: SortOrder
-    otherRequirements?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PreferencesSumOrderByAggregateInput = {
-    budget?: SortOrder
-  }
-
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -9938,29 +5934,200 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type DesignOutputCountOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    outputImageUrl?: SortOrder
-    variationName?: SortOrder
-    generationParameters?: SortOrder
-    createdAt?: SortOrder
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type DesignOutputMaxOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    outputImageUrl?: SortOrder
-    variationName?: SortOrder
-    createdAt?: SortOrder
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type DesignOutputMinOrderByAggregateInput = {
+  export type DesignOutputListRelationFilter = {
+    every?: DesignOutputWhereInput
+    some?: DesignOutputWhereInput
+    none?: DesignOutputWhereInput
+  }
+
+  export type DesignNullableScalarRelationFilter = {
+    is?: DesignWhereInput | null
+    isNot?: DesignWhereInput | null
+  }
+
+  export type ProfileScalarRelationFilter = {
+    is?: ProfileWhereInput
+    isNot?: ProfileWhereInput
+  }
+
+  export type DesignOutputOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DesignCountOrderByAggregateInput = {
     id?: SortOrder
-    designId?: SortOrder
-    outputImageUrl?: SortOrder
-    variationName?: SortOrder
+    userId?: SortOrder
+    description?: SortOrder
+    imageUrl?: SortOrder
+    customRequirements?: SortOrder
+    status?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+    generationNumber?: SortOrder
+    parentId?: SortOrder
+    budget?: SortOrder
+    colorPalette?: SortOrder
+    colorScheme?: SortOrder
+    isPublic?: SortOrder
+    materialPreferences?: SortOrder
+    mood?: SortOrder
+    otherRequirements?: SortOrder
+    priority?: SortOrder
+    roomType?: SortOrder
+    size?: SortOrder
+    style?: SortOrder
+    stylePreference?: SortOrder
+    title?: SortOrder
+    costBreakdown?: SortOrder
+    estimatedCost?: SortOrder
+    paybackTimeline?: SortOrder
+    roiNotes?: SortOrder
+    roiPercentage?: SortOrder
+  }
+
+  export type DesignAvgOrderByAggregateInput = {
+    generationNumber?: SortOrder
+    budget?: SortOrder
+    estimatedCost?: SortOrder
+    roiPercentage?: SortOrder
+  }
+
+  export type DesignMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    description?: SortOrder
+    imageUrl?: SortOrder
+    customRequirements?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    generationNumber?: SortOrder
+    parentId?: SortOrder
+    budget?: SortOrder
+    colorScheme?: SortOrder
+    isPublic?: SortOrder
+    materialPreferences?: SortOrder
+    mood?: SortOrder
+    otherRequirements?: SortOrder
+    priority?: SortOrder
+    roomType?: SortOrder
+    size?: SortOrder
+    style?: SortOrder
+    stylePreference?: SortOrder
+    title?: SortOrder
+    estimatedCost?: SortOrder
+    paybackTimeline?: SortOrder
+    roiNotes?: SortOrder
+    roiPercentage?: SortOrder
+  }
+
+  export type DesignMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    description?: SortOrder
+    imageUrl?: SortOrder
+    customRequirements?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    generationNumber?: SortOrder
+    parentId?: SortOrder
+    budget?: SortOrder
+    colorScheme?: SortOrder
+    isPublic?: SortOrder
+    materialPreferences?: SortOrder
+    mood?: SortOrder
+    otherRequirements?: SortOrder
+    priority?: SortOrder
+    roomType?: SortOrder
+    size?: SortOrder
+    style?: SortOrder
+    stylePreference?: SortOrder
+    title?: SortOrder
+    estimatedCost?: SortOrder
+    paybackTimeline?: SortOrder
+    roiNotes?: SortOrder
+    roiPercentage?: SortOrder
+  }
+
+  export type DesignSumOrderByAggregateInput = {
+    generationNumber?: SortOrder
+    budget?: SortOrder
+    estimatedCost?: SortOrder
+    roiPercentage?: SortOrder
+  }
+
+  export type EnumDesignStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DesignStatus | EnumDesignStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDesignStatusWithAggregatesFilter<$PrismaModel> | $Enums.DesignStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDesignStatusFilter<$PrismaModel>
+    _max?: NestedEnumDesignStatusFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -9989,177 +6156,91 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type RoiCalculationCountOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    estimatedCost?: SortOrder
-    roiPercentage?: SortOrder
-    paybackTimeline?: SortOrder
-    costBreakdown?: SortOrder
-    notes?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type RoiCalculationAvgOrderByAggregateInput = {
-    estimatedCost?: SortOrder
-    roiPercentage?: SortOrder
-  }
-
-  export type RoiCalculationMaxOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    estimatedCost?: SortOrder
-    roiPercentage?: SortOrder
-    paybackTimeline?: SortOrder
-    notes?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type RoiCalculationMinOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    estimatedCost?: SortOrder
-    roiPercentage?: SortOrder
-    paybackTimeline?: SortOrder
-    notes?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type RoiCalculationSumOrderByAggregateInput = {
-    estimatedCost?: SortOrder
-    roiPercentage?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type EnumFeedbackTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.FeedbackType | EnumFeedbackTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFeedbackTypeFilter<$PrismaModel> | $Enums.FeedbackType
-  }
-
-  export type BoolNullableFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
-  export type FeedbackCountOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    userId?: SortOrder
-    rating?: SortOrder
-    comments?: SortOrder
-    type?: SortOrder
-    helpful?: SortOrder
-    metadata?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type FeedbackAvgOrderByAggregateInput = {
-    rating?: SortOrder
-  }
-
-  export type FeedbackMaxOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    userId?: SortOrder
-    rating?: SortOrder
-    comments?: SortOrder
-    type?: SortOrder
-    helpful?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type FeedbackMinOrderByAggregateInput = {
-    id?: SortOrder
-    designId?: SortOrder
-    userId?: SortOrder
-    rating?: SortOrder
-    comments?: SortOrder
-    type?: SortOrder
-    helpful?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type FeedbackSumOrderByAggregateInput = {
-    rating?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type EnumFeedbackTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FeedbackType | EnumFeedbackTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFeedbackTypeWithAggregatesFilter<$PrismaModel> | $Enums.FeedbackType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumFeedbackTypeFilter<$PrismaModel>
-    _max?: NestedEnumFeedbackTypeFilter<$PrismaModel>
-  }
-
-  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedBoolNullableFilter<$PrismaModel>
-    _max?: NestedBoolNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type StringFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type DesignScalarRelationFilter = {
+    is?: DesignWhereInput
+    isNot?: DesignWhereInput
+  }
+
+  export type DesignOutputCountOrderByAggregateInput = {
+    id?: SortOrder
+    designId?: SortOrder
+    outputImageUrl?: SortOrder
+    variationName?: SortOrder
+    generationParameters?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type DesignOutputMaxOrderByAggregateInput = {
+    id?: SortOrder
+    designId?: SortOrder
+    outputImageUrl?: SortOrder
+    variationName?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type DesignOutputMinOrderByAggregateInput = {
+    id?: SortOrder
+    designId?: SortOrder
+    outputImageUrl?: SortOrder
+    variationName?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type DesignCreateNestedManyWithoutProfileInput = {
@@ -10169,25 +6250,11 @@ export namespace Prisma {
     connect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
   }
 
-  export type FeedbackCreateNestedManyWithoutProfileInput = {
-    create?: XOR<FeedbackCreateWithoutProfileInput, FeedbackUncheckedCreateWithoutProfileInput> | FeedbackCreateWithoutProfileInput[] | FeedbackUncheckedCreateWithoutProfileInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutProfileInput | FeedbackCreateOrConnectWithoutProfileInput[]
-    createMany?: FeedbackCreateManyProfileInputEnvelope
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-  }
-
   export type DesignUncheckedCreateNestedManyWithoutProfileInput = {
     create?: XOR<DesignCreateWithoutProfileInput, DesignUncheckedCreateWithoutProfileInput> | DesignCreateWithoutProfileInput[] | DesignUncheckedCreateWithoutProfileInput[]
     connectOrCreate?: DesignCreateOrConnectWithoutProfileInput | DesignCreateOrConnectWithoutProfileInput[]
     createMany?: DesignCreateManyProfileInputEnvelope
     connect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
-  }
-
-  export type FeedbackUncheckedCreateNestedManyWithoutProfileInput = {
-    create?: XOR<FeedbackCreateWithoutProfileInput, FeedbackUncheckedCreateWithoutProfileInput> | FeedbackCreateWithoutProfileInput[] | FeedbackUncheckedCreateWithoutProfileInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutProfileInput | FeedbackCreateOrConnectWithoutProfileInput[]
-    createMany?: FeedbackCreateManyProfileInputEnvelope
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10220,20 +6287,6 @@ export namespace Prisma {
     deleteMany?: DesignScalarWhereInput | DesignScalarWhereInput[]
   }
 
-  export type FeedbackUpdateManyWithoutProfileNestedInput = {
-    create?: XOR<FeedbackCreateWithoutProfileInput, FeedbackUncheckedCreateWithoutProfileInput> | FeedbackCreateWithoutProfileInput[] | FeedbackUncheckedCreateWithoutProfileInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutProfileInput | FeedbackCreateOrConnectWithoutProfileInput[]
-    upsert?: FeedbackUpsertWithWhereUniqueWithoutProfileInput | FeedbackUpsertWithWhereUniqueWithoutProfileInput[]
-    createMany?: FeedbackCreateManyProfileInputEnvelope
-    set?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    disconnect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    delete?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    update?: FeedbackUpdateWithWhereUniqueWithoutProfileInput | FeedbackUpdateWithWhereUniqueWithoutProfileInput[]
-    updateMany?: FeedbackUpdateManyWithWhereWithoutProfileInput | FeedbackUpdateManyWithWhereWithoutProfileInput[]
-    deleteMany?: FeedbackScalarWhereInput | FeedbackScalarWhereInput[]
-  }
-
   export type DesignUncheckedUpdateManyWithoutProfileNestedInput = {
     create?: XOR<DesignCreateWithoutProfileInput, DesignUncheckedCreateWithoutProfileInput> | DesignCreateWithoutProfileInput[] | DesignUncheckedCreateWithoutProfileInput[]
     connectOrCreate?: DesignCreateOrConnectWithoutProfileInput | DesignCreateOrConnectWithoutProfileInput[]
@@ -10248,20 +6301,6 @@ export namespace Prisma {
     deleteMany?: DesignScalarWhereInput | DesignScalarWhereInput[]
   }
 
-  export type FeedbackUncheckedUpdateManyWithoutProfileNestedInput = {
-    create?: XOR<FeedbackCreateWithoutProfileInput, FeedbackUncheckedCreateWithoutProfileInput> | FeedbackCreateWithoutProfileInput[] | FeedbackUncheckedCreateWithoutProfileInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutProfileInput | FeedbackCreateOrConnectWithoutProfileInput[]
-    upsert?: FeedbackUpsertWithWhereUniqueWithoutProfileInput | FeedbackUpsertWithWhereUniqueWithoutProfileInput[]
-    createMany?: FeedbackCreateManyProfileInputEnvelope
-    set?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    disconnect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    delete?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    update?: FeedbackUpdateWithWhereUniqueWithoutProfileInput | FeedbackUpdateWithWhereUniqueWithoutProfileInput[]
-    updateMany?: FeedbackUpdateManyWithWhereWithoutProfileInput | FeedbackUpdateManyWithWhereWithoutProfileInput[]
-    deleteMany?: FeedbackScalarWhereInput | FeedbackScalarWhereInput[]
-  }
-
   export type DesignOutputCreateNestedManyWithoutDesignInput = {
     create?: XOR<DesignOutputCreateWithoutDesignInput, DesignOutputUncheckedCreateWithoutDesignInput> | DesignOutputCreateWithoutDesignInput[] | DesignOutputUncheckedCreateWithoutDesignInput[]
     connectOrCreate?: DesignOutputCreateOrConnectWithoutDesignInput | DesignOutputCreateOrConnectWithoutDesignInput[]
@@ -10269,29 +6308,23 @@ export namespace Prisma {
     connect?: DesignOutputWhereUniqueInput | DesignOutputWhereUniqueInput[]
   }
 
+  export type DesignCreateNestedOneWithoutChildDesignsInput = {
+    create?: XOR<DesignCreateWithoutChildDesignsInput, DesignUncheckedCreateWithoutChildDesignsInput>
+    connectOrCreate?: DesignCreateOrConnectWithoutChildDesignsInput
+    connect?: DesignWhereUniqueInput
+  }
+
+  export type DesignCreateNestedManyWithoutParentDesignInput = {
+    create?: XOR<DesignCreateWithoutParentDesignInput, DesignUncheckedCreateWithoutParentDesignInput> | DesignCreateWithoutParentDesignInput[] | DesignUncheckedCreateWithoutParentDesignInput[]
+    connectOrCreate?: DesignCreateOrConnectWithoutParentDesignInput | DesignCreateOrConnectWithoutParentDesignInput[]
+    createMany?: DesignCreateManyParentDesignInputEnvelope
+    connect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+  }
+
   export type ProfileCreateNestedOneWithoutDesignsInput = {
     create?: XOR<ProfileCreateWithoutDesignsInput, ProfileUncheckedCreateWithoutDesignsInput>
     connectOrCreate?: ProfileCreateOrConnectWithoutDesignsInput
     connect?: ProfileWhereUniqueInput
-  }
-
-  export type FeedbackCreateNestedManyWithoutDesignInput = {
-    create?: XOR<FeedbackCreateWithoutDesignInput, FeedbackUncheckedCreateWithoutDesignInput> | FeedbackCreateWithoutDesignInput[] | FeedbackUncheckedCreateWithoutDesignInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutDesignInput | FeedbackCreateOrConnectWithoutDesignInput[]
-    createMany?: FeedbackCreateManyDesignInputEnvelope
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-  }
-
-  export type PreferencesCreateNestedOneWithoutDesignInput = {
-    create?: XOR<PreferencesCreateWithoutDesignInput, PreferencesUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: PreferencesCreateOrConnectWithoutDesignInput
-    connect?: PreferencesWhereUniqueInput
-  }
-
-  export type RoiCalculationCreateNestedOneWithoutDesignInput = {
-    create?: XOR<RoiCalculationCreateWithoutDesignInput, RoiCalculationUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: RoiCalculationCreateOrConnectWithoutDesignInput
-    connect?: RoiCalculationWhereUniqueInput
   }
 
   export type DesignOutputUncheckedCreateNestedManyWithoutDesignInput = {
@@ -10301,27 +6334,43 @@ export namespace Prisma {
     connect?: DesignOutputWhereUniqueInput | DesignOutputWhereUniqueInput[]
   }
 
-  export type FeedbackUncheckedCreateNestedManyWithoutDesignInput = {
-    create?: XOR<FeedbackCreateWithoutDesignInput, FeedbackUncheckedCreateWithoutDesignInput> | FeedbackCreateWithoutDesignInput[] | FeedbackUncheckedCreateWithoutDesignInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutDesignInput | FeedbackCreateOrConnectWithoutDesignInput[]
-    createMany?: FeedbackCreateManyDesignInputEnvelope
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-  }
-
-  export type PreferencesUncheckedCreateNestedOneWithoutDesignInput = {
-    create?: XOR<PreferencesCreateWithoutDesignInput, PreferencesUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: PreferencesCreateOrConnectWithoutDesignInput
-    connect?: PreferencesWhereUniqueInput
-  }
-
-  export type RoiCalculationUncheckedCreateNestedOneWithoutDesignInput = {
-    create?: XOR<RoiCalculationCreateWithoutDesignInput, RoiCalculationUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: RoiCalculationCreateOrConnectWithoutDesignInput
-    connect?: RoiCalculationWhereUniqueInput
+  export type DesignUncheckedCreateNestedManyWithoutParentDesignInput = {
+    create?: XOR<DesignCreateWithoutParentDesignInput, DesignUncheckedCreateWithoutParentDesignInput> | DesignCreateWithoutParentDesignInput[] | DesignUncheckedCreateWithoutParentDesignInput[]
+    connectOrCreate?: DesignCreateOrConnectWithoutParentDesignInput | DesignCreateOrConnectWithoutParentDesignInput[]
+    createMany?: DesignCreateManyParentDesignInputEnvelope
+    connect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
   }
 
   export type EnumDesignStatusFieldUpdateOperationsInput = {
     set?: $Enums.DesignStatus
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type DesignOutputUpdateManyWithoutDesignNestedInput = {
@@ -10338,46 +6387,36 @@ export namespace Prisma {
     deleteMany?: DesignOutputScalarWhereInput | DesignOutputScalarWhereInput[]
   }
 
+  export type DesignUpdateOneWithoutChildDesignsNestedInput = {
+    create?: XOR<DesignCreateWithoutChildDesignsInput, DesignUncheckedCreateWithoutChildDesignsInput>
+    connectOrCreate?: DesignCreateOrConnectWithoutChildDesignsInput
+    upsert?: DesignUpsertWithoutChildDesignsInput
+    disconnect?: DesignWhereInput | boolean
+    delete?: DesignWhereInput | boolean
+    connect?: DesignWhereUniqueInput
+    update?: XOR<XOR<DesignUpdateToOneWithWhereWithoutChildDesignsInput, DesignUpdateWithoutChildDesignsInput>, DesignUncheckedUpdateWithoutChildDesignsInput>
+  }
+
+  export type DesignUpdateManyWithoutParentDesignNestedInput = {
+    create?: XOR<DesignCreateWithoutParentDesignInput, DesignUncheckedCreateWithoutParentDesignInput> | DesignCreateWithoutParentDesignInput[] | DesignUncheckedCreateWithoutParentDesignInput[]
+    connectOrCreate?: DesignCreateOrConnectWithoutParentDesignInput | DesignCreateOrConnectWithoutParentDesignInput[]
+    upsert?: DesignUpsertWithWhereUniqueWithoutParentDesignInput | DesignUpsertWithWhereUniqueWithoutParentDesignInput[]
+    createMany?: DesignCreateManyParentDesignInputEnvelope
+    set?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    disconnect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    delete?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    connect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    update?: DesignUpdateWithWhereUniqueWithoutParentDesignInput | DesignUpdateWithWhereUniqueWithoutParentDesignInput[]
+    updateMany?: DesignUpdateManyWithWhereWithoutParentDesignInput | DesignUpdateManyWithWhereWithoutParentDesignInput[]
+    deleteMany?: DesignScalarWhereInput | DesignScalarWhereInput[]
+  }
+
   export type ProfileUpdateOneRequiredWithoutDesignsNestedInput = {
     create?: XOR<ProfileCreateWithoutDesignsInput, ProfileUncheckedCreateWithoutDesignsInput>
     connectOrCreate?: ProfileCreateOrConnectWithoutDesignsInput
     upsert?: ProfileUpsertWithoutDesignsInput
     connect?: ProfileWhereUniqueInput
     update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutDesignsInput, ProfileUpdateWithoutDesignsInput>, ProfileUncheckedUpdateWithoutDesignsInput>
-  }
-
-  export type FeedbackUpdateManyWithoutDesignNestedInput = {
-    create?: XOR<FeedbackCreateWithoutDesignInput, FeedbackUncheckedCreateWithoutDesignInput> | FeedbackCreateWithoutDesignInput[] | FeedbackUncheckedCreateWithoutDesignInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutDesignInput | FeedbackCreateOrConnectWithoutDesignInput[]
-    upsert?: FeedbackUpsertWithWhereUniqueWithoutDesignInput | FeedbackUpsertWithWhereUniqueWithoutDesignInput[]
-    createMany?: FeedbackCreateManyDesignInputEnvelope
-    set?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    disconnect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    delete?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    update?: FeedbackUpdateWithWhereUniqueWithoutDesignInput | FeedbackUpdateWithWhereUniqueWithoutDesignInput[]
-    updateMany?: FeedbackUpdateManyWithWhereWithoutDesignInput | FeedbackUpdateManyWithWhereWithoutDesignInput[]
-    deleteMany?: FeedbackScalarWhereInput | FeedbackScalarWhereInput[]
-  }
-
-  export type PreferencesUpdateOneWithoutDesignNestedInput = {
-    create?: XOR<PreferencesCreateWithoutDesignInput, PreferencesUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: PreferencesCreateOrConnectWithoutDesignInput
-    upsert?: PreferencesUpsertWithoutDesignInput
-    disconnect?: PreferencesWhereInput | boolean
-    delete?: PreferencesWhereInput | boolean
-    connect?: PreferencesWhereUniqueInput
-    update?: XOR<XOR<PreferencesUpdateToOneWithWhereWithoutDesignInput, PreferencesUpdateWithoutDesignInput>, PreferencesUncheckedUpdateWithoutDesignInput>
-  }
-
-  export type RoiCalculationUpdateOneWithoutDesignNestedInput = {
-    create?: XOR<RoiCalculationCreateWithoutDesignInput, RoiCalculationUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: RoiCalculationCreateOrConnectWithoutDesignInput
-    upsert?: RoiCalculationUpsertWithoutDesignInput
-    disconnect?: RoiCalculationWhereInput | boolean
-    delete?: RoiCalculationWhereInput | boolean
-    connect?: RoiCalculationWhereUniqueInput
-    update?: XOR<XOR<RoiCalculationUpdateToOneWithWhereWithoutDesignInput, RoiCalculationUpdateWithoutDesignInput>, RoiCalculationUncheckedUpdateWithoutDesignInput>
   }
 
   export type DesignOutputUncheckedUpdateManyWithoutDesignNestedInput = {
@@ -10394,140 +6433,32 @@ export namespace Prisma {
     deleteMany?: DesignOutputScalarWhereInput | DesignOutputScalarWhereInput[]
   }
 
-  export type FeedbackUncheckedUpdateManyWithoutDesignNestedInput = {
-    create?: XOR<FeedbackCreateWithoutDesignInput, FeedbackUncheckedCreateWithoutDesignInput> | FeedbackCreateWithoutDesignInput[] | FeedbackUncheckedCreateWithoutDesignInput[]
-    connectOrCreate?: FeedbackCreateOrConnectWithoutDesignInput | FeedbackCreateOrConnectWithoutDesignInput[]
-    upsert?: FeedbackUpsertWithWhereUniqueWithoutDesignInput | FeedbackUpsertWithWhereUniqueWithoutDesignInput[]
-    createMany?: FeedbackCreateManyDesignInputEnvelope
-    set?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    disconnect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    delete?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    connect?: FeedbackWhereUniqueInput | FeedbackWhereUniqueInput[]
-    update?: FeedbackUpdateWithWhereUniqueWithoutDesignInput | FeedbackUpdateWithWhereUniqueWithoutDesignInput[]
-    updateMany?: FeedbackUpdateManyWithWhereWithoutDesignInput | FeedbackUpdateManyWithWhereWithoutDesignInput[]
-    deleteMany?: FeedbackScalarWhereInput | FeedbackScalarWhereInput[]
+  export type DesignUncheckedUpdateManyWithoutParentDesignNestedInput = {
+    create?: XOR<DesignCreateWithoutParentDesignInput, DesignUncheckedCreateWithoutParentDesignInput> | DesignCreateWithoutParentDesignInput[] | DesignUncheckedCreateWithoutParentDesignInput[]
+    connectOrCreate?: DesignCreateOrConnectWithoutParentDesignInput | DesignCreateOrConnectWithoutParentDesignInput[]
+    upsert?: DesignUpsertWithWhereUniqueWithoutParentDesignInput | DesignUpsertWithWhereUniqueWithoutParentDesignInput[]
+    createMany?: DesignCreateManyParentDesignInputEnvelope
+    set?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    disconnect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    delete?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    connect?: DesignWhereUniqueInput | DesignWhereUniqueInput[]
+    update?: DesignUpdateWithWhereUniqueWithoutParentDesignInput | DesignUpdateWithWhereUniqueWithoutParentDesignInput[]
+    updateMany?: DesignUpdateManyWithWhereWithoutParentDesignInput | DesignUpdateManyWithWhereWithoutParentDesignInput[]
+    deleteMany?: DesignScalarWhereInput | DesignScalarWhereInput[]
   }
 
-  export type PreferencesUncheckedUpdateOneWithoutDesignNestedInput = {
-    create?: XOR<PreferencesCreateWithoutDesignInput, PreferencesUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: PreferencesCreateOrConnectWithoutDesignInput
-    upsert?: PreferencesUpsertWithoutDesignInput
-    disconnect?: PreferencesWhereInput | boolean
-    delete?: PreferencesWhereInput | boolean
-    connect?: PreferencesWhereUniqueInput
-    update?: XOR<XOR<PreferencesUpdateToOneWithWhereWithoutDesignInput, PreferencesUpdateWithoutDesignInput>, PreferencesUncheckedUpdateWithoutDesignInput>
-  }
-
-  export type RoiCalculationUncheckedUpdateOneWithoutDesignNestedInput = {
-    create?: XOR<RoiCalculationCreateWithoutDesignInput, RoiCalculationUncheckedCreateWithoutDesignInput>
-    connectOrCreate?: RoiCalculationCreateOrConnectWithoutDesignInput
-    upsert?: RoiCalculationUpsertWithoutDesignInput
-    disconnect?: RoiCalculationWhereInput | boolean
-    delete?: RoiCalculationWhereInput | boolean
-    connect?: RoiCalculationWhereUniqueInput
-    update?: XOR<XOR<RoiCalculationUpdateToOneWithWhereWithoutDesignInput, RoiCalculationUpdateWithoutDesignInput>, RoiCalculationUncheckedUpdateWithoutDesignInput>
-  }
-
-  export type DesignCreateNestedOneWithoutPreferencesInput = {
-    create?: XOR<DesignCreateWithoutPreferencesInput, DesignUncheckedCreateWithoutPreferencesInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutPreferencesInput
+  export type DesignCreateNestedOneWithoutOutputsInput = {
+    create?: XOR<DesignCreateWithoutOutputsInput, DesignUncheckedCreateWithoutOutputsInput>
+    connectOrCreate?: DesignCreateOrConnectWithoutOutputsInput
     connect?: DesignWhereUniqueInput
   }
 
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type DesignUpdateOneRequiredWithoutPreferencesNestedInput = {
-    create?: XOR<DesignCreateWithoutPreferencesInput, DesignUncheckedCreateWithoutPreferencesInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutPreferencesInput
-    upsert?: DesignUpsertWithoutPreferencesInput
+  export type DesignUpdateOneRequiredWithoutOutputsNestedInput = {
+    create?: XOR<DesignCreateWithoutOutputsInput, DesignUncheckedCreateWithoutOutputsInput>
+    connectOrCreate?: DesignCreateOrConnectWithoutOutputsInput
+    upsert?: DesignUpsertWithoutOutputsInput
     connect?: DesignWhereUniqueInput
-    update?: XOR<XOR<DesignUpdateToOneWithWhereWithoutPreferencesInput, DesignUpdateWithoutPreferencesInput>, DesignUncheckedUpdateWithoutPreferencesInput>
-  }
-
-  export type DesignCreateNestedOneWithoutDesignOutputsInput = {
-    create?: XOR<DesignCreateWithoutDesignOutputsInput, DesignUncheckedCreateWithoutDesignOutputsInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutDesignOutputsInput
-    connect?: DesignWhereUniqueInput
-  }
-
-  export type DesignUpdateOneRequiredWithoutDesignOutputsNestedInput = {
-    create?: XOR<DesignCreateWithoutDesignOutputsInput, DesignUncheckedCreateWithoutDesignOutputsInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutDesignOutputsInput
-    upsert?: DesignUpsertWithoutDesignOutputsInput
-    connect?: DesignWhereUniqueInput
-    update?: XOR<XOR<DesignUpdateToOneWithWhereWithoutDesignOutputsInput, DesignUpdateWithoutDesignOutputsInput>, DesignUncheckedUpdateWithoutDesignOutputsInput>
-  }
-
-  export type DesignCreateNestedOneWithoutRoiCalculationInput = {
-    create?: XOR<DesignCreateWithoutRoiCalculationInput, DesignUncheckedCreateWithoutRoiCalculationInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutRoiCalculationInput
-    connect?: DesignWhereUniqueInput
-  }
-
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type DesignUpdateOneRequiredWithoutRoiCalculationNestedInput = {
-    create?: XOR<DesignCreateWithoutRoiCalculationInput, DesignUncheckedCreateWithoutRoiCalculationInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutRoiCalculationInput
-    upsert?: DesignUpsertWithoutRoiCalculationInput
-    connect?: DesignWhereUniqueInput
-    update?: XOR<XOR<DesignUpdateToOneWithWhereWithoutRoiCalculationInput, DesignUpdateWithoutRoiCalculationInput>, DesignUncheckedUpdateWithoutRoiCalculationInput>
-  }
-
-  export type DesignCreateNestedOneWithoutFeedbackInput = {
-    create?: XOR<DesignCreateWithoutFeedbackInput, DesignUncheckedCreateWithoutFeedbackInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutFeedbackInput
-    connect?: DesignWhereUniqueInput
-  }
-
-  export type ProfileCreateNestedOneWithoutFeedbackInput = {
-    create?: XOR<ProfileCreateWithoutFeedbackInput, ProfileUncheckedCreateWithoutFeedbackInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutFeedbackInput
-    connect?: ProfileWhereUniqueInput
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type EnumFeedbackTypeFieldUpdateOperationsInput = {
-    set?: $Enums.FeedbackType
-  }
-
-  export type NullableBoolFieldUpdateOperationsInput = {
-    set?: boolean | null
-  }
-
-  export type DesignUpdateOneRequiredWithoutFeedbackNestedInput = {
-    create?: XOR<DesignCreateWithoutFeedbackInput, DesignUncheckedCreateWithoutFeedbackInput>
-    connectOrCreate?: DesignCreateOrConnectWithoutFeedbackInput
-    upsert?: DesignUpsertWithoutFeedbackInput
-    connect?: DesignWhereUniqueInput
-    update?: XOR<XOR<DesignUpdateToOneWithWhereWithoutFeedbackInput, DesignUpdateWithoutFeedbackInput>, DesignUncheckedUpdateWithoutFeedbackInput>
-  }
-
-  export type ProfileUpdateOneRequiredWithoutFeedbackNestedInput = {
-    create?: XOR<ProfileCreateWithoutFeedbackInput, ProfileUncheckedCreateWithoutFeedbackInput>
-    connectOrCreate?: ProfileCreateOrConnectWithoutFeedbackInput
-    upsert?: ProfileUpsertWithoutFeedbackInput
-    connect?: ProfileWhereUniqueInput
-    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutFeedbackInput, ProfileUpdateWithoutFeedbackInput>, ProfileUncheckedUpdateWithoutFeedbackInput>
+    update?: XOR<XOR<DesignUpdateToOneWithWhereWithoutOutputsInput, DesignUpdateWithoutOutputsInput>, DesignUncheckedUpdateWithoutOutputsInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -10671,31 +6602,31 @@ export namespace Prisma {
     not?: NestedEnumDesignStatusFilter<$PrismaModel> | $Enums.DesignStatus
   }
 
-  export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+  export type NestedUuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
     gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedEnumDesignStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.DesignStatus | EnumDesignStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDesignStatusWithAggregatesFilter<$PrismaModel> | $Enums.DesignStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumDesignStatusFilter<$PrismaModel>
-    _max?: NestedEnumDesignStatusFilter<$PrismaModel>
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
@@ -10709,20 +6640,71 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+  export type NestedEnumDesignStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DesignStatus | EnumDesignStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DesignStatus[] | ListEnumDesignStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDesignStatusWithAggregatesFilter<$PrismaModel> | $Enums.DesignStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDesignStatusFilter<$PrismaModel>
+    _max?: NestedEnumDesignStatusFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -10748,105 +6730,109 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type NestedEnumFeedbackTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.FeedbackType | EnumFeedbackTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFeedbackTypeFilter<$PrismaModel> | $Enums.FeedbackType
-  }
-
-  export type NestedBoolNullableFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedEnumFeedbackTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FeedbackType | EnumFeedbackTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.FeedbackType[] | ListEnumFeedbackTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumFeedbackTypeWithAggregatesFilter<$PrismaModel> | $Enums.FeedbackType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumFeedbackTypeFilter<$PrismaModel>
-    _max?: NestedEnumFeedbackTypeFilter<$PrismaModel>
-  }
-
-  export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedBoolNullableFilter<$PrismaModel>
-    _max?: NestedBoolNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type DesignCreateWithoutProfileInput = {
     id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
     status?: $Enums.DesignStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-    designOutputs?: DesignOutputCreateNestedManyWithoutDesignInput
-    feedback?: FeedbackCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationCreateNestedOneWithoutDesignInput
+    generationNumber?: number
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputCreateNestedManyWithoutDesignInput
+    parentDesign?: DesignCreateNestedOneWithoutChildDesignsInput
+    childDesigns?: DesignCreateNestedManyWithoutParentDesignInput
   }
 
   export type DesignUncheckedCreateWithoutProfileInput = {
     id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
     status?: $Enums.DesignStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-    designOutputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
-    feedback?: FeedbackUncheckedCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesUncheckedCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationUncheckedCreateNestedOneWithoutDesignInput
+    generationNumber?: number
+    parentId?: string | null
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
+    childDesigns?: DesignUncheckedCreateNestedManyWithoutParentDesignInput
   }
 
   export type DesignCreateOrConnectWithoutProfileInput = {
@@ -10856,40 +6842,6 @@ export namespace Prisma {
 
   export type DesignCreateManyProfileInputEnvelope = {
     data: DesignCreateManyProfileInput | DesignCreateManyProfileInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type FeedbackCreateWithoutProfileInput = {
-    id?: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    design: DesignCreateNestedOneWithoutFeedbackInput
-  }
-
-  export type FeedbackUncheckedCreateWithoutProfileInput = {
-    id?: string
-    designId: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type FeedbackCreateOrConnectWithoutProfileInput = {
-    where: FeedbackWhereUniqueInput
-    create: XOR<FeedbackCreateWithoutProfileInput, FeedbackUncheckedCreateWithoutProfileInput>
-  }
-
-  export type FeedbackCreateManyProfileInputEnvelope = {
-    data: FeedbackCreateManyProfileInput | FeedbackCreateManyProfileInput[]
     skipDuplicates?: boolean
   }
 
@@ -10915,44 +6867,32 @@ export namespace Prisma {
     NOT?: DesignScalarWhereInput | DesignScalarWhereInput[]
     id?: UuidFilter<"Design"> | string
     userId?: UuidFilter<"Design"> | string
-    inputPrompt?: StringFilter<"Design"> | string
-    uploadedImageUrl?: StringNullableFilter<"Design"> | string | null
-    aiModelUsed?: StringFilter<"Design"> | string
+    description?: StringNullableFilter<"Design"> | string | null
+    imageUrl?: StringNullableFilter<"Design"> | string | null
+    customRequirements?: StringNullableFilter<"Design"> | string | null
     status?: EnumDesignStatusFilter<"Design"> | $Enums.DesignStatus
     createdAt?: DateTimeFilter<"Design"> | Date | string
     updatedAt?: DateTimeFilter<"Design"> | Date | string
-  }
-
-  export type FeedbackUpsertWithWhereUniqueWithoutProfileInput = {
-    where: FeedbackWhereUniqueInput
-    update: XOR<FeedbackUpdateWithoutProfileInput, FeedbackUncheckedUpdateWithoutProfileInput>
-    create: XOR<FeedbackCreateWithoutProfileInput, FeedbackUncheckedCreateWithoutProfileInput>
-  }
-
-  export type FeedbackUpdateWithWhereUniqueWithoutProfileInput = {
-    where: FeedbackWhereUniqueInput
-    data: XOR<FeedbackUpdateWithoutProfileInput, FeedbackUncheckedUpdateWithoutProfileInput>
-  }
-
-  export type FeedbackUpdateManyWithWhereWithoutProfileInput = {
-    where: FeedbackScalarWhereInput
-    data: XOR<FeedbackUpdateManyMutationInput, FeedbackUncheckedUpdateManyWithoutProfileInput>
-  }
-
-  export type FeedbackScalarWhereInput = {
-    AND?: FeedbackScalarWhereInput | FeedbackScalarWhereInput[]
-    OR?: FeedbackScalarWhereInput[]
-    NOT?: FeedbackScalarWhereInput | FeedbackScalarWhereInput[]
-    id?: UuidFilter<"Feedback"> | string
-    designId?: UuidFilter<"Feedback"> | string
-    userId?: UuidFilter<"Feedback"> | string
-    rating?: IntFilter<"Feedback"> | number
-    comments?: StringNullableFilter<"Feedback"> | string | null
-    type?: EnumFeedbackTypeFilter<"Feedback"> | $Enums.FeedbackType
-    helpful?: BoolNullableFilter<"Feedback"> | boolean | null
-    metadata?: JsonNullableFilter<"Feedback">
-    createdAt?: DateTimeFilter<"Feedback"> | Date | string
-    updatedAt?: DateTimeFilter<"Feedback"> | Date | string
+    generationNumber?: IntFilter<"Design"> | number
+    parentId?: UuidNullableFilter<"Design"> | string | null
+    budget?: DecimalNullableFilter<"Design"> | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: JsonNullableFilter<"Design">
+    colorScheme?: StringNullableFilter<"Design"> | string | null
+    isPublic?: BoolFilter<"Design"> | boolean
+    materialPreferences?: StringNullableFilter<"Design"> | string | null
+    mood?: StringNullableFilter<"Design"> | string | null
+    otherRequirements?: StringNullableFilter<"Design"> | string | null
+    priority?: StringNullableFilter<"Design"> | string | null
+    roomType?: StringNullableFilter<"Design"> | string | null
+    size?: StringNullableFilter<"Design"> | string | null
+    style?: StringNullableFilter<"Design"> | string | null
+    stylePreference?: StringNullableFilter<"Design"> | string | null
+    title?: StringNullableFilter<"Design"> | string | null
+    costBreakdown?: JsonNullableFilter<"Design">
+    estimatedCost?: FloatNullableFilter<"Design"> | number | null
+    paybackTimeline?: StringNullableFilter<"Design"> | string | null
+    roiNotes?: StringNullableFilter<"Design"> | string | null
+    roiPercentage?: FloatNullableFilter<"Design"> | number | null
   }
 
   export type DesignOutputCreateWithoutDesignInput = {
@@ -10981,6 +6921,149 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DesignCreateWithoutChildDesignsInput = {
+    id?: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
+    status?: $Enums.DesignStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    generationNumber?: number
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputCreateNestedManyWithoutDesignInput
+    parentDesign?: DesignCreateNestedOneWithoutChildDesignsInput
+    profile: ProfileCreateNestedOneWithoutDesignsInput
+  }
+
+  export type DesignUncheckedCreateWithoutChildDesignsInput = {
+    id?: string
+    userId: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
+    status?: $Enums.DesignStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    generationNumber?: number
+    parentId?: string | null
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
+  }
+
+  export type DesignCreateOrConnectWithoutChildDesignsInput = {
+    where: DesignWhereUniqueInput
+    create: XOR<DesignCreateWithoutChildDesignsInput, DesignUncheckedCreateWithoutChildDesignsInput>
+  }
+
+  export type DesignCreateWithoutParentDesignInput = {
+    id?: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
+    status?: $Enums.DesignStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    generationNumber?: number
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputCreateNestedManyWithoutDesignInput
+    childDesigns?: DesignCreateNestedManyWithoutParentDesignInput
+    profile: ProfileCreateNestedOneWithoutDesignsInput
+  }
+
+  export type DesignUncheckedCreateWithoutParentDesignInput = {
+    id?: string
+    userId: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
+    status?: $Enums.DesignStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    generationNumber?: number
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    outputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
+    childDesigns?: DesignUncheckedCreateNestedManyWithoutParentDesignInput
+  }
+
+  export type DesignCreateOrConnectWithoutParentDesignInput = {
+    where: DesignWhereUniqueInput
+    create: XOR<DesignCreateWithoutParentDesignInput, DesignUncheckedCreateWithoutParentDesignInput>
+  }
+
+  export type DesignCreateManyParentDesignInputEnvelope = {
+    data: DesignCreateManyParentDesignInput | DesignCreateManyParentDesignInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProfileCreateWithoutDesignsInput = {
     id?: string
     userId: string
@@ -10990,7 +7073,6 @@ export namespace Prisma {
     avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    feedback?: FeedbackCreateNestedManyWithoutProfileInput
   }
 
   export type ProfileUncheckedCreateWithoutDesignsInput = {
@@ -11002,104 +7084,11 @@ export namespace Prisma {
     avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    feedback?: FeedbackUncheckedCreateNestedManyWithoutProfileInput
   }
 
   export type ProfileCreateOrConnectWithoutDesignsInput = {
     where: ProfileWhereUniqueInput
     create: XOR<ProfileCreateWithoutDesignsInput, ProfileUncheckedCreateWithoutDesignsInput>
-  }
-
-  export type FeedbackCreateWithoutDesignInput = {
-    id?: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    profile: ProfileCreateNestedOneWithoutFeedbackInput
-  }
-
-  export type FeedbackUncheckedCreateWithoutDesignInput = {
-    id?: string
-    userId: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type FeedbackCreateOrConnectWithoutDesignInput = {
-    where: FeedbackWhereUniqueInput
-    create: XOR<FeedbackCreateWithoutDesignInput, FeedbackUncheckedCreateWithoutDesignInput>
-  }
-
-  export type FeedbackCreateManyDesignInputEnvelope = {
-    data: FeedbackCreateManyDesignInput | FeedbackCreateManyDesignInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type PreferencesCreateWithoutDesignInput = {
-    id?: string
-    roomType: string
-    size: string
-    stylePreference: string
-    budget?: number | null
-    colorScheme?: string | null
-    materialPreferences?: string | null
-    otherRequirements?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type PreferencesUncheckedCreateWithoutDesignInput = {
-    id?: string
-    roomType: string
-    size: string
-    stylePreference: string
-    budget?: number | null
-    colorScheme?: string | null
-    materialPreferences?: string | null
-    otherRequirements?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type PreferencesCreateOrConnectWithoutDesignInput = {
-    where: PreferencesWhereUniqueInput
-    create: XOR<PreferencesCreateWithoutDesignInput, PreferencesUncheckedCreateWithoutDesignInput>
-  }
-
-  export type RoiCalculationCreateWithoutDesignInput = {
-    id?: string
-    estimatedCost: number
-    roiPercentage: number
-    paybackTimeline?: string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type RoiCalculationUncheckedCreateWithoutDesignInput = {
-    id?: string
-    estimatedCost: number
-    roiPercentage: number
-    paybackTimeline?: string | null
-    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type RoiCalculationCreateOrConnectWithoutDesignInput = {
-    where: RoiCalculationWhereUniqueInput
-    create: XOR<RoiCalculationCreateWithoutDesignInput, RoiCalculationUncheckedCreateWithoutDesignInput>
   }
 
   export type DesignOutputUpsertWithWhereUniqueWithoutDesignInput = {
@@ -11130,6 +7119,97 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"DesignOutput"> | Date | string
   }
 
+  export type DesignUpsertWithoutChildDesignsInput = {
+    update: XOR<DesignUpdateWithoutChildDesignsInput, DesignUncheckedUpdateWithoutChildDesignsInput>
+    create: XOR<DesignCreateWithoutChildDesignsInput, DesignUncheckedCreateWithoutChildDesignsInput>
+    where?: DesignWhereInput
+  }
+
+  export type DesignUpdateToOneWithWhereWithoutChildDesignsInput = {
+    where?: DesignWhereInput
+    data: XOR<DesignUpdateWithoutChildDesignsInput, DesignUncheckedUpdateWithoutChildDesignsInput>
+  }
+
+  export type DesignUpdateWithoutChildDesignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUpdateManyWithoutDesignNestedInput
+    parentDesign?: DesignUpdateOneWithoutChildDesignsNestedInput
+    profile?: ProfileUpdateOneRequiredWithoutDesignsNestedInput
+  }
+
+  export type DesignUncheckedUpdateWithoutChildDesignsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
+  }
+
+  export type DesignUpsertWithWhereUniqueWithoutParentDesignInput = {
+    where: DesignWhereUniqueInput
+    update: XOR<DesignUpdateWithoutParentDesignInput, DesignUncheckedUpdateWithoutParentDesignInput>
+    create: XOR<DesignCreateWithoutParentDesignInput, DesignUncheckedCreateWithoutParentDesignInput>
+  }
+
+  export type DesignUpdateWithWhereUniqueWithoutParentDesignInput = {
+    where: DesignWhereUniqueInput
+    data: XOR<DesignUpdateWithoutParentDesignInput, DesignUncheckedUpdateWithoutParentDesignInput>
+  }
+
+  export type DesignUpdateManyWithWhereWithoutParentDesignInput = {
+    where: DesignScalarWhereInput
+    data: XOR<DesignUpdateManyMutationInput, DesignUncheckedUpdateManyWithoutParentDesignInput>
+  }
+
   export type ProfileUpsertWithoutDesignsInput = {
     update: XOR<ProfileUpdateWithoutDesignsInput, ProfileUncheckedUpdateWithoutDesignsInput>
     create: XOR<ProfileCreateWithoutDesignsInput, ProfileUncheckedCreateWithoutDesignsInput>
@@ -11150,7 +7230,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    feedback?: FeedbackUpdateManyWithoutProfileNestedInput
   }
 
   export type ProfileUncheckedUpdateWithoutDesignsInput = {
@@ -11162,541 +7241,274 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    feedback?: FeedbackUncheckedUpdateManyWithoutProfileNestedInput
   }
 
-  export type FeedbackUpsertWithWhereUniqueWithoutDesignInput = {
-    where: FeedbackWhereUniqueInput
-    update: XOR<FeedbackUpdateWithoutDesignInput, FeedbackUncheckedUpdateWithoutDesignInput>
-    create: XOR<FeedbackCreateWithoutDesignInput, FeedbackUncheckedCreateWithoutDesignInput>
-  }
-
-  export type FeedbackUpdateWithWhereUniqueWithoutDesignInput = {
-    where: FeedbackWhereUniqueInput
-    data: XOR<FeedbackUpdateWithoutDesignInput, FeedbackUncheckedUpdateWithoutDesignInput>
-  }
-
-  export type FeedbackUpdateManyWithWhereWithoutDesignInput = {
-    where: FeedbackScalarWhereInput
-    data: XOR<FeedbackUpdateManyMutationInput, FeedbackUncheckedUpdateManyWithoutDesignInput>
-  }
-
-  export type PreferencesUpsertWithoutDesignInput = {
-    update: XOR<PreferencesUpdateWithoutDesignInput, PreferencesUncheckedUpdateWithoutDesignInput>
-    create: XOR<PreferencesCreateWithoutDesignInput, PreferencesUncheckedCreateWithoutDesignInput>
-    where?: PreferencesWhereInput
-  }
-
-  export type PreferencesUpdateToOneWithWhereWithoutDesignInput = {
-    where?: PreferencesWhereInput
-    data: XOR<PreferencesUpdateWithoutDesignInput, PreferencesUncheckedUpdateWithoutDesignInput>
-  }
-
-  export type PreferencesUpdateWithoutDesignInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    roomType?: StringFieldUpdateOperationsInput | string
-    size?: StringFieldUpdateOperationsInput | string
-    stylePreference?: StringFieldUpdateOperationsInput | string
-    budget?: NullableFloatFieldUpdateOperationsInput | number | null
-    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
-    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
-    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PreferencesUncheckedUpdateWithoutDesignInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    roomType?: StringFieldUpdateOperationsInput | string
-    size?: StringFieldUpdateOperationsInput | string
-    stylePreference?: StringFieldUpdateOperationsInput | string
-    budget?: NullableFloatFieldUpdateOperationsInput | number | null
-    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
-    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
-    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type RoiCalculationUpsertWithoutDesignInput = {
-    update: XOR<RoiCalculationUpdateWithoutDesignInput, RoiCalculationUncheckedUpdateWithoutDesignInput>
-    create: XOR<RoiCalculationCreateWithoutDesignInput, RoiCalculationUncheckedCreateWithoutDesignInput>
-    where?: RoiCalculationWhereInput
-  }
-
-  export type RoiCalculationUpdateToOneWithWhereWithoutDesignInput = {
-    where?: RoiCalculationWhereInput
-    data: XOR<RoiCalculationUpdateWithoutDesignInput, RoiCalculationUncheckedUpdateWithoutDesignInput>
-  }
-
-  export type RoiCalculationUpdateWithoutDesignInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    estimatedCost?: FloatFieldUpdateOperationsInput | number
-    roiPercentage?: FloatFieldUpdateOperationsInput | number
-    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+  export type DesignCreateWithoutOutputsInput = {
+    id?: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
+    status?: $Enums.DesignStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    generationNumber?: number
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
     costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    parentDesign?: DesignCreateNestedOneWithoutChildDesignsInput
+    childDesigns?: DesignCreateNestedManyWithoutParentDesignInput
+    profile: ProfileCreateNestedOneWithoutDesignsInput
   }
 
-  export type RoiCalculationUncheckedUpdateWithoutDesignInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    estimatedCost?: FloatFieldUpdateOperationsInput | number
-    roiPercentage?: FloatFieldUpdateOperationsInput | number
-    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+  export type DesignUncheckedCreateWithoutOutputsInput = {
+    id?: string
+    userId: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
+    status?: $Enums.DesignStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    generationNumber?: number
+    parentId?: string | null
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
     costBreakdown?: NullableJsonNullValueInput | InputJsonValue
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
+    childDesigns?: DesignUncheckedCreateNestedManyWithoutParentDesignInput
   }
 
-  export type DesignCreateWithoutPreferencesInput = {
-    id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designOutputs?: DesignOutputCreateNestedManyWithoutDesignInput
-    profile: ProfileCreateNestedOneWithoutDesignsInput
-    feedback?: FeedbackCreateNestedManyWithoutDesignInput
-    roiCalculation?: RoiCalculationCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignUncheckedCreateWithoutPreferencesInput = {
-    id?: string
-    userId: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designOutputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
-    feedback?: FeedbackUncheckedCreateNestedManyWithoutDesignInput
-    roiCalculation?: RoiCalculationUncheckedCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignCreateOrConnectWithoutPreferencesInput = {
+  export type DesignCreateOrConnectWithoutOutputsInput = {
     where: DesignWhereUniqueInput
-    create: XOR<DesignCreateWithoutPreferencesInput, DesignUncheckedCreateWithoutPreferencesInput>
+    create: XOR<DesignCreateWithoutOutputsInput, DesignUncheckedCreateWithoutOutputsInput>
   }
 
-  export type DesignUpsertWithoutPreferencesInput = {
-    update: XOR<DesignUpdateWithoutPreferencesInput, DesignUncheckedUpdateWithoutPreferencesInput>
-    create: XOR<DesignCreateWithoutPreferencesInput, DesignUncheckedCreateWithoutPreferencesInput>
+  export type DesignUpsertWithoutOutputsInput = {
+    update: XOR<DesignUpdateWithoutOutputsInput, DesignUncheckedUpdateWithoutOutputsInput>
+    create: XOR<DesignCreateWithoutOutputsInput, DesignUncheckedCreateWithoutOutputsInput>
     where?: DesignWhereInput
   }
 
-  export type DesignUpdateToOneWithWhereWithoutPreferencesInput = {
+  export type DesignUpdateToOneWithWhereWithoutOutputsInput = {
     where?: DesignWhereInput
-    data: XOR<DesignUpdateWithoutPreferencesInput, DesignUncheckedUpdateWithoutPreferencesInput>
+    data: XOR<DesignUpdateWithoutOutputsInput, DesignUncheckedUpdateWithoutOutputsInput>
   }
 
-  export type DesignUpdateWithoutPreferencesInput = {
+  export type DesignUpdateWithoutOutputsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUpdateManyWithoutDesignNestedInput
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    parentDesign?: DesignUpdateOneWithoutChildDesignsNestedInput
+    childDesigns?: DesignUpdateManyWithoutParentDesignNestedInput
     profile?: ProfileUpdateOneRequiredWithoutDesignsNestedInput
-    feedback?: FeedbackUpdateManyWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUpdateOneWithoutDesignNestedInput
   }
 
-  export type DesignUncheckedUpdateWithoutPreferencesInput = {
+  export type DesignUncheckedUpdateWithoutOutputsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
-    feedback?: FeedbackUncheckedUpdateManyWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUncheckedUpdateOneWithoutDesignNestedInput
-  }
-
-  export type DesignCreateWithoutDesignOutputsInput = {
-    id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    profile: ProfileCreateNestedOneWithoutDesignsInput
-    feedback?: FeedbackCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignUncheckedCreateWithoutDesignOutputsInput = {
-    id?: string
-    userId: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    feedback?: FeedbackUncheckedCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesUncheckedCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationUncheckedCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignCreateOrConnectWithoutDesignOutputsInput = {
-    where: DesignWhereUniqueInput
-    create: XOR<DesignCreateWithoutDesignOutputsInput, DesignUncheckedCreateWithoutDesignOutputsInput>
-  }
-
-  export type DesignUpsertWithoutDesignOutputsInput = {
-    update: XOR<DesignUpdateWithoutDesignOutputsInput, DesignUncheckedUpdateWithoutDesignOutputsInput>
-    create: XOR<DesignCreateWithoutDesignOutputsInput, DesignUncheckedCreateWithoutDesignOutputsInput>
-    where?: DesignWhereInput
-  }
-
-  export type DesignUpdateToOneWithWhereWithoutDesignOutputsInput = {
-    where?: DesignWhereInput
-    data: XOR<DesignUpdateWithoutDesignOutputsInput, DesignUncheckedUpdateWithoutDesignOutputsInput>
-  }
-
-  export type DesignUpdateWithoutDesignOutputsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
-    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    profile?: ProfileUpdateOneRequiredWithoutDesignsNestedInput
-    feedback?: FeedbackUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUpdateOneWithoutDesignNestedInput
-  }
-
-  export type DesignUncheckedUpdateWithoutDesignOutputsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
-    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    feedback?: FeedbackUncheckedUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUncheckedUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUncheckedUpdateOneWithoutDesignNestedInput
-  }
-
-  export type DesignCreateWithoutRoiCalculationInput = {
-    id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designOutputs?: DesignOutputCreateNestedManyWithoutDesignInput
-    profile: ProfileCreateNestedOneWithoutDesignsInput
-    feedback?: FeedbackCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignUncheckedCreateWithoutRoiCalculationInput = {
-    id?: string
-    userId: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designOutputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
-    feedback?: FeedbackUncheckedCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesUncheckedCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignCreateOrConnectWithoutRoiCalculationInput = {
-    where: DesignWhereUniqueInput
-    create: XOR<DesignCreateWithoutRoiCalculationInput, DesignUncheckedCreateWithoutRoiCalculationInput>
-  }
-
-  export type DesignUpsertWithoutRoiCalculationInput = {
-    update: XOR<DesignUpdateWithoutRoiCalculationInput, DesignUncheckedUpdateWithoutRoiCalculationInput>
-    create: XOR<DesignCreateWithoutRoiCalculationInput, DesignUncheckedCreateWithoutRoiCalculationInput>
-    where?: DesignWhereInput
-  }
-
-  export type DesignUpdateToOneWithWhereWithoutRoiCalculationInput = {
-    where?: DesignWhereInput
-    data: XOR<DesignUpdateWithoutRoiCalculationInput, DesignUncheckedUpdateWithoutRoiCalculationInput>
-  }
-
-  export type DesignUpdateWithoutRoiCalculationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
-    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUpdateManyWithoutDesignNestedInput
-    profile?: ProfileUpdateOneRequiredWithoutDesignsNestedInput
-    feedback?: FeedbackUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUpdateOneWithoutDesignNestedInput
-  }
-
-  export type DesignUncheckedUpdateWithoutRoiCalculationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
-    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
-    feedback?: FeedbackUncheckedUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUncheckedUpdateOneWithoutDesignNestedInput
-  }
-
-  export type DesignCreateWithoutFeedbackInput = {
-    id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designOutputs?: DesignOutputCreateNestedManyWithoutDesignInput
-    profile: ProfileCreateNestedOneWithoutDesignsInput
-    preferences?: PreferencesCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignUncheckedCreateWithoutFeedbackInput = {
-    id?: string
-    userId: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
-    status?: $Enums.DesignStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designOutputs?: DesignOutputUncheckedCreateNestedManyWithoutDesignInput
-    preferences?: PreferencesUncheckedCreateNestedOneWithoutDesignInput
-    roiCalculation?: RoiCalculationUncheckedCreateNestedOneWithoutDesignInput
-  }
-
-  export type DesignCreateOrConnectWithoutFeedbackInput = {
-    where: DesignWhereUniqueInput
-    create: XOR<DesignCreateWithoutFeedbackInput, DesignUncheckedCreateWithoutFeedbackInput>
-  }
-
-  export type ProfileCreateWithoutFeedbackInput = {
-    id?: string
-    userId: string
-    name?: string | null
-    company?: string | null
-    role?: $Enums.UserRole
-    avatar?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designs?: DesignCreateNestedManyWithoutProfileInput
-  }
-
-  export type ProfileUncheckedCreateWithoutFeedbackInput = {
-    id?: string
-    userId: string
-    name?: string | null
-    company?: string | null
-    role?: $Enums.UserRole
-    avatar?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    designs?: DesignUncheckedCreateNestedManyWithoutProfileInput
-  }
-
-  export type ProfileCreateOrConnectWithoutFeedbackInput = {
-    where: ProfileWhereUniqueInput
-    create: XOR<ProfileCreateWithoutFeedbackInput, ProfileUncheckedCreateWithoutFeedbackInput>
-  }
-
-  export type DesignUpsertWithoutFeedbackInput = {
-    update: XOR<DesignUpdateWithoutFeedbackInput, DesignUncheckedUpdateWithoutFeedbackInput>
-    create: XOR<DesignCreateWithoutFeedbackInput, DesignUncheckedCreateWithoutFeedbackInput>
-    where?: DesignWhereInput
-  }
-
-  export type DesignUpdateToOneWithWhereWithoutFeedbackInput = {
-    where?: DesignWhereInput
-    data: XOR<DesignUpdateWithoutFeedbackInput, DesignUncheckedUpdateWithoutFeedbackInput>
-  }
-
-  export type DesignUpdateWithoutFeedbackInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
-    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUpdateManyWithoutDesignNestedInput
-    profile?: ProfileUpdateOneRequiredWithoutDesignsNestedInput
-    preferences?: PreferencesUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUpdateOneWithoutDesignNestedInput
-  }
-
-  export type DesignUncheckedUpdateWithoutFeedbackInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
-    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUncheckedUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUncheckedUpdateOneWithoutDesignNestedInput
-  }
-
-  export type ProfileUpsertWithoutFeedbackInput = {
-    update: XOR<ProfileUpdateWithoutFeedbackInput, ProfileUncheckedUpdateWithoutFeedbackInput>
-    create: XOR<ProfileCreateWithoutFeedbackInput, ProfileUncheckedCreateWithoutFeedbackInput>
-    where?: ProfileWhereInput
-  }
-
-  export type ProfileUpdateToOneWithWhereWithoutFeedbackInput = {
-    where?: ProfileWhereInput
-    data: XOR<ProfileUpdateWithoutFeedbackInput, ProfileUncheckedUpdateWithoutFeedbackInput>
-  }
-
-  export type ProfileUpdateWithoutFeedbackInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    company?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designs?: DesignUpdateManyWithoutProfileNestedInput
-  }
-
-  export type ProfileUncheckedUpdateWithoutFeedbackInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    company?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designs?: DesignUncheckedUpdateManyWithoutProfileNestedInput
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    childDesigns?: DesignUncheckedUpdateManyWithoutParentDesignNestedInput
   }
 
   export type DesignCreateManyProfileInput = {
     id?: string
-    inputPrompt: string
-    uploadedImageUrl?: string | null
-    aiModelUsed: string
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
     status?: $Enums.DesignStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-  }
-
-  export type FeedbackCreateManyProfileInput = {
-    id?: string
-    designId: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
+    generationNumber?: number
+    parentId?: string | null
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
   }
 
   export type DesignUpdateWithoutProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUpdateManyWithoutDesignNestedInput
-    feedback?: FeedbackUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUpdateOneWithoutDesignNestedInput
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUpdateManyWithoutDesignNestedInput
+    parentDesign?: DesignUpdateOneWithoutChildDesignsNestedInput
+    childDesigns?: DesignUpdateManyWithoutParentDesignNestedInput
   }
 
   export type DesignUncheckedUpdateWithoutProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    designOutputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
-    feedback?: FeedbackUncheckedUpdateManyWithoutDesignNestedInput
-    preferences?: PreferencesUncheckedUpdateOneWithoutDesignNestedInput
-    roiCalculation?: RoiCalculationUncheckedUpdateOneWithoutDesignNestedInput
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
+    childDesigns?: DesignUncheckedUpdateManyWithoutParentDesignNestedInput
   }
 
   export type DesignUncheckedUpdateManyWithoutProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    inputPrompt?: StringFieldUpdateOperationsInput | string
-    uploadedImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    aiModelUsed?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FeedbackUpdateWithoutProfileInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    design?: DesignUpdateOneRequiredWithoutFeedbackNestedInput
-  }
-
-  export type FeedbackUncheckedUpdateWithoutProfileInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FeedbackUncheckedUpdateManyWithoutProfileInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    designId?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type DesignOutputCreateManyDesignInput = {
@@ -11707,16 +7519,34 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type FeedbackCreateManyDesignInput = {
+  export type DesignCreateManyParentDesignInput = {
     id?: string
     userId: string
-    rating: number
-    comments?: string | null
-    type?: $Enums.FeedbackType
-    helpful?: boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    description?: string | null
+    imageUrl?: string | null
+    customRequirements?: string | null
+    status?: $Enums.DesignStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    generationNumber?: number
+    budget?: Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: string | null
+    isPublic?: boolean
+    materialPreferences?: string | null
+    mood?: string | null
+    otherRequirements?: string | null
+    priority?: string | null
+    roomType?: string | null
+    size?: string | null
+    style?: string | null
+    stylePreference?: string | null
+    title?: string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: number | null
+    paybackTimeline?: string | null
+    roiNotes?: string | null
+    roiPercentage?: number | null
   }
 
   export type DesignOutputUpdateWithoutDesignInput = {
@@ -11743,40 +7573,98 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type FeedbackUpdateWithoutDesignInput = {
+  export type DesignUpdateWithoutParentDesignInput = {
     id?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    profile?: ProfileUpdateOneRequiredWithoutFeedbackNestedInput
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUpdateManyWithoutDesignNestedInput
+    childDesigns?: DesignUpdateManyWithoutParentDesignNestedInput
+    profile?: ProfileUpdateOneRequiredWithoutDesignsNestedInput
   }
 
-  export type FeedbackUncheckedUpdateWithoutDesignInput = {
+  export type DesignUncheckedUpdateWithoutParentDesignInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    outputs?: DesignOutputUncheckedUpdateManyWithoutDesignNestedInput
+    childDesigns?: DesignUncheckedUpdateManyWithoutParentDesignNestedInput
   }
 
-  export type FeedbackUncheckedUpdateManyWithoutDesignInput = {
+  export type DesignUncheckedUpdateManyWithoutParentDesignInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comments?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumFeedbackTypeFieldUpdateOperationsInput | $Enums.FeedbackType
-    helpful?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    customRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    generationNumber?: IntFieldUpdateOperationsInput | number
+    budget?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    colorPalette?: NullableJsonNullValueInput | InputJsonValue
+    colorScheme?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    materialPreferences?: NullableStringFieldUpdateOperationsInput | string | null
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    otherRequirements?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: NullableStringFieldUpdateOperationsInput | string | null
+    roomType?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    style?: NullableStringFieldUpdateOperationsInput | string | null
+    stylePreference?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    costBreakdown?: NullableJsonNullValueInput | InputJsonValue
+    estimatedCost?: NullableFloatFieldUpdateOperationsInput | number | null
+    paybackTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    roiNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    roiPercentage?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
 

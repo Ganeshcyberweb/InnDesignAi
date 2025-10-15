@@ -1,4 +1,8 @@
+"use client";
+
 import * as React from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 import {
   Sidebar,
@@ -11,6 +15,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import {
   RiSparklingLine,
@@ -23,6 +30,10 @@ import {
   RiHeartLine,
   RiCamera3Line,
 } from "@remixicon/react";
+import { ChevronRight } from "lucide-react";
+import { useDesignHistoryStore } from "@/stores/design-history-store";
+import { formatDistanceToNow } from "date-fns";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 // Interior Design navigation data
 const data = {
@@ -35,12 +46,12 @@ const data = {
           title: "Design Assistant",
           url: "/dashboard",
           icon: RiSparklingLine,
-          isActive: true,
         },
         {
           title: "Design History",
           url: "/dashboard/history",
           icon: RiHistoryLine,
+          hasSubItems: true,
         },
       ],
     },
@@ -69,6 +80,17 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+  const { getAllDesigns, refreshIfStale } = useDesignHistoryStore();
+  const [isHistoryOpen, setIsHistoryOpen] = React.useState(true);
+
+  // Load recent designs when component mounts
+  React.useEffect(() => {
+    refreshIfStale();
+  }, [refreshIfStale]);
+
+  const recentDesigns = getAllDesigns().slice(0, 5); // Get last 5 designs
+
   return (
     <Sidebar {...props} className="dark border-sidebar-border bg-sidebar">
       <SidebarHeader>
@@ -101,26 +123,109 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupLabel>
           <SidebarGroupContent className="px-2">
             <SidebarMenu>
-              {data.navMain[0]?.items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className="group/menu-button font-medium gap-3 h-9 rounded-md text-sidebar-foreground data-[active=true]:hover:bg-transparent data-[active=true]:bg-gradient-to-b data-[active=true]:from-sidebar-primary data-[active=true]:to-sidebar-primary/70 data-[active=true]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] [&>svg]:size-auto"
-                    isActive={item.isActive}
-                  >
-                    <a href={item.url}>
-                      {item.icon && (
-                        <item.icon
-                          className="text-sidebar-foreground/70 group-data-[active=true]/menu-button:text-sidebar-primary-foreground"
-                          size={22}
-                          aria-hidden="true"
-                        />
-                      )}
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {data.navMain[0]?.items.map((item) => {
+                // For /dashboard, only match exact path, not sub-routes
+                // For other routes, match exact or sub-routes
+                const isActive = item.url === '/dashboard'
+                  ? pathname === item.url
+                  : pathname === item.url || pathname?.startsWith(`${item.url}/`);
+
+                // Special handling for Design History with dropdown
+                if (item.hasSubItems) {
+                  return (
+                    <Collapsible
+                      key={item.title}
+                      open={isHistoryOpen}
+                      onOpenChange={setIsHistoryOpen}
+                      className="group/collapsible"
+                    >
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton
+                            className="group/menu-button font-medium gap-3 h-9 rounded-md text-sidebar-foreground data-[active=true]:hover:bg-transparent data-[active=true]:bg-gradient-to-b data-[active=true]:from-sidebar-primary data-[active=true]:to-sidebar-primary/70 data-[active=true]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] [&>svg]:size-auto data-[active=true]:text-white"
+                            isActive={isActive}
+                          >
+                            <Link href={item.url} className="flex items-center gap-3 flex-1">
+                              {item.icon && (
+                                <item.icon
+                                  className="text-sidebar-foreground/70 group-data-[active=true]/menu-button:text-white"
+                                  size={22}
+                                  aria-hidden="true"
+                                />
+                              )}
+                              <span className="group-data-[active=true]/menu-button:text-white">{item.title}</span>
+                            </Link>
+                            <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub className="overflow-hidden">
+                            {recentDesigns.length > 0 ? (
+                              recentDesigns.map((design) => (
+                                <SidebarMenuSubItem key={design.id}>
+                                  <SidebarMenuSubButton asChild className="h-auto py-2 w-full overflow-hidden">
+                                    <Link href={`/designs/${design.id}/history`} className="flex flex-col items-start gap-1 w-full min-w-0 max-w-full overflow-hidden">
+                                      <div className="flex items-center justify-between w-full min-w-0 gap-2">
+                                        <span className="truncate text-xs font-medium flex-shrink min-w-0 max-w-[70%]">
+                                          Design #{design.id.slice(0, 6)}
+                                        </span>
+                                        <span className="text-xs text-sidebar-foreground/50 flex-shrink-0 text-right">
+                                          {formatDistanceToNow(new Date(design.createdAt), {
+                                            addSuffix: false,
+                                          }).replace('about ', '')}
+                                        </span>
+                                      </div>
+                                      <div>
+                                        {design.description && (
+                                        <span className="text-xs text-sidebar-foreground/60 line-clamp-2 w-full text-left break-all overflow-hidden hyphens-auto leading-tight">
+                                          {design.description.length > 120 ? `${design.description.substring(0, 120)}...` : design.description}
+                                        </span>
+                                      )}
+                                      </div>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))
+                            ) : (
+                              <SidebarMenuSubItem>
+                                <SidebarMenuSubButton asChild>
+                                  <div className="pointer-events-none">
+                                    <span className="text-xs text-sidebar-foreground/50">
+                                      No designs yet
+                                    </span>
+                                  </div>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            )}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  );
+                }
+
+                // Regular menu items
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="group/menu-button font-medium gap-3 h-9 rounded-md text-sidebar-foreground data-[active=true]:hover:bg-transparent data-[active=true]:bg-gradient-to-b data-[active=true]:from-sidebar-primary data-[active=true]:to-sidebar-primary/70 data-[active=true]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] [&>svg]:size-auto data-[active=true]:text-white"
+                      isActive={isActive}
+                    >
+                      <Link href={item.url}>
+                        {item.icon && (
+                          <item.icon
+                            className="text-sidebar-foreground/70 group-data-[active=true]/menu-button:text-white"
+                            size={22}
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span className="group-data-[active=true]/menu-button:text-white">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -133,26 +238,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupLabel>
           <SidebarGroupContent className="px-2">
             <SidebarMenu>
-              {data.navMain[1]?.items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className="group/menu-button font-medium gap-3 h-9 rounded-md text-sidebar-foreground [&>svg]:size-auto"
-                    isActive={item.isActive}
-                  >
-                    <a href={item.url}>
-                      {item.icon && (
-                        <item.icon
-                          className="text-sidebar-foreground/70 group-data-[active=true]/menu-button:text-sidebar-accent-foreground"
-                          size={22}
-                          aria-hidden="true"
-                        />
-                      )}
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {data.navMain[1]?.items.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="group/menu-button font-medium gap-3 h-9 rounded-md text-sidebar-foreground [&>svg]:size-auto"
+                      isActive={isActive}
+                    >
+                      <Link href={item.url}>
+                        {item.icon && (
+                          <item.icon
+                            className="text-sidebar-foreground/70 group-data-[active=true]/menu-button:text-sidebar-accent-foreground"
+                            size={22}
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

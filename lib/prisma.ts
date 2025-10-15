@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { PrismaClient } from './generated/prisma'
+import { PrismaClientKnownRequestError } from './generated/prisma/runtime/library'
 
 declare global {
   var __prisma: PrismaClient | undefined
@@ -11,9 +11,7 @@ declare global {
  */
 export const prisma =
   globalThis.__prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+  new PrismaClient()
 
 if (process.env.NODE_ENV !== 'production') {
   globalThis.__prisma = prisma
@@ -79,16 +77,12 @@ export async function withTransaction<T>(
 // Re-export types from the generated Prisma client
 export type {
   Profile,
-  Preferences,
   Design,
   DesignOutput,
-  RoiCalculation,
-  Feedback,
 } from './generated/prisma'
 
 // Re-export enum types
 export {
   UserRole,
   DesignStatus,
-  FeedbackType,
 } from './generated/prisma'

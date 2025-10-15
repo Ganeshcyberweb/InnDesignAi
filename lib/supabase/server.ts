@@ -4,6 +4,7 @@
  */
 
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/database'
 
@@ -11,8 +12,8 @@ export async function createClient() {
   const cookieStore = await cookies()
 
   return createServerClient<Database>(
-    "https://hyokzduxwgldgtlgguin.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5b2t6ZHV4d2dsZGd0bGdndWluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1OTIwMzAsImV4cCI6MjA3MzE2ODAzMH0.8_MGOUU3wV5o7rkF4dRl9jMmHc7bi2F4kNT61TYpLo4",
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
@@ -30,6 +31,22 @@ export async function createClient() {
           }
         },
       },
+    }
+  )
+}
+
+/**
+ * Service role client for admin operations that bypass RLS
+ */
+export function createServiceRoleClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      }
     }
   )
 }

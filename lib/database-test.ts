@@ -4,7 +4,7 @@
  */
 
 import { checkDatabaseConnection } from './prisma'
-import { validateSchema, createDesignSchema, createFeedbackSchema } from './validation-schemas'
+import { validateSchema, createDesignSchema } from './validation-schemas'
 
 /**
  * Test database connection
@@ -39,17 +39,15 @@ export function testSchemaValidation(): boolean {
   // Test valid design data
   const validDesignData = {
     userId: '550e8400-e29b-41d4-a716-446655440000',
-    inputPrompt: 'Create a modern living room with minimalist design',
-    aiModelUsed: 'dall-e-3',
-    preferences: {
-      roomType: 'living_room',
-      size: 'medium',
-      stylePreference: 'modern',
-      budget: 5000,
-      colorScheme: 'neutral tones',
-      materialPreferences: 'wood and metal',
-      otherRequirements: 'pet-friendly furniture'
-    }
+    title: 'Modern Living Room Design',
+    description: 'Create a modern living room with minimalist design',
+    roomType: 'living_room',
+    size: 'medium',
+    stylePreference: 'modern',
+    budget: 5000,
+    colorScheme: 'neutral tones',
+    materialPreferences: 'wood and metal',
+    otherRequirements: 'pet-friendly furniture'
   }
 
   const designValidation = validateSchema(createDesignSchema, validDesignData)
@@ -63,14 +61,11 @@ export function testSchemaValidation(): boolean {
   // Test invalid design data
   const invalidDesignData = {
     userId: 'invalid-uuid',
-    inputPrompt: 'too short',
-    aiModelUsed: '',
-    preferences: {
-      roomType: '',
-      size: '',
-      stylePreference: '',
-      budget: -100
-    }
+    title: 'a'.repeat(201), // Too long
+    roomType: '',
+    size: '',
+    stylePreference: '',
+    budget: -100
   }
 
   const invalidDesignValidation = validateSchema(createDesignSchema, invalidDesignData)
@@ -81,39 +76,7 @@ export function testSchemaValidation(): boolean {
     allTestsPassed = false
   }
 
-  // Test valid feedback data
-  const validFeedbackData = {
-    designId: '550e8400-e29b-41d4-a716-446655440001',
-    userId: '550e8400-e29b-41d4-a716-446655440000',
-    rating: 5,
-    comments: 'Excellent design! Very satisfied with the results.',
-    type: 'QUALITY',
-    helpful: true
-  }
 
-  const feedbackValidation = validateSchema(createFeedbackSchema, validFeedbackData)
-  if (feedbackValidation.success) {
-    console.log('✅ Valid feedback schema validation passed!')
-  } else {
-    console.log('❌ Valid feedback schema validation failed:', feedbackValidation.errors)
-    allTestsPassed = false
-  }
-
-  // Test invalid feedback data
-  const invalidFeedbackData = {
-    designId: 'invalid-uuid',
-    userId: 'invalid-uuid',
-    rating: 10, // Should be 1-5
-    comments: 'a'.repeat(1001), // Too long
-  }
-
-  const invalidFeedbackValidation = validateSchema(createFeedbackSchema, invalidFeedbackData)
-  if (!invalidFeedbackValidation.success) {
-    console.log('✅ Invalid feedback schema validation correctly rejected!')
-  } else {
-    console.log('❌ Invalid feedback schema validation should have failed!')
-    allTestsPassed = false
-  }
 
   if (allTestsPassed) {
     console.log('✅ All schema validation tests passed!')

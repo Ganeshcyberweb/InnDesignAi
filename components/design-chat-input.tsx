@@ -38,6 +38,7 @@ import {
   PromptInputActionMenuTrigger,
   PromptInputActionMenuContent,
   PromptInputActionAddAttachments,
+  usePromptInputAttachments,
   type PromptInputMessage,
 } from "@/components/ai-elements/prompt-input"
 
@@ -74,6 +75,13 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
   const [showChat, setShowChat] = React.useState(alwaysOpen)
   const [success, setSuccess] = React.useState(false)
   const chatWidth = useChatWidth()
+  const { formData } = useDesignFormStore()
+
+  // Calculate dynamic height based on content (furniture items or uploaded images)
+  const hasFurnitureItems = formData.selectedFurnitureItems.length > 0
+  const [hasUploadedImages, setHasUploadedImages] = React.useState(false)
+  const hasAnyAttachments = hasFurnitureItems || hasUploadedImages
+  const chatHeight = hasAnyAttachments ? CHAT_WITH_ATTACHMENTS_HEIGHT : CHAT_BASE_HEIGHT
 
   const closeChat = React.useCallback(() => {
     if (!alwaysOpen) {
@@ -130,7 +138,7 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
       )}
       style={{
         width: chatWidth,
-        height: CHAT_HEIGHT,
+        height: chatHeight,
       }}
     >
       <motion.div
@@ -142,7 +150,7 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
         initial={false}
         animate={{
           width: showChat ? chatWidth : "auto",
-          height: showChat ? CHAT_HEIGHT : 44,
+          height: showChat ? chatHeight : 44,
           borderRadius: showChat ? 14 : 20,
         }}
         transition={{
@@ -155,7 +163,14 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
       >
         <ChatContext.Provider value={context}>
           {!alwaysOpen && <CompactDock />}
-          <ExpandedChat ref={textareaRef} onSuccess={onChatSuccess} onSubmit={onSubmit} chatWidth={chatWidth} />
+          <ExpandedChat
+            ref={textareaRef}
+            onSuccess={onChatSuccess}
+            onSubmit={onSubmit}
+            chatWidth={chatWidth}
+            chatHeight={chatHeight}
+            onImagesChange={setHasUploadedImages}
+          />
         </ChatContext.Provider>
       </motion.div>
     </div>
@@ -209,13 +224,16 @@ function CompactDock() {
   )
 }
 
-const CHAT_HEIGHT = 200
+const CHAT_BASE_HEIGHT = 200
+const CHAT_WITH_ATTACHMENTS_HEIGHT = 300
 
 interface ExpandedChatProps {
   ref: React.Ref<HTMLTextAreaElement>
   onSuccess: () => void
   onSubmit?: (message: PromptInputMessage) => void
   chatWidth: number
+  chatHeight: number
+  onImagesChange: (hasImages: boolean) => void
 }
 
 function ExpandedChat({
@@ -223,6 +241,8 @@ function ExpandedChat({
   onSuccess,
   onSubmit,
   chatWidth,
+  chatHeight,
+  onImagesChange,
 }: ExpandedChatProps) {
   const { closeChat, showChat, alwaysOpen } = useChat()
   const { formData, updateField } = useDesignFormStore()
@@ -256,6 +276,22 @@ function ExpandedChat({
   const selectedPalette = COLOR_PALETTES.find(palette => palette.id === formData.colorPalette) || COLOR_PALETTES[0]
 
   const handleSubmit = (message: PromptInputMessage) => {
+    // Validate that we have either a prompt or images
+    const hasPrompt = message.text && message.text.trim().length > 0
+    const hasImages = message.files && message.files.length > 0
+    
+    if (!hasPrompt && !hasImages) {
+      console.warn('❌ Submit blocked: No prompt or images provided')
+      return
+    }
+
+    // Additional validation: if no images, prompt must be reasonably descriptive
+    if (!hasImages && hasPrompt && message.text && message.text.trim().length < 10) {
+      console.warn('❌ Submit blocked: Prompt too short (minimum 10 characters)')
+      // You could show a toast notification here
+      return
+    }
+
     // Update the prompt in the form data
     updateField("prompt", message.text || "")
 
@@ -282,7 +318,7 @@ function ExpandedChat({
       className="absolute bottom-0"
       style={{
         width: chatWidth,
-        height: CHAT_HEIGHT,
+        height: chatHeight,
         pointerEvents: showChat ? "all" : "none",
       }}
     >
@@ -303,11 +339,12 @@ function ExpandedChat({
             <PromptInput
               className="bg-white border-stone-200  divide-stone-200 h-full"
               onSubmit={handleSubmit}
-              accept="image/*"
+              accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
               multiple
               maxFiles={5}
               maxFileSize={10 * 1024 * 1024} // 10MB
             >
+              <ImageTracker onImagesChange={onImagesChange} />
               <PromptInputBody className="space-y-0 h-full flex flex-col">
                 {/* Header */}
                 <div className="flex justify-between items-center py-2 px-3">
@@ -333,19 +370,10 @@ function ExpandedChat({
                   )}
                 </div>
 
-                {/* File Attachments */}
-                <PromptInputAttachments>
-                  {(attachment) => (
-                    <PromptInputAttachment
-                      key={attachment.id}
-                      data={attachment}
-                      className=""
-                    />
-                  )}
-                </PromptInputAttachments>
+                <CombinedImagesSection />
 
                 {/* Main Textarea */}
-                <div className="flex-1 p-3 min-h-0">
+                <div className="flex-1 p-3 min-h-0 overflow-y-auto">
                   <PromptInputTextarea
                     ref={ref}
                     placeholder="Describe your design vision..."
@@ -356,7 +384,7 @@ function ExpandedChat({
                       "text-stone-900 placeholder:text-stone-500 bg-transparent",
                       "text-sm border-none shadow-none",
                       "focus-visible:ring-0 focus-visible:ring-offset-0",
-                      "resize-none w-full h-full max-h-[80px]"
+                      "resize-none w-full h-full"
                     )}
                     onKeyDown={onKeyDown}
                   />
@@ -558,6 +586,86 @@ function ExpandedChat({
       </AnimatePresence>
     </div>
   )
+}
+
+// Combined images section showing both uploaded files and furniture items
+function CombinedImagesSection() {
+  const { files, remove } = usePromptInputAttachments()
+  const { formData, removeFurnitureItem } = useDesignFormStore()
+
+  const totalImages = files.length + formData.selectedFurnitureItems.length
+
+  if (totalImages === 0) return null
+
+  return (
+    <div className="px-3 pb-2">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-xs text-stone-500">
+          Design Images ({totalImages})
+        </span>
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        {/* Uploaded Images */}
+        {files.map((file) => (
+          <div
+            key={file.id}
+            className="relative group w-16 h-16 rounded-md overflow-hidden border border-stone-200 bg-stone-50"
+          >
+            {file.mediaType?.startsWith("image/") && file.url ? (
+              <img
+                src={file.url}
+                alt={file.filename || "uploaded image"}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-stone-100">
+                <Image className="h-6 w-6 text-stone-400" />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => remove(file.id)}
+              className="absolute top-0.5 right-0.5 h-4 w-4 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        ))}
+
+        {/* Furniture Items */}
+        {formData.selectedFurnitureItems.map((item) => (
+          <div
+            key={item.id}
+            className="relative group w-16 h-16 rounded-md overflow-hidden border border-stone-200 bg-stone-50"
+          >
+            <img
+              src={item.image_path}
+              alt={item.name}
+              className="w-full h-full object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => removeFurnitureItem(item.id)}
+              className="absolute top-0.5 right-0.5 h-4 w-4 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Image tracker component to detect when images are uploaded
+function ImageTracker({ onImagesChange }: { onImagesChange: (hasImages: boolean) => void }) {
+  const { files } = usePromptInputAttachments()
+
+  React.useEffect(() => {
+    onImagesChange(files.length > 0)
+  }, [files.length, onImagesChange])
+
+  return null
 }
 
 // Add default export for lazy loading

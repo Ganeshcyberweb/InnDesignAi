@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { prisma } from '@/lib/prisma'
 
 export async function GET(request: Request) {
   try {
@@ -11,17 +12,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    // Get the user profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
-
-    if (profileError && profileError.code !== 'PGRST116') {
-      console.error('Profile fetch error:', profileError)
-      return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 })
-    }
+    // Use Prisma to fetch the user profile
+    const profile = await prisma.profile.findUnique({
+      where: {
+        userId: user.id
+      }
+    })
 
     // Return user data with profile
     const userData = {

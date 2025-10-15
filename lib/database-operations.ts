@@ -7,13 +7,9 @@ import { prisma, handlePrismaError, withTransaction } from './prisma'
 import type {
   Profile,
   Design,
-  Preferences,
   DesignOutput,
-  RoiCalculation,
-  Feedback,
   UserRole,
   DesignStatus,
-  FeedbackType,
 } from './generated/prisma'
 
 import type { GenerationParameters } from '@/types/design'
@@ -25,18 +21,33 @@ import type { CostBreakdown } from '@/types/roi'
 
 export interface CreateDesignRequest {
   userId: string
-  inputPrompt: string
-  uploadedImageUrl?: string
-  aiModelUsed: string
-  preferences: {
-    roomType: string
-    size: string
-    stylePreference: string
-    budget?: number
-    colorScheme?: string
-    materialPreferences?: string
-    otherRequirements?: string
-  }
+  title?: string
+  description?: string
+  style?: string
+  mood?: string
+  colorPalette?: any
+  roomType?: string
+  budget?: number
+  priority?: string
+  customRequirements?: string
+  imageUrl?: string
+  isPublic?: boolean
+  status?: DesignStatus
+  generationNumber?: number
+  
+  // Merged preferences fields
+  size?: string
+  stylePreference?: string
+  colorScheme?: string
+  materialPreferences?: string
+  otherRequirements?: string
+  
+  // Merged ROI calculation fields
+  estimatedCost?: number
+  roiPercentage?: number
+  paybackTimeline?: string
+  costBreekdown?: any
+  roiNotes?: string
 }
 
 export interface CreateDesignOutputRequest {
@@ -46,31 +57,9 @@ export interface CreateDesignOutputRequest {
   generationParameters?: GenerationParameters
 }
 
-export interface CreateRoiCalculationRequest {
-  designId: string
-  estimatedCost: number
-  roiPercentage: number
-  paybackTimeline?: string
-  costBreakdown?: CostBreakdown
-  notes?: string
-}
-
-export interface CreateFeedbackRequest {
-  designId: string
-  userId: string
-  rating: number
-  comments?: string
-  type?: FeedbackType
-  helpful?: boolean
-  metadata?: Record<string, any>
-}
-
 export interface DesignWithRelations extends Design {
   profile: Profile
-  preferences: Preferences | null
-  designOutputs: DesignOutput[]
-  roiCalculation: RoiCalculation | null
-  feedback: Feedback[]
+  outputs: DesignOutput[]
 }
 
 // ================================
@@ -121,44 +110,50 @@ export async function getProfileByUserId(userId: string): Promise<Profile | null
 // ================================
 
 /**
- * Create a new design with preferences
+ * Create a new design with all fields merged
  */
-export async function createDesignWithPreferences(
+export async function createDesign(
   data: CreateDesignRequest
 ): Promise<DesignWithRelations> {
   try {
-    return await withTransaction(async (tx) => {
-      // Create the design
-      const design = await tx.design.create({
-        data: {
-          userId: data.userId,
-          inputPrompt: data.inputPrompt,
-          uploadedImageUrl: data.uploadedImageUrl,
-          aiModelUsed: data.aiModelUsed,
-          status: 'PENDING',
-        },
-      })
+    const design = await prisma.design.create({
+      data: {
+        userId: data.userId,
+        title: data.title,
+        description: data.description,
+        style: data.style,
+        mood: data.mood,
+        colorPalette: data.colorPalette,
+        roomType: data.roomType,
+        budget: data.budget,
+        priority: data.priority,
+        customRequirements: data.customRequirements,
+        imageUrl: data.imageUrl,
+        isPublic: data.isPublic || false,
+        status: data.status || 'PENDING',
+        generationNumber: data.generationNumber || 1,
+        
+        // Merged preferences fields
+        size: data.size,
+        stylePreference: data.stylePreference,
+        colorScheme: data.colorScheme,
+        materialPreferences: data.materialPreferences,
+        otherRequirements: data.otherRequirements,
+        
+        // Merged ROI calculation fields
+        estimatedCost: data.estimatedCost,
+        roiPercentage: data.roiPercentage,
+        paybackTimeline: data.paybackTimeline,
+        costBreakdown: data.costBreekdown,
+        roiNotes: data.roiNotes,
+      },
+      include: {
+        profile: true,
+        outputs: true,
+      },
+    }) as DesignWithRelations
 
-      // Create associated preferences
-      await tx.preferences.create({
-        data: {
-          designId: design.id,
-          ...data.preferences,
-        },
-      })
-
-      // Return design with all relations
-      return await tx.design.findUnique({
-        where: { id: design.id },
-        include: {
-          profile: true,
-          preferences: true,
-          designOutputs: true,
-          roiCalculation: true,
-          feedback: true,
-        },
-      }) as DesignWithRelations
-    })
+    return design
   } catch (error) {
     handlePrismaError(error)
   }
@@ -296,106 +291,9 @@ export async function getDesignOutputs(designId: string): Promise<DesignOutput[]
   }
 }
 
-// ================================
-// ROI Calculation Operations
-// ================================
 
-/**
- * Create or update ROI calculation for a design
- */
-export async function upsertRoiCalculation(
-  data: CreateRoiCalculationRequest
-): Promise<RoiCalculation> {
-  try {
-    return await prisma.roiCalculation.upsert({
-      where: { designId: data.designId },
-      create: data,
-      update: {
-        estimatedCost: data.estimatedCost,
-        roiPercentage: data.roiPercentage,
-        paybackTimeline: data.paybackTimeline,
-        costBreakdown: data.costBreakdown,
-        notes: data.notes,
-        updatedAt: new Date(),
-      },
-    })
-  } catch (error) {
-    handlePrismaError(error)
-  }
-}
 
-/**
- * Get ROI calculation for a design
- */
-export async function getRoiCalculation(designId: string): Promise<RoiCalculation | null> {
-  try {
-    return await prisma.roiCalculation.findUnique({
-      where: { designId },
-    })
-  } catch (error) {
-    handlePrismaError(error)
-  }
-}
 
-// ================================
-// Feedback Operations
-// ================================
-
-/**
- * Create feedback for a design
- */
-export async function createFeedback(data: CreateFeedbackRequest): Promise<Feedback> {
-  try {
-    return await prisma.feedback.create({
-      data,
-    })
-  } catch (error) {
-    handlePrismaError(error)
-  }
-}
-
-/**
- * Get feedback for a design
- */
-export async function getDesignFeedback(designId: string): Promise<Feedback[]> {
-  try {
-    return await prisma.feedback.findMany({
-      where: { designId },
-      include: {
-        profile: {
-          select: {
-            name: true,
-            avatar: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
-  } catch (error) {
-    handlePrismaError(error)
-  }
-}
-
-/**
- * Get average rating for a design
- */
-export async function getDesignAverageRating(designId: string): Promise<number | null> {
-  try {
-    const result = await prisma.feedback.aggregate({
-      where: { designId },
-      _avg: {
-        rating: true,
-      },
-      _count: {
-        rating: true,
-      },
-    })
-
-    return result._count.rating > 0 ? result._avg.rating : null
-  } catch (error) {
-    handlePrismaError(error)
-  }
-}
 
 // ================================
 // Analytics & Statistics

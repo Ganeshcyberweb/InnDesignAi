@@ -39,7 +39,7 @@ export function FurnitureSuggestionsCarousel({
     limit: 16
   });
 
-  const { addFurnitureItem, isFurnitureItemSelected } = useDesignFormStore();
+  const { addFurnitureItem, isFurnitureItemSelected, getSelectedItemsCount, formData } = useDesignFormStore();
 
   return (
     <div className={cn("w-full max-w-[1000px]", className)}>
@@ -99,15 +99,26 @@ export function FurnitureSuggestionsCarousel({
                   className="w-full"
                 >
                   <CarouselContent className="-ml-1">
-                    {products.map((product) => (
-                      <CarouselItem key={product.id} className="pl-1 basis-[100px]">
-                        <ProductCard
-                          product={product}
-                          isSelected={isFurnitureItemSelected(product.id)}
-                          onSelect={() => addFurnitureItem(product)}
-                        />
-                      </CarouselItem>
-                    ))}
+                    {products.map((product) => {
+                      // Gemini max = 3 images total
+                      // Dynamic limit: if there's an uploaded image, max 2 furniture; otherwise max 3
+                      // Note: We can't directly check uploaded images here, so we use 3 as max
+                      // The API will intelligently handle the actual limit
+                      const selectedCount = getSelectedItemsCount();
+                      const maxFurniture = 3; // Will be limited by API if upload exists
+                      const isLimitReached = selectedCount >= maxFurniture && !isFurnitureItemSelected(product.id);
+
+                      return (
+                        <CarouselItem key={product.id} className="pl-1 basis-[100px]">
+                          <ProductCard
+                            product={product}
+                            isSelected={isFurnitureItemSelected(product.id)}
+                            onSelect={() => addFurnitureItem(product)}
+                            isLimitReached={isLimitReached}
+                          />
+                        </CarouselItem>
+                      );
+                    })}
                   </CarouselContent>
                   <CarouselPrevious className="left-1 h-7 w-7" />
                   <CarouselNext className="right-1 h-7 w-7" />
@@ -130,31 +141,42 @@ interface ProductCardProps {
   product: FurnitureProduct;
   isSelected: boolean;
   onSelect: () => void;
+  isLimitReached?: boolean;
 }
 
-function ProductCard({ product, isSelected, onSelect }: ProductCardProps) {
+function ProductCard({ product, isSelected, onSelect, isLimitReached = false }: ProductCardProps) {
   const [imageError, setImageError] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
 
   const currentPrice = product.discount_price || product.price;
+  const isDisabled = isLimitReached && !isSelected;
 
   return (
     <motion.div
-      className="relative cursor-pointer"
-      whileHover={{ y: -2 }}
+      className={cn(
+        "relative",
+        isDisabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+      )}
+      whileHover={!isDisabled ? { y: -2 } : {}}
       transition={{ duration: 0.2 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      onClick={onSelect}
+      onClick={isDisabled ? undefined : onSelect}
     >
       {/* Square Container */}
-      <div className="relative w-[90px] h-[90px] rounded-lg overflow-hidden bg-stone-50 border border-stone-200 hover:shadow-md transition-all duration-200">
+      <div className={cn(
+        "relative w-[90px] h-[90px] rounded-lg overflow-hidden bg-stone-50 border border-stone-200 transition-all duration-200",
+        !isDisabled && "hover:shadow-md"
+      )}>
         {/* Product Image */}
         {!imageError ? (
           <img
             src={product.image_path}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            className={cn(
+              "w-full h-full object-cover transition-transform duration-300",
+              !isDisabled && "hover:scale-105"
+            )}
             onError={() => setImageError(true)}
             loading="lazy"
           />
@@ -168,7 +190,7 @@ function ProductCard({ product, isSelected, onSelect }: ProductCardProps) {
         <motion.div
           className="absolute inset-0 bg-black/40 flex items-center justify-center"
           initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
+          animate={{ opacity: isHovered && !isDisabled ? 1 : 0 }}
           transition={{ duration: 0.2 }}
         >
           <Button
@@ -179,7 +201,7 @@ function ProductCard({ product, isSelected, onSelect }: ProductCardProps) {
                 ? "bg-green-600 hover:bg-green-700 text-white"
                 : "bg-white hover:bg-stone-100 text-stone-900"
             )}
-            disabled={isSelected}
+            disabled={isSelected || isDisabled}
           >
             {isSelected ? (
               <Check className="h-4 w-4" />
@@ -193,6 +215,15 @@ function ProductCard({ product, isSelected, onSelect }: ProductCardProps) {
         {isSelected && (
           <div className="absolute top-1 right-1">
             <div className="h-3 w-3 bg-green-500 rounded-full border border-white"></div>
+          </div>
+        )}
+
+        {/* Limit Reached Overlay */}
+        {isLimitReached && (
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+            <span className="text-[10px] font-medium text-white bg-stone-900/80 px-1.5 py-0.5 rounded">
+              Max 3
+            </span>
           </div>
         )}
       </div>

@@ -21,14 +21,7 @@ export const designStatusSchema = z.enum([
   'ARCHIVED',
 ])
 
-export const feedbackTypeSchema = z.enum([
-  'GENERAL',
-  'QUALITY',
-  'ACCURACY',
-  'USABILITY',
-  'FEATURE_REQUEST',
-  'BUG_REPORT',
-])
+
 
 // ================================
 // Profile Schemas
@@ -60,10 +53,31 @@ export const preferencesSchema = z.object({
 
 export const createDesignSchema = z.object({
   userId: uuidSchema,
-  inputPrompt: z.string().min(10, 'Prompt must be at least 10 characters').max(1000, 'Prompt too long'),
-  uploadedImageUrl: z.string().url('Invalid image URL').optional(),
-  aiModelUsed: z.string().min(1, 'AI model is required').max(50, 'AI model name too long'),
-  preferences: preferencesSchema,
+  title: z.string().max(200, 'Title too long').optional(),
+  description: z.string().max(1000, 'Description too long').optional(),
+  style: z.string().max(100, 'Style too long').optional(),
+  mood: z.string().max(100, 'Mood too long').optional(),
+  colorPalette: z.any().optional(), // JSON field
+  roomType: z.string().max(50, 'Room type too long').optional(),
+  budget: z.number().min(0, 'Budget must be positive').optional(),
+  priority: z.string().max(50, 'Priority too long').optional(),
+  customRequirements: z.string().max(500, 'Requirements too long').optional(),
+  imageUrl: z.string().url('Invalid image URL').optional(),
+  isPublic: z.boolean().default(false),
+  
+  // Merged preferences fields
+  size: z.string().max(50, 'Size too long').optional(),
+  stylePreference: z.string().max(50, 'Style preference too long').optional(),
+  colorScheme: z.string().max(100, 'Color scheme too long').optional(),
+  materialPreferences: z.string().max(200, 'Material preferences too long').optional(),
+  otherRequirements: z.string().max(500, 'Other requirements too long').optional(),
+  
+  // Merged ROI calculation fields
+  estimatedCost: z.number().min(0, 'Estimated cost must be positive').optional(),
+  roiPercentage: z.number().min(-100, 'ROI percentage too low').max(1000, 'ROI percentage too high').optional(),
+  paybackTimeline: z.string().max(100, 'Payback timeline too long').optional(),
+  costBreakdown: z.record(z.any()).optional(),
+  roiNotes: z.string().max(1000, 'ROI notes too long').optional(),
 })
 
 export const updateDesignStatusSchema = z.object({
@@ -89,32 +103,9 @@ export const createDesignOutputSchema = z.object({
   }).optional(),
 })
 
-// ================================
-// ROI Calculation Schemas
-// ================================
 
-export const createRoiCalculationSchema = z.object({
-  designId: uuidSchema,
-  estimatedCost: z.number().min(0, 'Estimated cost must be positive'),
-  roiPercentage: z.number().min(-100, 'ROI percentage too low').max(1000, 'ROI percentage too high'),
-  paybackTimeline: z.string().max(100, 'Payback timeline too long').optional(),
-  costBreakdown: z.record(z.any()).optional(),
-  notes: z.string().max(1000, 'Notes too long').optional(),
-})
 
-// ================================
-// Feedback Schemas
-// ================================
 
-export const createFeedbackSchema = z.object({
-  designId: uuidSchema,
-  userId: uuidSchema,
-  rating: z.number().int('Rating must be an integer').min(1, 'Rating must be at least 1').max(5, 'Rating must be at most 5'),
-  comments: z.string().max(1000, 'Comments too long').optional(),
-  type: feedbackTypeSchema.default('GENERAL'),
-  helpful: z.boolean().optional(),
-  metadata: z.record(z.any()).optional(),
-})
 
 // ================================
 // Query Schemas
@@ -233,8 +224,6 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>
 export type PreferencesInput = z.infer<typeof preferencesSchema>
 export type CreateDesignInput = z.infer<typeof createDesignSchema>
 export type CreateDesignOutputInput = z.infer<typeof createDesignOutputSchema>
-export type CreateRoiCalculationInput = z.infer<typeof createRoiCalculationSchema>
-export type CreateFeedbackInput = z.infer<typeof createFeedbackSchema>
 export type GetUserDesignsInput = z.infer<typeof getUserDesignsSchema>
 export type SearchDesignsInput = z.infer<typeof searchDesignsSchema>
 export type ApiSuccessResponse<T = any> = {

@@ -12,10 +12,7 @@ import {
 
 import {
   RiLogoutCircleLine,
-  RiTimer2Line,
-  RiUserLine,
   RiFindReplaceLine,
-  RiPulseLine,
 } from "@remixicon/react";
 
 import { useAuth } from "@/lib/auth/context";
@@ -71,39 +68,6 @@ export default function UserDropdown() {
             {userEmail}
           </span>
         </DropdownMenuLabel>
-        <DropdownMenuItem
-          className="gap-3 px-1 cursor-pointer"
-          onClick={() => handleNavigation('/dashboard')}
-        >
-          <RiTimer2Line
-            size={20}
-            className="text-muted-foreground/70"
-            aria-hidden="true"
-          />
-          <span>Dashboard</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="gap-3 px-1 cursor-pointer"
-          onClick={() => handleNavigation('/profile')}
-        >
-          <RiUserLine
-            size={20}
-            className="text-muted-foreground/70"
-            aria-hidden="true"
-          />
-          <span>Profile</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="gap-3 px-1 cursor-pointer"
-          onClick={() => handleNavigation('/changelog')}
-        >
-          <RiPulseLine
-            size={20}
-            className="text-muted-foreground/70"
-            aria-hidden="true"
-          />
-          <span>Changelog</span>
-        </DropdownMenuItem>
         <DropdownMenuItem
           className="gap-3 px-1 cursor-pointer"
           onClick={() => handleNavigation('/dashboard/history')}

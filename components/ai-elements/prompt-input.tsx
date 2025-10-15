@@ -49,7 +49,7 @@ import {
 } from "react";
 
 type AttachmentsContext = {
-  files: (FileUIPart & { id: string })[];
+  files: (FileUIPart & { id: string; file?: File })[];
   add: (files: File[] | FileList) => void;
   remove: (id: string) => void;
   clear: () => void;
@@ -72,7 +72,7 @@ export const usePromptInputAttachments = () => {
 };
 
 export type PromptInputAttachmentProps = HTMLAttributes<HTMLDivElement> & {
-  data: FileUIPart & { id: string };
+  data: FileUIPart & { id: string; file?: File };
   className?: string;
 };
 
@@ -120,7 +120,7 @@ export type PromptInputAttachmentsProps = Omit<
   HTMLAttributes<HTMLDivElement>,
   "children"
 > & {
-  children: (attachment: FileUIPart & { id: string }) => React.ReactNode;
+  children: (attachment: FileUIPart & { id: string; file?: File }) => React.ReactNode;
 };
 
 export function PromptInputAttachments({
@@ -294,7 +294,7 @@ export const PromptInput = ({
             message: "Too many files. Some were not added.",
           });
         }
-        const next: (FileUIPart & { id: string })[] = [];
+        const next: (FileUIPart & { id: string; file: File })[] = [];
         for (const file of capped) {
           next.push({
             id: nanoid(),
@@ -302,6 +302,7 @@ export const PromptInput = ({
             url: URL.createObjectURL(file),
             mediaType: file.type,
             filename: file.name,
+            file: file, // Store the File object
           });
         }
         return prev.concat(next);

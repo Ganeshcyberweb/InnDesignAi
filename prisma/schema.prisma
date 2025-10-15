@@ -10,56 +10,58 @@ datasource db {
 }
 
 model Profile {
-  id        String     @id @default(uuid()) @db.Uuid
-  userId    String     @unique @map("user_id") @db.Uuid
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
   name      String?
   company   String?
-  role      UserRole   @default(CLIENT)
-  avatar    String?    @map("avatar_url")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
+  role      UserRole @default(CLIENT)
+  avatar    String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   designs   Design[]
-  feedback  Feedback[]
 
   @@map("profiles")
 }
 
 model Design {
-  id               String          @id @default(uuid()) @db.Uuid
-  userId           String          @map("user_id") @db.Uuid
-  inputPrompt      String          @map("input_prompt")
-  uploadedImageUrl String?         @map("uploaded_image_url")
-  aiModelUsed      String          @map("ai_model_used")
-  status           DesignStatus    @default(PENDING)
-  createdAt        DateTime        @default(now()) @map("created_at")
-  updatedAt        DateTime        @updatedAt @map("updated_at")
-  designOutputs    DesignOutput[]
-  profile          Profile         @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  feedback         Feedback[]
-  preferences      Preferences?    @relation("DesignPreferences")
-  roiCalculation   RoiCalculation? @relation("DesignROI")
+  id                  String         @id @default(uuid()) @db.Uuid
+  userId              String         @map("user_id") @db.Uuid
+  description         String?        @map("input_prompt")
+  imageUrl            String?        @map("uploaded_image_url")
+  customRequirements  String?        @map("ai_model_used")
+  status              DesignStatus   @default(COMPLETED)
+  createdAt           DateTime       @default(now()) @map("created_at")
+  updatedAt           DateTime       @updatedAt @map("updated_at")
+  generationNumber    Int            @default(1) @map("generation_number")
+  parentId            String?        @map("parent_design_id") @db.Uuid
+  budget              Decimal?
+  colorPalette        Json?
+  colorScheme         String?        @map("color_scheme")
+  isPublic            Boolean        @default(false)
+  materialPreferences String?        @map("material_preferences")
+  mood                String?
+  otherRequirements   String?        @map("other_requirements")
+  priority            String?
+  roomType            String?
+  size                String?
+  style               String?
+  stylePreference     String?        @map("style_preference")
+  title               String?
+  costBreakdown       Json?          @map("cost_breakdown")
+  estimatedCost       Float?         @map("estimated_cost")
+  paybackTimeline     String?        @map("payback_timeline")
+  roiNotes            String?        @map("roi_notes")
+  roiPercentage       Float?         @map("roi_percentage")
+  outputs             DesignOutput[]
+  parentDesign        Design?        @relation("DesignRegeneration", fields: [parentId], references: [id])
+  childDesigns        Design[]       @relation("DesignRegeneration")
+  profile             Profile        @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([status])
   @@index([createdAt])
+  @@index([parentId])
+  @@index([status])
+  @@index([userId])
   @@map("designs")
-}
-
-model Preferences {
-  id                  String   @id @default(uuid()) @db.Uuid
-  designId            String   @unique @map("design_id") @db.Uuid
-  roomType            String   @map("room_type")
-  size                String
-  stylePreference     String   @map("style_preference")
-  budget              Float?
-  colorScheme         String?  @map("color_scheme")
-  materialPreferences String?  @map("material_preferences")
-  otherRequirements   String?  @map("other_requirements")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
-  design              Design   @relation("DesignPreferences", fields: [designId], references: [id], onDelete: Cascade)
-
-  @@map("preferences")
 }
 
 model DesignOutput {
@@ -75,41 +77,6 @@ model DesignOutput {
   @@map("design_outputs")
 }
 
-model RoiCalculation {
-  id              String   @id @default(uuid()) @db.Uuid
-  designId        String   @unique @map("design_id") @db.Uuid
-  estimatedCost   Float    @map("estimated_cost")
-  roiPercentage   Float    @map("roi_percentage")
-  paybackTimeline String?  @map("payback_timeline")
-  costBreakdown   Json?    @map("cost_breakdown")
-  notes           String?
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  design          Design   @relation("DesignROI", fields: [designId], references: [id], onDelete: Cascade)
-
-  @@map("roi_calculations")
-}
-
-model Feedback {
-  id        String       @id @default(uuid()) @db.Uuid
-  designId  String       @map("design_id") @db.Uuid
-  userId    String       @map("user_id") @db.Uuid
-  rating    Int          @db.SmallInt
-  comments  String?
-  type      FeedbackType @default(GENERAL)
-  helpful   Boolean?
-  metadata  Json?
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @updatedAt @map("updated_at")
-  design    Design       @relation(fields: [designId], references: [id], onDelete: Cascade)
-  profile   Profile      @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
-  @@index([designId])
-  @@index([userId])
-  @@index([rating])
-  @@map("feedback")
-}
-
 enum UserRole {
   CLIENT
   DESIGNER
@@ -122,13 +89,4 @@ enum DesignStatus {
   COMPLETED
   FAILED
   ARCHIVED
-}
-
-enum FeedbackType {
-  GENERAL
-  QUALITY
-  ACCURACY
-  USABILITY
-  FEATURE_REQUEST
-  BUG_REPORT
 }
