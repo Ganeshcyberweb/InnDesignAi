@@ -185,10 +185,7 @@ export async function getDesignById(designId: string): Promise<DesignWithRelatio
       where: { id: designId },
       include: {
         profile: true,
-        preferences: true,
-        designOutputs: true,
-        roiCalculation: true,
-        feedback: true,
+        outputs: true,
       },
     }) as DesignWithRelations | null
   } catch (error) {
@@ -235,10 +232,7 @@ export async function getUserDesigns(
         where,
         include: {
           profile: true,
-          preferences: true,
-          designOutputs: true,
-          roiCalculation: true,
-          feedback: true,
+          outputs: true,
         },
         orderBy: { [orderBy]: orderDirection },
         skip,
@@ -270,7 +264,12 @@ export async function createDesignOutput(
 ): Promise<DesignOutput> {
   try {
     return await prisma.designOutput.create({
-      data,
+      data: {
+        designId: data.designId,
+        outputImageUrl: data.outputImageUrl,
+        variationName: data.variationName,
+        generationParameters: data.generationParameters as any,
+      },
     })
   } catch (error) {
     handlePrismaError(error)
@@ -314,29 +313,20 @@ export async function getUserStats(userId: string): Promise<{
       totalDesigns,
       completedDesigns,
       pendingDesigns,
-      averageRatingResult,
-      totalFeedback,
     ] = await Promise.all([
       prisma.design.count({ where: { userId } }),
       prisma.design.count({ where: { userId, status: 'COMPLETED' } }),
       prisma.design.count({
         where: { userId, status: { in: ['PENDING', 'PROCESSING'] } },
       }),
-      prisma.feedback.aggregate({
-        where: { design: { userId } },
-        _avg: { rating: true },
-        _count: { rating: true },
-      }),
-      prisma.feedback.count({ where: { design: { userId } } }),
     ])
 
     return {
       totalDesigns,
       completedDesigns,
       pendingDesigns,
-      averageRating:
-        averageRatingResult._count.rating > 0 ? averageRatingResult._avg.rating : null,
-      totalFeedback,
+      averageRating: null,
+      totalFeedback: 0,
     }
   } catch (error) {
     handlePrismaError(error)
@@ -351,10 +341,7 @@ export async function getRecentDesigns(limit = 10): Promise<DesignWithRelations[
     return await prisma.design.findMany({
       include: {
         profile: true,
-        preferences: true,
-        designOutputs: true,
-        roiCalculation: true,
-        feedback: true,
+        outputs: true,
       },
       orderBy: { createdAt: 'desc' },
       take: limit,
@@ -384,10 +371,7 @@ export async function deleteDesign(designId: string, userId: string): Promise<vo
 
     // Delete all related data (cascading deletes should handle this, but being explicit)
     await withTransaction(async (tx) => {
-      await tx.feedback.deleteMany({ where: { designId } })
-      await tx.roiCalculation.deleteMany({ where: { designId } })
       await tx.designOutput.deleteMany({ where: { designId } })
-      await tx.preferences.deleteMany({ where: { designId } })
       await tx.design.delete({ where: { id: designId } })
     })
   } catch (error) {
@@ -428,27 +412,17 @@ export async function searchDesigns(
       AND: [
         {
           OR: [
-            { inputPrompt: { contains: query, mode: 'insensitive' as const } },
-            {
-              preferences: {
-                OR: [
-                  { roomType: { contains: query, mode: 'insensitive' as const } },
-                  { stylePreference: { contains: query, mode: 'insensitive' as const } },
-                  { colorScheme: { contains: query, mode: 'insensitive' as const } },
-                  { materialPreferences: { contains: query, mode: 'insensitive' as const } },
-                ],
-              },
-            },
+            { description: { contains: query, mode: 'insensitive' as const } },
+            { roomType: { contains: query, mode: 'insensitive' as const } },
+            { stylePreference: { contains: query, mode: 'insensitive' as const } },
+            { colorScheme: { contains: query, mode: 'insensitive' as const } },
+            { materialPreferences: { contains: query, mode: 'insensitive' as const } },
           ],
         },
         ...(filters.userId ? [{ userId: filters.userId }] : []),
         ...(filters.status ? [{ status: filters.status }] : []),
-        ...(filters.roomType
-          ? [{ preferences: { roomType: filters.roomType } }]
-          : []),
-        ...(filters.stylePreference
-          ? [{ preferences: { stylePreference: filters.stylePreference } }]
-          : []),
+        ...(filters.roomType ? [{ roomType: filters.roomType }] : []),
+        ...(filters.stylePreference ? [{ stylePreference: filters.stylePreference }] : []),
       ],
     }
 
@@ -457,10 +431,7 @@ export async function searchDesigns(
         where,
         include: {
           profile: true,
-          preferences: true,
-          designOutputs: true,
-          roiCalculation: true,
-          feedback: true,
+          outputs: true,
         },
         orderBy: { createdAt: 'desc' },
         skip,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -24,7 +24,7 @@ interface ThemeDesign {
   label: string
 }
 
-export default function Page() {
+function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { formData, updateFormData } = useDesignFormStore();
@@ -425,5 +425,17 @@ export default function Page() {
         </div>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
