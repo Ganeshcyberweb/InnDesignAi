@@ -128,12 +128,12 @@ export const HeroHeader = () => {
                       transition={{ duration: 0.4, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
                     >
                       <Button asChild variant="ghost" size="sm">
-                        <Link href="#" className="text-foreground hover:text-primary">
+                        <Link href="/login" className="text-foreground hover:text-primary">
                           <span>Login</span>
                         </Link>
                       </Button>
                       <Button asChild size="sm">
-                        <Link href="#" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        <Link href="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90">
                           <span>Sign Up</span>
                         </Link>
                       </Button>
@@ -150,12 +150,12 @@ export const HeroHeader = () => {
                 transition={{ duration: 0.6, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
                 <Button asChild variant="ghost" size="sm">
-                  <Link href="#" className="text-foreground hover:text-primary">
+                  <Link href="/login" className="text-foreground hover:text-primary">
                     <span>Login</span>
                   </Link>
                 </Button>
                 <Button asChild size="sm">
-                  <Link href="#" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Link href="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90">
                     <span>Sign Up</span>
                   </Link>
                 </Button>

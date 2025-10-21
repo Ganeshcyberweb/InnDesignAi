@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Eye, EyeOff, Loader2, Building2, Palette } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Building2, Palette, Mail, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
@@ -87,6 +87,8 @@ const roleOptions = [
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [verificationSent, setVerificationSent] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
   const { signUp, loading } = useAuth()
   const shouldReduceMotion = useReducedMotion()
 
@@ -113,6 +115,9 @@ export function SignupForm() {
     )
     if (error) {
       form.setError('root', { message: error.message })
+    } else {
+      setUserEmail(data.email)
+      setVerificationSent(true)
     }
   }
 
@@ -136,6 +141,96 @@ export function SignupForm() {
         variants: buttonVariants,
         whileTap: 'tap',
       }
+
+  if (verificationSent) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="flex flex-col items-center justify-center text-center space-y-6 py-8"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 15 }}
+        >
+          <div className="relative">
+            <div className="absolute inset-0 bg-green-500/20 dark:bg-green-400/20 blur-2xl rounded-full" />
+            <CheckCircle2 className="h-20 w-20 text-green-600 dark:text-green-400 relative" />
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="space-y-3 max-w-md"
+        >
+          <h2 className="text-3xl font-bold text-foreground">
+            Verification Email Sent!
+          </h2>
+          <div className="space-y-2">
+            <p className="text-lg text-muted-foreground">
+              We've sent a verification link to
+            </p>
+            <p className="text-lg font-semibold text-foreground break-all">
+              {userEmail}
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-2 max-w-md"
+        >
+          <div className="flex items-start gap-3">
+            <Mail className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-left space-y-1">
+              <p className="font-medium text-blue-900 dark:text-blue-100">
+                Next steps:
+              </p>
+              <ul className="text-blue-800 dark:text-blue-200 space-y-1 list-disc list-inside">
+                <li>Check your email inbox</li>
+                <li>Click the verification link</li>
+                <li>Return here to sign in</li>
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="text-sm text-muted-foreground"
+        >
+          Didn't receive the email?{' '}
+          <button
+            onClick={() => setVerificationSent(false)}
+            className="text-primary hover:underline font-medium"
+          >
+            Try signing up again
+          </button>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <Link
+            href="/login"
+            className="text-sm text-primary hover:underline font-medium"
+          >
+            Go to login page
+          </Link>
+        </motion.div>
+      </motion.div>
+    )
+  }
 
   return (
     <Form {...form}>
