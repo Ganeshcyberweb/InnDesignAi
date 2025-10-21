@@ -29,8 +29,6 @@ const PUBLIC_ROUTES = [
   '/terms',
 ]
 
-// Profile setup route - requires authentication but no role check
-const PROFILE_SETUP_ROUTE = '/profile/setup'
 
 // API routes that don't require authentication
 const PUBLIC_API_ROUTES = [
@@ -47,10 +45,6 @@ const AUTH_ROUTES = [
   '/auth/callback',
 ]
 
-// API routes that require authentication but no role check
-const SETUP_API_ROUTES = [
-  '/api/profile/setup',
-]
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -103,20 +97,7 @@ export async function middleware(request: NextRequest) {
 
   // Handle API routes
   if (pathname.startsWith('/api/')) {
-    // Setup API routes require authentication but no role check
-    if (SETUP_API_ROUTES.includes(pathname)) {
-      if (!user) {
-        return NextResponse.json(
-          { success: false, error: 'Unauthorized - Please sign in' },
-          { status: 401 }
-        )
-      }
-      // Add user ID to request headers and allow access
-      response.headers.set('x-user-id', user.id)
-      return response
-    }
-
-    // All other API routes require authentication
+    // All API routes require authentication
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized - Please sign in' },
@@ -125,37 +106,6 @@ export async function middleware(request: NextRequest) {
     }
 
     // Add user ID to request headers for API routes
-    response.headers.set('x-user-id', user.id)
-    return response
-  }
-
-  // Handle profile setup route - requires authentication but no role check
-  if (pathname === PROFILE_SETUP_ROUTE) {
-    if (!user) {
-      // Redirect unauthenticated users to login
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('redirectTo', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    // Check if user already has a complete profile
-    try {
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', user.id)
-        .single()
-
-      if (!error && profile) {
-        // User already has a profile, redirect to dashboard
-        return NextResponse.redirect(new URL('/dashboard', request.url))
-      }
-    } catch (error) {
-      console.error('Error checking profile during setup route access:', error)
-      // Continue to allow access if there's an error checking profile
-    }
-
-    // Allow authenticated users without profiles to access profile setup
     response.headers.set('x-user-id', user.id)
     return response
   }
@@ -180,16 +130,10 @@ export async function middleware(request: NextRequest) {
           .single()
 
         if (error || !profile) {
-          // For OAuth users, allow access and let the app handle profile creation
-          // This prevents redirect loops after successful OAuth
-          if (user.app_metadata?.provider && user.app_metadata.provider !== 'email') {
-            // OAuth user - allow access, profile will be created by trigger or app logic
-            response.headers.set('x-user-id', user.id)
-            return response
-          } else {
-            // Email/password user without profile - redirect to profile setup
-            return NextResponse.redirect(new URL('/profile/setup', request.url))
-          }
+          // Allow access for all authenticated users regardless of profile status
+          // Profile will be created by trigger or app logic
+          response.headers.set('x-user-id', user.id)
+          return response
         }
 
         if (!requiredRoles.includes(profile.role as any)) {
