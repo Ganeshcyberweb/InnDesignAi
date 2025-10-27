@@ -237,10 +237,15 @@ export async function POST(request: NextRequest) {
         console.log(`   [${outputIndex}/${totalImages}] Creating: ${variationName}`);
         const outputCreateStart = Date.now();
 
-        // Try to upload to R2 if configured
-        let finalImageUrl = imageData; // Default to base64 if R2 fails
+        // Check if imageData is already an R2 URL (starts with https://)
+        let finalImageUrl = imageData;
+        const isAlreadyR2Url = imageData.startsWith('https://');
 
-        if (useR2) {
+        if (isAlreadyR2Url) {
+          console.log(`      ✅ Already uploaded to R2, using existing URL`);
+          finalImageUrl = imageData;
+        } else if (useR2) {
+          // Only upload if it's base64 data and R2 is configured
           const uploadResult = await uploadImageToR2({
             base64Data: imageData,
             designId: design.id,

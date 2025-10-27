@@ -228,11 +228,42 @@ function DashboardContent() {
             aiModel: 'gemini-2.5-flash-image'
           });
 
+          // Upload all images to R2 first to avoid large payload
+          console.log('☁️ Uploading images to R2 storage...');
+          const themesWithR2Urls = await Promise.all(
+            result.themes.map(async (theme: ThemeDesign) => {
+              const uploadedImages = await Promise.all(
+                theme.images.map(async (base64Image: string) => {
+                  try {
+                    const uploadResponse = await fetch('/api/designs/upload-image', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ base64Data: base64Image, viewType: 'variation' }),
+                    });
+                    const uploadResult = await uploadResponse.json();
+
+                    if (uploadResult.success && uploadResult.url) {
+                      console.log(`✅ Uploaded image to R2: ${uploadResult.key}`);
+                      return uploadResult.url;
+                    } else {
+                      console.warn('⚠️ R2 upload failed, using base64 fallback');
+                      return base64Image;
+                    }
+                  } catch (err) {
+                    console.error('❌ Error uploading to R2:', err);
+                    return base64Image; // Fallback to base64
+                  }
+                })
+              );
+              return { ...theme, images: uploadedImages };
+            })
+          );
+
           const savePayload = {
             inputPrompt: message.text,
             uploadedImageUrl: imageFiles[0]?.url || null,
             aiModelUsed: 'gemini-2.5-flash-image',
-            themes: result.themes,
+            themes: themesWithR2Urls,
             formData: formData,
             parentDesignId: parentDesignId, // Include for regeneration chain
             roiAnalysis: result.roiAnalysis || null, // Include ROI analysis for storage
