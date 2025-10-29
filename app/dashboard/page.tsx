@@ -15,6 +15,7 @@ import { AnimatedChainOfThought } from "@/components/animated-chain-of-thought";
 import { FurnitureSuggestionsCarousel } from "@/components/furniture-suggestions-carousel";
 import { useDesignFormStore } from "@/stores/design-form-store";
 import { useDesignHistoryStore } from "@/stores/design-history-store";
+import { useBatchImageUpload } from "@/hooks/use-batch-image-upload";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { History, RefreshCw, X } from "lucide-react";
 
@@ -29,6 +30,7 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const { formData, updateFormData } = useDesignFormStore();
   const { addNewDesign, invalidateCache } = useDesignHistoryStore();
+  const { uploadImages, progress: uploadProgress, isUploading, overallProgress } = useBatchImageUpload();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedDesigns, setGeneratedDesigns] = useState<ThemeDesign[] | null>(null);
   const [roiAnalysis, setRoiAnalysis] = useState<string | null>(null);
@@ -228,36 +230,63 @@ function DashboardContent() {
             aiModel: 'gemini-2.5-flash-image'
           });
 
-          // Upload all images to R2 first to avoid large payload
-          console.log('☁️ Uploading images to R2 storage...');
-          const themesWithR2Urls = await Promise.all(
-            result.themes.map(async (theme: ThemeDesign) => {
-              const uploadedImages = await Promise.all(
-                theme.images.map(async (base64Image: string) => {
-                  try {
-                    const uploadResponse = await fetch('/api/designs/upload-image', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ base64Data: base64Image, viewType: 'variation' }),
-                    });
-                    const uploadResult = await uploadResponse.json();
+          // Collect all base64 images from all themes
+          console.log('\n☁️ === UPLOADING IMAGES TO R2 ===');
+          const allBase64Images: string[] = [];
+          const imageIndexMap: Array<{ themeIndex: number; imageIndex: number }> = [];
 
-                    if (uploadResult.success && uploadResult.url) {
-                      console.log(`✅ Uploaded image to R2: ${uploadResult.key}`);
-                      return uploadResult.url;
-                    } else {
-                      console.warn('⚠️ R2 upload failed, using base64 fallback');
-                      return base64Image;
-                    }
-                  } catch (err) {
-                    console.error('❌ Error uploading to R2:', err);
-                    return base64Image; // Fallback to base64
-                  }
-                })
+          result.themes.forEach((theme: ThemeDesign, themeIndex: number) => {
+            theme.images.forEach((image: string, imageIndex: number) => {
+              allBase64Images.push(image);
+              imageIndexMap.push({ themeIndex, imageIndex });
+            });
+          });
+
+          console.log(`📤 Total images to upload: ${allBase64Images.length}`);
+          console.log(`📦 Distributed across ${result.themes.length} themes`);
+
+          // Upload all images in batch with progress tracking
+          const uploadResult = await uploadImages(allBase64Images, 'variation');
+
+          console.log('\n📊 Upload Results:', {
+            success: uploadResult.success,
+            totalUploaded: uploadResult.uploadedUrls.filter(url => url !== null).length,
+            totalFailed: uploadResult.failedIndices.length,
+          });
+
+          if (!uploadResult.success) {
+            const failedCount = uploadResult.failedIndices.length;
+            console.error(`❌ ${failedCount} image(s) failed to upload:`, uploadResult.failedIndices);
+            
+            // Show user-friendly error
+            throw new Error(
+              `Failed to upload ${failedCount} image(s) to storage. ` +
+              `Please check your connection and try again.`
+            );
+          }
+
+          // Map uploaded URLs back to themes structure
+          console.log('\n🔄 Mapping uploaded URLs back to themes...');
+          const themesWithR2Urls = result.themes.map((theme: ThemeDesign, themeIndex: number) => {
+            const themeImages = theme.images.map((_, imageIndex: number) => {
+              // Find the corresponding uploaded URL
+              const globalIndex = imageIndexMap.findIndex(
+                (map) => map.themeIndex === themeIndex && map.imageIndex === imageIndex
               );
-              return { ...theme, images: uploadedImages };
-            })
-          );
+              const uploadedUrl = uploadResult.uploadedUrls[globalIndex];
+
+              if (!uploadedUrl) {
+                console.error(`❌ Missing URL for theme ${themeIndex}, image ${imageIndex}`);
+                throw new Error(`Failed to get uploaded URL for image ${globalIndex + 1}`);
+              }
+
+              return uploadedUrl;
+            });
+
+            return { ...theme, images: themeImages };
+          });
+
+          console.log('✅ All images mapped successfully');
 
           const savePayload = {
             inputPrompt: message.text,
@@ -269,7 +298,8 @@ function DashboardContent() {
             roiAnalysis: result.roiAnalysis || null, // Include ROI analysis for storage
           };
 
-          console.log('🌐 Sending save request to /api/designs/save...');
+          console.log('\n🌐 Sending save request to /api/designs/save...');
+          console.log('📊 Payload size:', JSON.stringify(savePayload).length, 'bytes');
           const saveStartTime = Date.now();
 
           const saveResponse = await fetch('/api/designs/save', {
@@ -382,6 +412,40 @@ function DashboardContent() {
 
             {/* AI Generation Results Display */}
             <div className="mb-8">
+              {/* Upload Progress Indicator */}
+              {isUploading && (
+                <div className="border-2 border-blue-300 bg-blue-50 rounded-lg p-6 mb-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex-shrink-0">
+                      <svg className="w-6 h-6 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-blue-900 mb-1">
+                        Uploading Images to Cloud Storage
+                      </h3>
+                      <p className="text-sm text-blue-700">
+                        {overallProgress}% complete - Please wait while we upload your designs
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                      style={{ width: `${overallProgress}%` }}
+                    />
+                  </div>
+                  {uploadProgress.length > 0 && (
+                    <div className="mt-3 text-xs text-blue-600">
+                      <p>
+                        {uploadProgress.filter(p => p.status === 'success').length} / {uploadProgress.length} images uploaded
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {(isGenerating || generatedDesigns) && (
                 <AnimatedChainOfThought
                   className="w-full"

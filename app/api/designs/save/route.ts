@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/database';
-import { uploadImageToR2, isR2Configured } from '@/lib/r2-storage';
 
 // Helper function to parse budget range string to numeric value
 function parseBudget(budgetRange: string): number | null {
@@ -217,15 +216,10 @@ export async function POST(request: NextRequest) {
 
     // Create design outputs for each theme and view
     console.log('\n📸 Creating DesignOutput records...');
+    console.log('ℹ️ All images should already be uploaded to R2 - expecting URLs only');
+    
     const designOutputs = [];
     let outputIndex = 0;
-    const useR2 = isR2Configured();
-
-    if (useR2) {
-      console.log('   ☁️ R2 storage is configured - images will be uploaded to R2');
-    } else {
-      console.log('   ⚠️ R2 storage not configured - images will be stored as base64 in database');
-    }
 
     for (const theme of themes) {
       for (let i = 0; i < theme.images.length; i++) {
@@ -234,38 +228,44 @@ export async function POST(request: NextRequest) {
         const viewName = i === 0 ? 'Main View' : 'Detail View';
         const variationName = `${theme.label} - ${viewName}`;
 
-        console.log(`   [${outputIndex}/${totalImages}] Creating: ${variationName}`);
+        console.log(`\n   📦 [${outputIndex}/${totalImages}] Processing: ${variationName}`);
+        console.log(`   📦 Theme: ${theme.theme}, Label: ${theme.label}`);
         const outputCreateStart = Date.now();
 
-        // Check if imageData is already an R2 URL (starts with https://)
-        let finalImageUrl = imageData;
-        const isAlreadyR2Url = imageData.startsWith('https://');
+        // Validate that we have a URL (not base64)
+        const isR2Url = imageData.startsWith('https://');
+        const isBase64Data = imageData.startsWith('data:image/');
 
-        if (isAlreadyR2Url) {
-          console.log(`      ✅ Already uploaded to R2, using existing URL`);
-          finalImageUrl = imageData;
-        } else if (useR2) {
-          // Only upload if it's base64 data and R2 is configured
-          const uploadResult = await uploadImageToR2({
-            base64Data: imageData,
-            designId: design.id,
-            outputId: `output-${outputIndex}`,
-            viewType: i === 0 ? 'main' : 'detail',
-          });
-
-          if (uploadResult.success && uploadResult.url) {
-            finalImageUrl = uploadResult.url;
-            console.log(`      ✅ Uploaded to R2: ${uploadResult.key}`);
-          } else {
-            console.warn(`      ⚠️ R2 upload failed, falling back to base64 storage: ${uploadResult.error}`);
-            // Fall back to storing base64 in database
-          }
+        if (!isR2Url && !isBase64Data) {
+          console.error(`   ❌ Invalid image data format for output ${outputIndex}`);
+          return NextResponse.json(
+            { error: `Invalid image data format for output ${outputIndex}. Expected R2 URL or base64.` },
+            { status: 400 }
+          );
         }
+
+        if (isBase64Data) {
+          console.error(`   ❌ Base64 data detected for output ${outputIndex}`);
+          console.error(`   ❌ Images should be uploaded to R2 before calling save API`);
+          return NextResponse.json(
+            { 
+              error: `Base64 image detected at output ${outputIndex}. Please upload images to R2 first using /api/designs/upload-image endpoint.`,
+              details: 'This prevents payload size issues. Upload images individually first, then send R2 URLs.'
+            },
+            { status: 400 }
+          );
+        }
+
+        console.log(`   ✅ Valid R2 URL detected`);
+        console.log(`   ✅ URL: ${imageData}`);
+
+        console.log(`   💾 Creating DesignOutput in database...`);
+        const dbCreateStart = Date.now();
 
         const output = await prisma.designOutput.create({
           data: {
             designId: design.id,
-            outputImageUrl: finalImageUrl, // R2 URL or base64 data URL (fallback)
+            outputImageUrl: imageData, // R2 URL only
             variationName,
             generationParameters: {
               theme: theme.theme,
@@ -276,8 +276,12 @@ export async function POST(request: NextRequest) {
           },
         });
 
+        const dbCreateDuration = Date.now() - dbCreateStart;
         const outputCreateDuration = Date.now() - outputCreateStart;
-        console.log(`   ✅ Output created: ${output.id} (${outputCreateDuration}ms)`);
+        
+        console.log(`   ✅ DesignOutput created in database (${dbCreateDuration}ms)`);
+        console.log(`   ✅ Output ID: ${output.id}`);
+        console.log(`   ✅ Total processing time: ${outputCreateDuration}ms\n`);
 
         designOutputs.push(output);
       }
