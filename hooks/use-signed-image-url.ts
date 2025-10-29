@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { normalizeR2Url } from '@/lib/r2-storage';
 
 interface UseSignedImageUrlResult {
   signedUrl: string | null;
@@ -19,9 +20,12 @@ export function useSignedImageUrl(originalUrl: string | undefined): UseSignedIma
       return;
     }
 
+    // Normalize URL to fix any double slashes
+    const normalizedUrl = normalizeR2Url(originalUrl);
+
     // If the URL is not an R2 URL, use it directly
-    if (!originalUrl.includes('r2.cloudflarestorage.com')) {
-      setSignedUrl(originalUrl);
+    if (!normalizedUrl.includes('r2.cloudflarestorage.com') && !normalizedUrl.includes('r2.dev')) {
+      setSignedUrl(normalizedUrl);
       setLoading(false);
       setError(null);
       return;
@@ -37,7 +41,7 @@ export function useSignedImageUrl(originalUrl: string | undefined): UseSignedIma
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ imageUrl: originalUrl }),
+          body: JSON.stringify({ imageUrl: normalizedUrl }),
         });
 
         if (!response.ok) {

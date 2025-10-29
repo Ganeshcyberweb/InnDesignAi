@@ -6,6 +6,7 @@ import { BrainIcon, Loader2, ChevronDownIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { TextDotsLoader } from "@/components/ui/loader"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { normalizeR2Url } from "@/lib/r2-storage"
 
 interface ChainOfThoughtItem {
   id: string
@@ -373,7 +374,7 @@ export function AnimatedChainOfThought({
                               className="relative w-full rounded-lg overflow-hidden border-2 border-primary/30 shadow-md hover:shadow-lg transition-shadow"
                             >
                               <img
-                                src={imageUrl}
+                                src={normalizeR2Url(imageUrl)}
                                 alt={`${design.label} - View ${index + 1}`}
                                 className="w-full h-auto"
                               />

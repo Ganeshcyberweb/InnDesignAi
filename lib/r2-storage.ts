@@ -215,9 +215,14 @@ export async function uploadImageToR2(options: UploadImageOptions): Promise<Uplo
     }
 
     // Construct public URL
-    const publicUrl = process.env.R2_PUBLIC_URL
-      ? `${process.env.R2_PUBLIC_URL}/${key}`
-      : `https://${process.env.R2_BUCKET_NAME}.${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${key}`;
+    // Ensure no double slashes by removing trailing slash from R2_PUBLIC_URL if present
+    let publicUrl: string;
+    if (process.env.R2_PUBLIC_URL) {
+      const baseUrl = process.env.R2_PUBLIC_URL.replace(/\/$/, ''); // Remove trailing slash
+      publicUrl = `${baseUrl}/${key}`;
+    } else {
+      publicUrl = `https://${process.env.R2_BUCKET_NAME}.${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${key}`;
+    }
 
     console.log(`🟡 [R2-${uploadId}] Public URL generated:`, publicUrl);
 
@@ -370,6 +375,28 @@ export function extractKeyFromUrl(url: string): string | null {
   } catch (error) {
     console.error('Failed to extract key from URL:', error);
     return null;
+  }
+}
+
+/**
+ * Normalize R2 URL by removing double slashes in the path
+ * Fixes URLs like: https://domain.com//designs/... -> https://domain.com/designs/...
+ */
+export function normalizeR2Url(url: string): string {
+  if (!url) return url;
+  
+  try {
+    // Parse the URL
+    const urlObj = new URL(url);
+    
+    // Fix double slashes in pathname (but preserve protocol://)
+    urlObj.pathname = urlObj.pathname.replace(/\/+/g, '/');
+    
+    return urlObj.toString();
+  } catch (error) {
+    console.error('Failed to normalize R2 URL:', error);
+    // If URL parsing fails, just do a simple replace
+    return url.replace(/([^:])\/\//g, '$1/');
   }
 }
 
