@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
       stylePreference: formData?.stylePreference,
       budgetRange: formData?.budgetRange,
       roomSize: formData?.roomSize,
-      colorPalette: formData?.colorPalette
+      colorPalette: formData?.colorPalette,
+      customColors: formData?.customColors
     }, null, 2));
     console.log('📸 Uploaded Images Count:', images?.length || 0);
     console.log('🛋️ Furniture Items Count:', formData?.selectedFurnitureItems?.length || 0);

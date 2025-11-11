@@ -49,6 +49,7 @@ import { useChatWidth } from "@/hooks/use-chat-width"
 import { cn } from "@/lib/utils"
 import { COLOR_PALETTES } from "@/constants/color-palettes"
 import SiriOrb from "@/components/smoothui/ui/SiriOrb"
+import { CustomColorPaletteDialog } from "@/components/custom-color-palette-dialog"
 
 const SPEED = 1
 
@@ -246,34 +247,26 @@ function ExpandedChat({
 }: ExpandedChatProps) {
   const { closeChat, showChat, alwaysOpen } = useChat()
   const { formData, updateField } = useDesignFormStore()
-  const [isColorPaletteOpen, setIsColorPaletteOpen] = React.useState(false)
-  const colorPaletteRef = React.useRef<HTMLDivElement>(null)
+  const [showCustomColorDialog, setShowCustomColorDialog] = React.useState(false)
 
-  // Close color palette dropdown when clicking outside or when other interactions happen
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (colorPaletteRef.current && !colorPaletteRef.current.contains(event.target as Node)) {
-        setIsColorPaletteOpen(false)
-      }
+  // Get the display colors - use custom colors if "custom" is selected
+  const getDisplayColors = () => {
+    if (formData.colorPalette === 'custom') {
+      return formData.customColors
     }
+    const palette = COLOR_PALETTES.find(p => p.id === formData.colorPalette)
+    return palette ? palette.colors : COLOR_PALETTES[0].colors
+  }
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsColorPaletteOpen(false)
-      }
+  const displayColors = getDisplayColors()
+
+  // Handle color palette change
+  const handleColorPaletteChange = (value: string) => {
+    updateField("colorPalette", value)
+    if (value === 'custom') {
+      setShowCustomColorDialog(true)
     }
-
-    if (isColorPaletteOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('keydown', handleEscape)
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside)
-        document.removeEventListener('keydown', handleEscape)
-      }
-    }
-  }, [isColorPaletteOpen])
-
-  const selectedPalette = COLOR_PALETTES.find(palette => palette.id === formData.colorPalette) || COLOR_PALETTES[0]
+  }
 
   const handleSubmit = (message: PromptInputMessage) => {
     // Validate that we have either a prompt or images
@@ -337,7 +330,7 @@ function ExpandedChat({
             className="flex h-full flex-col p-1"
           >
             <PromptInput
-              className="bg-white border-stone-200  divide-stone-200 h-full"
+              className="bg-white border-stone-200  divide-stone-200 h-full overflow-visible"
               onSubmit={handleSubmit}
               accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
               multiple
@@ -345,7 +338,7 @@ function ExpandedChat({
               maxFileSize={10 * 1024 * 1024} // 10MB
             >
               <ImageTracker onImagesChange={onImagesChange} />
-              <PromptInputBody className="space-y-0 h-full flex flex-col">
+              <PromptInputBody className="space-y-0 h-full flex flex-col overflow-visible">
                 {/* Header */}
                 <div className="flex justify-between items-center py-2 px-3">
                   <div className="flex items-center gap-2">
@@ -379,7 +372,6 @@ function ExpandedChat({
                     placeholder="Describe your design vision..."
                     value={formData.prompt}
                     onChange={(e) => updateField("prompt", e.target.value)}
-                    onFocus={() => setIsColorPaletteOpen(false)}
                     className={cn(
                       "text-stone-900 placeholder:text-stone-500 bg-transparent",
                       "text-sm border-none shadow-none",
@@ -391,8 +383,8 @@ function ExpandedChat({
                 </div>
 
                 {/* Design Form Toolbar */}
-                <PromptInputToolbar className="p-3 pt-2">
-                  <PromptInputTools className="flex-wrap gap-2 mb-3">
+                <PromptInputToolbar className="p-3 pt-2 overflow-visible">
+                  <PromptInputTools className="flex-wrap gap-2 mb-3 overflow-visible">
                     {/* File Upload Button */}
                     <PromptInputActionMenu>
                       <PromptInputActionMenuTrigger
@@ -412,7 +404,6 @@ function ExpandedChat({
                     <Select
                       value={formData.roomType}
                       onValueChange={(value) => updateField("roomType", value)}
-                      onOpenChange={(open) => open && setIsColorPaletteOpen(false)}
                     >
                       <SelectTrigger className={cn(
                         "flex items-center gap-2 h-8 w-auto px-3 text-xs",
@@ -437,7 +428,6 @@ function ExpandedChat({
                     <Select
                       value={formData.stylePreference}
                       onValueChange={(value) => updateField("stylePreference", value)}
-                      onOpenChange={(open) => open && setIsColorPaletteOpen(false)}
                     >
                       <SelectTrigger className={cn(
                         "flex items-center gap-2 h-8 w-auto px-3 text-xs",
@@ -462,7 +452,6 @@ function ExpandedChat({
                     <Select
                       value={formData.budgetRange}
                       onValueChange={(value) => updateField("budgetRange", value)}
-                      onOpenChange={(open) => open && setIsColorPaletteOpen(false)}
                     >
                       <SelectTrigger className={cn(
                         "flex items-center gap-2 h-8 w-auto px-3 text-xs",
@@ -483,22 +472,18 @@ function ExpandedChat({
                     </Select>
 
                     {/* Color Palette Selector */}
-                    <div className="relative" ref={colorPaletteRef}>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setIsColorPaletteOpen(!isColorPaletteOpen)
-                        }}
-                        className={cn(
-                          "flex items-center gap-2 h-8 px-3 text-xs",
-                          "rounded-md bg-white border border-stone-200",
-                          "hover:bg-stone-50 transition-colors",
-                          "focus:ring-2 focus:ring-pink-500 text-stone-900"
-                        )}
-                      >
+                    <Select
+                      value={formData.colorPalette}
+                      onValueChange={handleColorPaletteChange}
+                    >
+                      <SelectTrigger className={cn(
+                        "flex items-center gap-2 h-8 w-auto px-3 text-xs",
+                        "rounded-md bg-white border-stone-200",
+                        "hover:bg-stone-50 transition-colors",
+                        "focus:ring-2 focus:ring-pink-500 text-stone-900"
+                      )}>
                         <div className="flex gap-1">
-                          {selectedPalette.colors.map((color, index) => (
+                          {displayColors.map((color, index) => (
                             <div
                               key={index}
                               className="w-3 h-3 rounded-full border border-stone-200"
@@ -506,44 +491,44 @@ function ExpandedChat({
                             />
                           ))}
                         </div>
-                        <ChevronDown className={cn(
-                          "w-3 h-3 text-stone-500 transition-transform",
-                          isColorPaletteOpen && "rotate-180"
-                        )} />
-                      </button>
-
-                      {isColorPaletteOpen && (
-                        <div className="absolute top-full left-0 mt-1 bg-white border border-stone-200 rounded-md shadow-lg z-[100] min-w-[200px]">
-                          <div className="p-2">
-                            <div className="text-xs text-stone-500 mb-2 px-2">Color Palette</div>
-                            {COLOR_PALETTES.map((palette) => (
-                              <button
-                                key={palette.id}
-                                onClick={() => {
-                                  updateField("colorPalette", palette.id);
-                                  setIsColorPaletteOpen(false);
-                                }}
-                                className={cn(
-                                  "w-full flex items-center gap-3 p-2 rounded-md text-xs hover:bg-stone-50 transition-colors",
-                                  formData.colorPalette === palette.id && "bg-stone-50"
-                                )}
-                              >
-                                <div className="flex gap-1">
-                                  {palette.colors.map((color, index) => (
-                                    <div
-                                      key={index}
-                                      className="w-4 h-4 rounded-full border border-stone-200"
-                                      style={{ backgroundColor: color }}
-                                    />
-                                  ))}
-                                </div>
-                                <span className="text-stone-900">{palette.label}</span>
-                              </button>
-                            ))}
+                        <ChevronDown className="w-3 h-3 text-stone-500" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-stone-200">
+                        {COLOR_PALETTES.slice(0, -1).map((palette) => (
+                          <SelectItem key={palette.id} value={palette.id}>
+                            <div className="flex items-center gap-3">
+                              <div className="flex gap-1">
+                                {palette.colors.map((color, index) => (
+                                  <div
+                                    key={index}
+                                    className="w-4 h-4 rounded-full border border-stone-200"
+                                    style={{ backgroundColor: color }}
+                                  />
+                                ))}
+                              </div>
+                              <span>{palette.label}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="custom">
+                          <div className="flex items-center gap-3">
+                            <div className="flex gap-1">
+                              {formData.customColors.map((color, index) => (
+                                <div
+                                  key={index}
+                                  className="w-4 h-4 rounded-full border border-stone-200"
+                                  style={{ backgroundColor: color }}
+                                />
+                              ))}
+                            </div>
+                            <span>Custom...</span>
                           </div>
-                        </div>
-                      )}
-                    </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {/* Custom Color Palette Dialog */}
+                    <CustomColorPaletteDialog open={showCustomColorDialog} onOpenChange={setShowCustomColorDialog} />
 
                     {/* Room Size Input */}
                     <div className={cn(
@@ -557,7 +542,6 @@ function ExpandedChat({
                         placeholder="Room size"
                         value={formData.roomSize}
                         onChange={(e) => updateField("roomSize", e.target.value)}
-                        onFocus={() => setIsColorPaletteOpen(false)}
                         className="h-6 w-16 text-xs border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-center text-stone-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                       <span className="text-xs text-stone-500">sq ft</span>

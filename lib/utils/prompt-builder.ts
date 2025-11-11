@@ -7,6 +7,7 @@ interface DesignFormData {
   stylePreference: string;
   budgetRange: string;
   colorPalette: string;
+  customColors?: string[]; // Optional array of custom hex colors
   selectedFurnitureItems: FurnitureProduct[];
 }
 
@@ -43,6 +44,7 @@ export function buildDesignPrompt(formData: DesignFormData): string {
     stylePreference,
     budgetRange,
     colorPalette,
+    customColors,
     selectedFurnitureItems
   } = formData;
 
@@ -53,7 +55,14 @@ export function buildDesignPrompt(formData: DesignFormData): string {
   const styleDescription = STYLE_DESCRIPTIONS[stylePreference as keyof typeof STYLE_DESCRIPTIONS] || stylePreference;
 
   // Color palette guidance
-  const colorDescription = COLOR_PALETTE_DESCRIPTIONS[colorPalette as keyof typeof COLOR_PALETTE_DESCRIPTIONS] || colorPalette;
+  let colorDescription: string
+  if (colorPalette === 'custom' && customColors && customColors.length === 3) {
+    colorDescription = `custom color palette using these specific colors: ${customColors[0]}, ${customColors[1]}, and ${customColors[2]}. Integrate these colors throughout the design in walls, furniture, decor, and accents.`
+    console.log('🎨 Using CUSTOM color palette:', customColors)
+  } else {
+    colorDescription = COLOR_PALETTE_DESCRIPTIONS[colorPalette as keyof typeof COLOR_PALETTE_DESCRIPTIONS] || colorPalette
+    console.log('🎨 Using preset color palette:', colorPalette)
+  }
 
   // Room size guidance
   const sizeGuidance = roomSize ? `The space is approximately ${roomSize} square feet.` : '';

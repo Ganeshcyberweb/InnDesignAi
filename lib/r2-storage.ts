@@ -224,6 +224,9 @@ export async function uploadImageToR2(options: UploadImageOptions): Promise<Uplo
       publicUrl = `https://${process.env.R2_BUCKET_NAME}.${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${key}`;
     }
 
+    // Normalize URL to remove any double slashes
+    publicUrl = normalizeR2Url(publicUrl);
+
     console.log(`🟡 [R2-${uploadId}] Public URL generated:`, publicUrl);
 
     const uploadDuration = Date.now() - uploadStart;

@@ -22,7 +22,8 @@ import {
   ChevronRight,
   ArrowLeft,
   RefreshCw,
-  Download
+  Download,
+  ChevronDown
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useDesignHistoryStore } from "@/stores/design-history-store";
@@ -34,6 +35,7 @@ import { toast } from "sonner";
 export default function DashboardHistoryPage() {
   const router = useRouter();
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [expandedRoiId, setExpandedRoiId] = useState<string | null>(null);
 
   // Use Zustand store instead of local state
   const {
@@ -289,6 +291,60 @@ export default function DashboardHistoryPage() {
                             <p className="text-sm text-primary mb-2">
                               Latest: {design.designOutputs[0].variationName || 'Generated Image'}
                             </p>
+                          )}
+
+                          {/* ROI Information */}
+                          {design.roiNotes && (
+                            <div className="border border-stone-200 rounded-md overflow-hidden">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedRoiId(expandedRoiId === design.id ? null : design.id);
+                                }}
+                                className="w-full flex items-center justify-between p-3 bg-stone-50 hover:bg-stone-100 transition-colors"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Sparkles className="w-4 h-4 text-stone-700" />
+                                  <span className="text-sm font-semibold text-stone-900">ROI Analysis</span>
+                                  {design.roiPercentage && (
+                                    <span className="text-sm font-medium text-stone-700">
+                                      • {design.roiPercentage}% Expected ROI
+                                    </span>
+                                  )}
+                                </div>
+                                <ChevronDown className={cn(
+                                  "w-4 h-4 text-stone-500 transition-transform",
+                                  expandedRoiId === design.id && "rotate-180"
+                                )} />
+                              </button>
+                              {expandedRoiId === design.id && (
+                                <div className="p-4 bg-white border-t border-stone-200">
+                                  <p className="text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">
+                                    {design.roiNotes}
+                                  </p>
+                                  <div className="flex flex-wrap gap-4 mt-3 pt-3 border-t border-stone-100">
+                                    {design.roiPercentage && (
+                                      <div>
+                                        <p className="text-xs text-stone-500 mb-1">Expected ROI</p>
+                                        <p className="text-base font-semibold text-stone-900">{design.roiPercentage}%</p>
+                                      </div>
+                                    )}
+                                    {design.estimatedCost && (
+                                      <div>
+                                        <p className="text-xs text-stone-500 mb-1">Estimated Cost</p>
+                                        <p className="text-base font-semibold text-stone-900">${design.estimatedCost.toLocaleString()}</p>
+                                      </div>
+                                    )}
+                                    {design.paybackTimeline && (
+                                      <div>
+                                        <p className="text-xs text-stone-500 mb-1">Payback Timeline</p>
+                                        <p className="text-base font-semibold text-stone-900">{design.paybackTimeline}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           )}
 
                           {/* Meta Information */}

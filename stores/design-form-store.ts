@@ -8,6 +8,7 @@ interface DesignFormData {
   stylePreference: string;
   budgetRange: string;
   colorPalette: string;
+  customColors: string[]; // Array of 3 custom hex colors
   selectedFurnitureItems: FurnitureProduct[];
 }
 
@@ -15,6 +16,7 @@ interface DesignFormState {
   formData: DesignFormData;
   updateField: (field: keyof DesignFormData, value: string) => void;
   updateFormData: (data: Partial<DesignFormData>) => void;
+  updateCustomColor: (index: number, color: string) => void;
   resetForm: () => void;
 
   // Furniture selection actions
@@ -37,6 +39,7 @@ const initialFormData: DesignFormData = {
   stylePreference: "modern",
   budgetRange: "$1,000 - $5,000",
   colorPalette: "neutral",
+  customColors: ["#000000", "#808080", "#ffffff"], // Default custom colors
   selectedFurnitureItems: [],
 };
 
@@ -50,6 +53,14 @@ export const useDesignFormStore = create<DesignFormState>()((set, get) => ({
     set((state) => ({
       formData: { ...state.formData, ...data },
     })),
+  updateCustomColor: (index, color) =>
+    set((state) => {
+      const newColors = [...state.formData.customColors];
+      newColors[index] = color;
+      return {
+        formData: { ...state.formData, customColors: newColors },
+      };
+    }),
   resetForm: () =>
     set({
       formData: initialFormData,

@@ -16,7 +16,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Download
+  Download,
+  ChevronDown
 } from "lucide-react";
 import type { Design, DesignOutput } from "@/lib/generated/prisma";
 import { formatDistanceToNow } from "date-fns";
@@ -44,6 +45,7 @@ export function DesignRegenerationHistory({
 }: DesignRegenerationHistoryProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [expandedRoiId, setExpandedRoiId] = useState<string | null>(null);
 
   const handleDownload = async (e: React.MouseEvent, design: DesignWithOutputs) => {
     e.stopPropagation();
@@ -184,6 +186,60 @@ export function DesignRegenerationHistory({
                               {design.description}
                             </p>
                           </div>
+
+                          {/* ROI Information */}
+                          {design.roiNotes && (
+                            <div className="border border-stone-200 rounded-md overflow-hidden">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedRoiId(expandedRoiId === design.id ? null : design.id);
+                                }}
+                                className="w-full flex items-center justify-between p-3 bg-stone-50 hover:bg-stone-100 transition-colors"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Sparkles className="w-4 h-4 text-stone-700" />
+                                  <span className="text-sm font-semibold text-stone-900">ROI Analysis</span>
+                                  {design.roiPercentage && (
+                                    <span className="text-sm font-medium text-stone-700">
+                                      • {design.roiPercentage}% ROI
+                                    </span>
+                                  )}
+                                </div>
+                                <ChevronDown className={cn(
+                                  "w-4 h-4 text-stone-500 transition-transform",
+                                  expandedRoiId === design.id && "rotate-180"
+                                )} />
+                              </button>
+                              {expandedRoiId === design.id && (
+                                <div className="p-3 bg-white border-t border-stone-200">
+                                  <p className="text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">
+                                    {design.roiNotes}
+                                  </p>
+                                  <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-stone-100">
+                                    {design.roiPercentage && (
+                                      <div>
+                                        <p className="text-xs text-stone-500 mb-1">Expected ROI</p>
+                                        <p className="text-sm font-semibold text-stone-900">{design.roiPercentage}%</p>
+                                      </div>
+                                    )}
+                                    {design.estimatedCost && (
+                                      <div>
+                                        <p className="text-xs text-stone-500 mb-1">Est. Cost</p>
+                                        <p className="text-sm font-semibold text-stone-900">${design.estimatedCost.toLocaleString()}</p>
+                                      </div>
+                                    )}
+                                    {design.paybackTimeline && (
+                                      <div>
+                                        <p className="text-xs text-stone-500 mb-1">Payback</p>
+                                        <p className="text-sm font-semibold text-stone-900">{design.paybackTimeline}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
 
                           {/* Expand/Collapse Button */}
                           <div className="flex gap-2">
