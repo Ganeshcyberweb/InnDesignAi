@@ -69,17 +69,17 @@ export async function getSignedImageUrl(key: string, expiresIn: number = 3600): 
  */
 export function extractKeyFromR2Url(url: string): string | null {
   console.log(`🔍 Extracting key from URL: ${url}`);
-  
+
   try {
     // Handle both formats:
     // https://bucket.account.r2.cloudflarestorage.com/path/to/file
     // https://custom-domain.com/path/to/file
     const urlObj = new URL(url);
-    
-    // Remove leading slash and return the path as key
-    const key = urlObj.pathname.substring(1);
+
+    // Remove ALL leading slashes (handles cases like //designs/... or /designs/...)
+    const key = urlObj.pathname.replace(/^\/+/, '');
     console.log(`✅ Extracted key: ${key}`);
-    return key;
+    return key || null;
   } catch (error) {
     console.error(`❌ Error extracting key from URL:`, {
       url,

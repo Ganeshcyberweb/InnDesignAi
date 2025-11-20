@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -15,7 +15,9 @@ import { AnimatedChainOfThought } from "@/components/animated-chain-of-thought";
 import { FurnitureSuggestionsCarousel } from "@/components/furniture-suggestions-carousel";
 import { useDesignFormStore } from "@/stores/design-form-store";
 import { useDesignHistoryStore } from "@/stores/design-history-store";
+import { usePendingDesignStore } from "@/stores/pending-design-store";
 import { useBatchImageUpload } from "@/hooks/use-batch-image-upload";
+import { base64ToFiles } from "@/lib/utils/design-persistence";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { History, RefreshCw, X } from "lucide-react";
 
@@ -28,8 +30,9 @@ interface ThemeDesign {
 function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { formData, updateFormData } = useDesignFormStore();
+  const { formData, updateFormData, updateFurnitureItems } = useDesignFormStore();
   const { addNewDesign, invalidateCache } = useDesignHistoryStore();
+  const { loadAndClear: loadPendingDesign } = usePendingDesignStore();
   const { uploadImages, progress: uploadProgress, isUploading, overallProgress } = useBatchImageUpload();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedDesigns, setGeneratedDesigns] = useState<ThemeDesign[] | null>(null);
@@ -42,6 +45,9 @@ function DashboardContent() {
   const [previousDesign, setPreviousDesign] = useState<any>(null);
   const [isLoadingPrevious, setIsLoadingPrevious] = useState(false);
 
+  // Track if we've already auto-triggered from pending design
+  const hasAutoTriggeredRef = useRef(false);
+
   // Load previous design if regenerating
   useEffect(() => {
     const regenerateFrom = searchParams?.get('regenerateFrom');
@@ -49,6 +55,60 @@ function DashboardContent() {
       loadPreviousDesign(regenerateFrom);
     }
   }, [searchParams]);
+
+  // Check for pending design from home page and auto-trigger generation
+  useEffect(() => {
+    // Only run once and not if we're in regeneration mode
+    if (hasAutoTriggeredRef.current || searchParams?.get('regenerateFrom')) {
+      return;
+    }
+
+    const pendingDesign = loadPendingDesign();
+
+    if (pendingDesign) {
+      console.log('🎨 Pending design found! Auto-triggering generation:', {
+        prompt: pendingDesign.prompt.substring(0, 50) + '...',
+        imagesCount: pendingDesign.images.length,
+        furnitureCount: pendingDesign.selectedFurnitureItems.length,
+      });
+
+      hasAutoTriggeredRef.current = true;
+
+      // Populate the form store with pending design data
+      updateFormData({
+        prompt: pendingDesign.prompt,
+        roomType: pendingDesign.roomType,
+        roomSize: pendingDesign.roomSize,
+        stylePreference: pendingDesign.stylePreference,
+        budgetRange: pendingDesign.budgetRange,
+        colorPalette: pendingDesign.colorPalette,
+        customColors: pendingDesign.customColors,
+      });
+
+      // Update furniture items separately
+      if (pendingDesign.selectedFurnitureItems.length > 0) {
+        updateFurnitureItems(pendingDesign.selectedFurnitureItems);
+      }
+
+      // Convert base64 images back to File objects and format as FileUIPart
+      const reconstructedFiles = base64ToFiles(pendingDesign.images);
+      const fileUIParts = reconstructedFiles.map((file) => ({
+        id: Math.random().toString(36).substring(7),
+        filename: file.name,
+        mediaType: file.type,
+        url: URL.createObjectURL(file),
+        file: file,
+      }));
+
+      // Trigger generation automatically with a slight delay to ensure form is populated
+      setTimeout(() => {
+        handleGenerateDesign({
+          text: pendingDesign.prompt,
+          files: fileUIParts as any,
+        });
+      }, 500);
+    }
+  }, []); // Empty dependency array - only run once on mount
 
   const loadPreviousDesign = async (designId: string) => {
     setIsLoadingPrevious(true);

@@ -2,18 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
 import { MorphSurface } from "@/components/smoothui/ui/AiInput";
 import { Magnetic } from "@/components/motion-primitives/magnetic";
 import { Button } from "@/components/ui/button";
-import { DesignChatInput } from "@/components/design-chat-input"
+import { DesignChatInput } from "@/components/design-chat-input";
+import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AnimatedGroup } from "@/components/landing/animated-group";
 import { AnimatedText } from "@/components/landing/animated-text";
 import { HeroHeader } from "@/components/smoothui/blocks/HeroHeader";
 import BeamsBackground from "@/components/kokonutui/beams-background";
 import { GlowEffect } from "@/components/motion-primitives/glow-effect";
+import { useAuth } from "@/lib/auth/context";
+import { useDesignFormStore } from "@/stores/design-form-store";
+import { usePendingDesignStore } from "@/stores/pending-design-store";
+import { filesToBase64 } from "@/lib/utils/design-persistence";
 
 interface HeroProductProps {
   badgeText?: string;
@@ -69,6 +75,56 @@ export default function Home({
     ],
   },
 }: HeroProductProps) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { formData } = useDesignFormStore();
+  const { savePendingDesign } = usePendingDesignStore();
+
+  const handleDesignSubmit = async (message: PromptInputMessage) => {
+    console.log('🎨 Design submitted from home page:', {
+      prompt: message.text?.substring(0, 50),
+      filesCount: message.files?.length || 0,
+      isAuthenticated: !!user,
+    });
+
+    // Check if user is authenticated
+    if (user) {
+      // User is logged in - redirect directly to dashboard
+      console.log('✅ User authenticated, redirecting to dashboard');
+      router.push('/dashboard');
+    } else {
+      // User not logged in - save pending design and redirect to login
+      console.log('🔐 User not authenticated, saving pending design and redirecting to login');
+
+      try {
+        // Convert uploaded images to base64
+        // Extract File objects from FileUIPart array
+        const fileObjects = message.files?.map(f => (f as any).file as File).filter(Boolean) || [];
+        const serializedImages = fileObjects.length > 0 ? await filesToBase64(fileObjects) : [];
+
+        // Save all design data to pending store
+        savePendingDesign({
+          prompt: message.text || "",
+          roomType: formData.roomType,
+          roomSize: formData.roomSize,
+          stylePreference: formData.stylePreference,
+          budgetRange: formData.budgetRange,
+          colorPalette: formData.colorPalette,
+          customColors: formData.customColors,
+          selectedFurnitureItems: formData.selectedFurnitureItems,
+          images: serializedImages,
+        });
+
+        console.log('💾 Pending design saved, redirecting to login');
+        router.push('/login');
+      } catch (error) {
+        console.error('❌ Failed to save pending design:', error);
+        // Still redirect to login even if save fails
+        router.push('/login');
+      }
+    }
+  };
+
   return (
     <div className="relative">
       {/* <BeamsBackground intensity="subtle" className="absolute inset-0" colorTheme="pink" /> */}
@@ -191,7 +247,7 @@ export default function Home({
                         duration={8}
                       /> */}
                       <DesignChatInput
-                        onSubmit={(message) => console.log('Design submitted:', message)}
+                        onSubmit={handleDesignSubmit}
                         className="drop-shadow-lg relative z-10"
                       />
                     </div>

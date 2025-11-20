@@ -7,9 +7,10 @@ import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/smoothui/button"
 
 const menuItems = [
-  { id: "features", name: "Features", href: "#link" },
-  { id: "pricing", name: "Pricing", href: "#link" },
-  { id: "about", name: "About", href: "#link" },
+  { id: "features", name: "Features", href: "/features" },
+  { id: "pricing", name: "Pricing", href: "/pricing" },
+  { id: "guide", name: "Guide", href: "/guide" },
+  { id: "about", name: "About", href: "/about" },
 ]
 
 export const HeroHeader = () => {

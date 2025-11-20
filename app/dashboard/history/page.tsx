@@ -29,7 +29,6 @@ import { formatDistanceToNow } from "date-fns";
 import { useDesignHistoryStore } from "@/stores/design-history-store";
 import { cn } from "@/lib/utils";
 import { R2Image } from "@/components/ui/r2-image";
-import { downloadDesignPackage } from "@/lib/utils/download";
 import { toast } from "sonner";
 
 export default function DashboardHistoryPage() {
@@ -64,25 +63,47 @@ export default function DashboardHistoryPage() {
 
   const handleDownload = async (e: React.MouseEvent, design: any) => {
     e.stopPropagation();
-    
+
     if (downloadingId) {
       toast.warning('Please wait for the current download to complete');
       return;
     }
 
     setDownloadingId(design.id);
-    toast.loading('Preparing download...', { id: 'download' });
+    toast.loading('Generating complete design package...', { id: 'download' });
 
     try {
-      await downloadDesignPackage(
-        design,
-        design.designOutputs || [],
-        design.roiNotes || null
-      );
+      console.log('🔽 Downloading design package:', design.id.slice(0, 8));
+
+      // Use server-side ZIP generation endpoint
+      const response = await fetch(`/api/designs/${design.id}/download-zip`);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Download failed with status ${response.status}`);
+      }
+
+      // Get the ZIP blob from response
+      const blob = await response.blob();
+      console.log(`✅ ZIP received (${(blob.size / 1024 / 1024).toFixed(2)} MB)`);
+
+      // Create download link and trigger download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `design-${design.id.slice(0, 8)}-complete.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
       toast.success('Download complete!', { id: 'download' });
     } catch (error) {
-      console.error('Download failed:', error);
-      toast.error('Failed to download design package', { id: 'download' });
+      console.error('❌ Download failed:', error);
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to download design package',
+        { id: 'download' }
+      );
     } finally {
       setDownloadingId(null);
     }
