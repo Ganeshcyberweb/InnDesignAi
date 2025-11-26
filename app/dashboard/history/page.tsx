@@ -269,16 +269,16 @@ export default function DashboardHistoryPage() {
                 </Card>
               ) : (
                 designs.map((design) => (
-                  <Card 
+                  <Card
                     key={design.id}
                     className="hover:shadow-md transition-shadow cursor-pointer"
                     onClick={() => router.push(`/designs/${design.id}/history`)}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between gap-4">
+                    <CardContent className="p-4 md:p-6">
+                      <div className="flex flex-col md:flex-row items-start gap-4">
                         {/* Generated Image Preview */}
                         {design.designOutputs && design.designOutputs.length > 0 && design.designOutputs[0].outputImageUrl && (
-                          <div className="w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+                          <div className="w-full md:w-32 h-48 md:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
                             <R2Image
                               src={design.designOutputs[0].outputImageUrl}
                               alt={`Design ${design.id.slice(0, 8)} preview`}
@@ -287,15 +287,15 @@ export default function DashboardHistoryPage() {
                           </div>
                         )}
 
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 w-full">
                           {/* Header */}
-                          <div className="flex items-center gap-2 mb-2">
-                            <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
-                            <h3 className="font-semibold text-lg truncate">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
+                            <h3 className="font-semibold text-base md:text-lg truncate flex-1 min-w-0">
                               {design.title || `Design #${design.id.slice(0, 8)}`}
                             </h3>
-                            <Badge 
-                              variant="outline" 
+                            <Badge
+                              variant="outline"
                               className={getStatusColor(design.status)}
                             >
                               {design.status}
@@ -303,7 +303,7 @@ export default function DashboardHistoryPage() {
                           </div>
 
                           {/* Prompt Preview */}
-                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                          <p className="text-xs md:text-sm text-muted-foreground mb-3 line-clamp-2">
                             {design.description}
                           </p>
 
@@ -369,51 +369,51 @@ export default function DashboardHistoryPage() {
                           )}
 
                           {/* Meta Information */}
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
+                              <Clock className="w-3 h-3 md:w-4 md:h-4" />
                               <span>
                                 {formatDistanceToNow(new Date(design.createdAt), { addSuffix: true })}
                               </span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <GitBranch className="w-4 h-4" />
+                              <GitBranch className="w-3 h-3 md:w-4 md:h-4" />
                               <span>
                                 {design.chainLength || 1} generation{(design.chainLength || 1) !== 1 ? 's' : ''}
                               </span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <Sparkles className="w-4 h-4" />
+                              <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
                               <span>{design.customRequirements || 'AI Generated'}</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Actions */}
-                        <div className="flex flex-col gap-2 flex-shrink-0">
+                        <div className="flex flex-row md:flex-col gap-2 flex-shrink-0 w-full md:w-auto mt-3 md:mt-0">
                           <Button
                             variant="outline"
                             size="icon"
-                            className="flex-shrink-0"
+                            className="flex-1 md:flex-initial"
                             onClick={(e) => handleDownload(e, design)}
                             disabled={downloadingId === design.id}
                             title="Download design package"
                           >
                             <Download className={cn(
-                              "w-5 h-5",
+                              "w-4 h-4 md:w-5 md:h-5",
                               downloadingId === design.id && "animate-pulse"
                             )} />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="flex-shrink-0"
+                            className="flex-1 md:flex-initial"
                             onClick={(e) => {
                               e.stopPropagation();
                               router.push(`/designs/${design.id}/history`);
                             }}
                           >
-                            <ChevronRight className="w-5 h-5" />
+                            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                           </Button>
                         </div>
                       </div>

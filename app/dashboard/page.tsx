@@ -433,25 +433,25 @@ function DashboardContent() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex-1 p-6 h-fit overflow-auto mx-auto">
+        <div className="flex-1 p-4 md:p-6 h-fit overflow-auto mx-auto">
           <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2">InnDesign Studio</h1>
-              <p className="text-muted-foreground">Create stunning interior designs with AI assistance</p>
+            <div className="mb-6 md:mb-8">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">InnDesign Studio</h1>
+              <p className="text-sm md:text-base text-muted-foreground">Create stunning interior designs with AI assistance</p>
             </div>
 
             {/* Regeneration Context Banner */}
             {previousDesign && !isGenerating && (
-              <div className="mb-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
+              <div className="mb-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-3 md:p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <RefreshCw className="w-5 h-5 text-blue-600" />
-                      <h3 className="font-semibold text-blue-900">
+                      <RefreshCw className="w-4 h-4 md:w-5 md:h-5 text-blue-600 flex-shrink-0" />
+                      <h3 className="font-semibold text-sm md:text-base text-blue-900">
                         Regenerating from Generation #{previousDesign.generationNumber}
                       </h3>
                     </div>
-                    <p className="text-sm text-blue-700 mb-2">
+                    <p className="text-xs md:text-sm text-blue-700 mb-2 break-words">
                       Previous prompt: "{previousDesign.inputPrompt?.substring(0, 100)}{previousDesign.inputPrompt?.length > 100 ? '...' : ''}"
                     </p>
                     <p className="text-xs text-blue-600">
@@ -462,7 +462,7 @@ function DashboardContent() {
                     variant="ghost"
                     size="sm"
                     onClick={clearRegenerationContext}
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-blue-600 hover:text-blue-800 flex-shrink-0"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -513,6 +513,7 @@ function DashboardContent() {
                   isProcessing={isGenerating}
                   generatedDesigns={generatedDesigns}
                   roiAnalysis={roiAnalysis}
+                  designId={savedDesignId}
                 />
               )}
 
@@ -535,10 +536,11 @@ function DashboardContent() {
 
             {/* Action Buttons - Show after successful generation */}
             {!isGenerating && generatedDesigns && savedDesignId && (
-              <div className="mb-8 flex gap-3 justify-center">
+              <div className="mb-6 md:mb-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
                   variant="default"
                   size="lg"
+                  className="w-full sm:w-auto"
                   onClick={() => router.push(`/designs/${savedDesignId}/history`)}
                 >
                   <History className="w-4 h-4 mr-2" />
@@ -547,6 +549,7 @@ function DashboardContent() {
                 <Button
                   variant="outline"
                   size="lg"
+                  className="w-full sm:w-auto"
                   onClick={() => {
                     setGeneratedDesigns(null);
                     setRoiAnalysis(null);

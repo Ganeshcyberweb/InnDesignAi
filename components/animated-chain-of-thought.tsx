@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "motion/react"
-import { BrainIcon, Loader2, ChevronDownIcon } from "lucide-react"
+import { BrainIcon, Loader2, ChevronDownIcon, Download, Package } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { TextDotsLoader } from "@/components/ui/loader"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
 import { normalizeR2Url } from "@/lib/r2-storage"
+import { ImageLightbox } from "@/components/image-lightbox"
+import { toast } from "sonner"
 
 interface ChainOfThoughtItem {
   id: string
@@ -27,6 +30,7 @@ interface AnimatedChainOfThoughtProps {
   isProcessing?: boolean
   generatedDesigns?: ThemeDesign[] | null
   roiAnalysis?: string | null
+  designId?: string | null
   onComplete?: () => void
 }
 
@@ -55,6 +59,7 @@ export function AnimatedChainOfThought({
   isProcessing = true,
   generatedDesigns = null,
   roiAnalysis = null,
+  designId = null,
   onComplete
 }: AnimatedChainOfThoughtProps) {
   const [thoughts, setThoughts] = useState<ChainOfThoughtItem[]>([])
@@ -63,6 +68,9 @@ export function AnimatedChainOfThought({
   const [showROI, setShowROI] = useState(false)
   const [showROIThinking, setShowROIThinking] = useState(false)
   const [selectedTheme, setSelectedTheme] = useState<string>("")
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [lightboxImages, setLightboxImages] = useState<Array<{ src: string; alt: string; title: string }>>([])
   const thoughtIndexRef = useRef(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -162,6 +170,63 @@ export function AnimatedChainOfThought({
     if (index === 3) return 0.8 // 4th - slightly faded
     if (index === 4) return 0.6 // 5th - more faded
     return 0.4 // 6th - most faded
+  }
+
+  // Download individual image
+  const handleDownloadImage = async (imageUrl: string, imageName: string, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent lightbox from opening
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = imageName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      URL.revokeObjectURL(blobUrl)
+      toast.success("Image downloaded successfully")
+    } catch (error) {
+      console.error("Error downloading image:", error)
+      toast.error("Failed to download image")
+    }
+  }
+
+  // Download all images as ZIP
+  const handleDownloadAll = async () => {
+    if (!designId) {
+      toast.error("Design ID not available")
+      return
+    }
+
+    try {
+      toast.info("Preparing download...")
+
+      const response = await fetch(`/api/designs/${designId}/download-zip`)
+
+      if (!response.ok) {
+        throw new Error("Failed to download ZIP")
+      }
+
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = `design-${designId}.zip`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      URL.revokeObjectURL(blobUrl)
+      toast.success("ZIP downloaded successfully")
+    } catch (error) {
+      console.error("Error downloading ZIP:", error)
+      toast.error("Failed to download ZIP")
+    }
   }
 
   return (
@@ -371,15 +436,44 @@ export function AnimatedChainOfThought({
                           {design.images.map((imageUrl, index) => (
                             <div
                               key={index}
-                              className="relative w-full rounded-lg overflow-hidden border-2 border-primary/30 shadow-md hover:shadow-lg transition-shadow"
+                              className="relative w-full rounded-lg overflow-hidden border-2 border-primary/30 shadow-md hover:shadow-lg transition-all cursor-pointer group"
+                              onClick={() => {
+                                // Prepare all images for the current theme
+                                const images = design.images.map((url, idx) => ({
+                                  src: normalizeR2Url(url),
+                                  alt: `${design.label} - View ${idx + 1}`,
+                                  title: `${design.label}_view_${idx + 1}.jpg`
+                                }))
+                                setLightboxImages(images)
+                                setLightboxIndex(index)
+                                setLightboxOpen(true)
+                              }}
                             >
                               <img
                                 src={normalizeR2Url(imageUrl)}
                                 alt={`${design.label} - View ${index + 1}`}
-                                className="w-full h-auto"
+                                className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
                               />
-                              <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                              <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
                                 View {index + 1}
+                              </div>
+                              <button
+                                onClick={(e) => handleDownloadImage(
+                                  normalizeR2Url(imageUrl),
+                                  `${design.label}_view_${index + 1}.jpg`,
+                                  e
+                                )}
+                                className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded transition-colors z-10"
+                                title="Download image"
+                              >
+                                <Download className="w-4 h-4" />
+                              </button>
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+                                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
+                                  <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                  </svg>
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -387,6 +481,25 @@ export function AnimatedChainOfThought({
                       </TabsContent>
                     ))}
                   </Tabs>
+
+                  {/* Download All Button */}
+                  {designId && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: 0.4 }}
+                      className="mt-6 flex justify-center"
+                    >
+                      <Button
+                        onClick={handleDownloadAll}
+                        className="gap-2"
+                        size="lg"
+                      >
+                        <Package className="w-4 h-4" />
+                        Download All as ZIP
+                      </Button>
+                    </motion.div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -444,7 +557,7 @@ export function AnimatedChainOfThought({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -20, scale: 0.95 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex gap-3 text-sm mt-6"
+                className="flex gap-2 md:gap-3 text-xs md:text-sm mt-4 md:mt-6"
               >
                 {/* Icon with connector line */}
                 <div className="relative mt-0.5 flex-shrink-0">
@@ -475,13 +588,13 @@ export function AnimatedChainOfThought({
                     transition={{ duration: 0.4, delay: 0.3 }}
                     className="mt-4"
                   >
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="p-1.5 rounded">
-                        <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex items-center gap-2 mb-2 md:mb-3">
+                      <div className="p-1 md:p-1.5 rounded">
+                        <svg className="w-3 h-3 md:w-4 md:h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                         </svg>
                       </div>
-                      <h4 className="text-sm font-semibold text-foreground">
+                      <h4 className="text-xs md:text-sm font-semibold text-foreground">
                         Investment Insights & Financial Analysis
                       </h4>
                     </div>
@@ -537,6 +650,14 @@ export function AnimatedChainOfThought({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Image Lightbox */}
+      <ImageLightbox
+        images={lightboxImages}
+        open={lightboxOpen}
+        index={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+      />
     </div>
   )
 }
