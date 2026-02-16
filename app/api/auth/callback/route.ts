@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
   try {
     const requestUrl = new URL(request.url)
     const code = requestUrl.searchParams.get('code')
+    const type = requestUrl.searchParams.get('type')
     const error = requestUrl.searchParams.get('error')
     const error_description = requestUrl.searchParams.get('error_description')
     const next = requestUrl.searchParams.get('next') || '/dashboard'
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
     // Handle OAuth errors
     if (error) {
       console.error('OAuth error:', error, error_description)
-      const errorUrl = new URL('/auth/signin', requestUrl.origin)
+      const errorUrl = new URL('/login', requestUrl.origin)
       errorUrl.searchParams.set('error', error)
       if (error_description) {
         errorUrl.searchParams.set('error_description', error_description)
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     if (!code) {
       console.error('No authorization code provided')
-      const errorUrl = new URL('/auth/signin', requestUrl.origin)
+      const errorUrl = new URL('/login', requestUrl.origin)
       errorUrl.searchParams.set('error', 'no_code')
       return NextResponse.redirect(errorUrl)
     }
@@ -40,19 +41,29 @@ export async function GET(request: NextRequest) {
 
     if (exchangeError) {
       console.error('Code exchange error:', exchangeError)
-      const errorUrl = new URL('/auth/signin', requestUrl.origin)
+      const errorUrl = new URL('/login', requestUrl.origin)
       errorUrl.searchParams.set('error', 'exchange_failed')
       return NextResponse.redirect(errorUrl)
     }
 
     if (!data.user || !data.session) {
       console.error('No user or session data after code exchange')
-      const errorUrl = new URL('/auth/signin', requestUrl.origin)
+      const errorUrl = new URL('/login', requestUrl.origin)
       errorUrl.searchParams.set('error', 'no_session')
       return NextResponse.redirect(errorUrl)
     }
 
-    // Get or create user profile
+    // Check if this is an email confirmation (signup flow)
+    // type=signup indicates email verification after signup
+    if (type === 'signup' || type === 'email') {
+      // Sign out the user - they need to log in manually
+      await supabase.auth.signOut()
+
+      // Redirect to home page with verification success message
+      return NextResponse.redirect(new URL('/?email_verified=true', requestUrl.origin))
+    }
+
+    // Get or create user profile for other flows (OAuth, magic link login)
     const { profile, error: profileError, created } = await getOrCreateUserProfile(data.user)
 
     if (profileError) {

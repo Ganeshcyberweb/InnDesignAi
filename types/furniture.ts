@@ -58,12 +58,13 @@ export interface RoomCategoryMapping {
   outdoor?: string[];
 }
 
+// Valid API categories: sofa, chair, stool, table, desk, kitchen, vanitory, matress, mirror, wardrove, lamp, tv table, garden
 export const ROOM_FURNITURE_MAPPING: RoomCategoryMapping = {
-  living_room: ['Lamps', 'Tables', 'Chairs', 'Sofas'],
-  bedroom: ['Lamps', 'Tables', 'Storage'],
-  kitchen: ['Tables', 'Chairs', 'Storage'],
-  bathroom: ['Storage', 'Lamps'],
-  dining_room: ['Tables', 'Chairs', 'Lamps'],
-  office: ['Tables', 'Chairs', 'Lamps', 'Storage'],
-  outdoor: ['Garden', 'Outdoor']
+  living_room: ['sofa', 'chair', 'table', 'lamp', 'tv table'],
+  bedroom: ['matress', 'wardrove', 'lamp', 'mirror', 'table'],
+  kitchen: ['kitchen', 'table', 'chair', 'stool'],
+  bathroom: ['vanitory', 'mirror', 'lamp'],
+  dining_room: ['table', 'chair', 'lamp'],
+  office: ['desk', 'chair', 'lamp', 'table'],
+  outdoor: ['garden']
 };

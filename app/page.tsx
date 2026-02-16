@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Star } from "lucide-react";
+import { toast } from "sonner";
 import { motion } from "motion/react";
 import { MorphSurface } from "@/components/smoothui/ui/AiInput";
 import { Magnetic } from "@/components/motion-primitives/magnetic";
@@ -76,9 +78,23 @@ export default function Home({
   },
 }: HeroProductProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const { formData } = useDesignFormStore();
   const { savePendingDesign } = usePendingDesignStore();
+
+  // Check for email verification success
+  useEffect(() => {
+    const emailVerified = searchParams.get('email_verified');
+    if (emailVerified === 'true') {
+      toast.success(
+        "Thank you, your email is verified! You can now log in and start designing.",
+        { duration: 6000 }
+      );
+      // Clean up the URL
+      router.replace('/', { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const handleDesignSubmit = async (message: PromptInputMessage) => {
     console.log('🎨 Design submitted from home page:', {

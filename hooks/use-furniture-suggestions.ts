@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { furnitureApi } from '@/lib/services/furniture-api';
 import { parseBudgetRange } from '@/lib/utils/budget-parser';
 import { ROOM_FURNITURE_MAPPING } from '@/types/furniture';
@@ -25,71 +25,86 @@ export function useFurnitureSuggestions({
   const [products, setProducts] = useState<FurnitureProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const lastRoomTypeRef = useRef<string | undefined>(undefined);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
       setError(null);
 
+      // Clear cache if room type changed to ensure fresh data
+      if (lastRoomTypeRef.current !== roomType) {
+        furnitureApi.clearCache();
+      }
+
       // Parse budget range
       const { min, max } = parseBudgetRange(budgetRange || '');
 
-      // Build filters
-      const filters: FurnitureFilters = {
-        limit: limit * 2, // Get more products to allow for filtering
-        featured: true, // Prefer featured products for suggestions
-      };
+      console.log(`🔍 Fetching furniture for room type: ${roomType || 'all'}`);
 
-      if (min !== undefined) {
-        filters.min_price = min;
-      }
+      let allProducts: FurnitureProduct[] = [];
 
-      if (max !== undefined) {
-        filters.max_price = max;
-      }
-
-      console.log('🔍 Fetching furniture suggestions with filters:', filters);
-
-      // Fetch products from API
-      const response = await furnitureApi.getProducts(filters);
-      let fetchedProducts = response.data;
-
-      console.log(`📦 Fetched ${fetchedProducts.length} products from API`);
-
-      // If we have a room type, try to get relevant categories
+      // If we have a room type, fetch products for each relevant category
       if (roomType && roomType in ROOM_FURNITURE_MAPPING) {
         const relevantCategories = ROOM_FURNITURE_MAPPING[roomType as keyof typeof ROOM_FURNITURE_MAPPING];
+        console.log(`🏠 Room type "${roomType}" maps to categories:`, relevantCategories);
 
-        // Filter products by relevant categories (case-insensitive)
-        const categoryFiltered = fetchedProducts.filter(product =>
-          relevantCategories?.some(category =>
-            product.category.toLowerCase().includes(category.toLowerCase()) ||
-            category.toLowerCase().includes(product.category.toLowerCase())
-          )
-        );
+        // Fetch products for each category in parallel
+        const categoryPromises = relevantCategories.map(async (category) => {
+          const filters: FurnitureFilters = {
+            category: category,
+            limit: Math.ceil(limit / relevantCategories.length) + 4, // Get extra to ensure variety
+          };
 
-        if (categoryFiltered.length > 0) {
-          fetchedProducts = categoryFiltered;
-          console.log(`🏠 Filtered to ${fetchedProducts.length} products for room type: ${roomType}`);
-        } else {
-          console.log(`⚠️ No category matches found for room type ${roomType}, using all products`);
-        }
+          if (min !== undefined) filters.min_price = min;
+          if (max !== undefined) filters.max_price = max;
+
+          try {
+            const response = await furnitureApi.getProducts(filters);
+            console.log(`📦 Category "${category}": ${response.data.length} products`);
+            return response.data;
+          } catch (err) {
+            console.warn(`⚠️ Failed to fetch category "${category}":`, err);
+            return [];
+          }
+        });
+
+        const categoryResults = await Promise.all(categoryPromises);
+
+        // Combine all category results
+        categoryResults.forEach(products => {
+          allProducts.push(...products);
+        });
+
+        // Remove duplicates by ID
+        const uniqueProducts = new Map<string, FurnitureProduct>();
+        allProducts.forEach(product => {
+          if (!uniqueProducts.has(product.id)) {
+            uniqueProducts.set(product.id, product);
+          }
+        });
+        allProducts = Array.from(uniqueProducts.values());
+
+        console.log(`🏠 Total unique products for "${roomType}": ${allProducts.length}`);
       }
 
-      // If we don't have enough products, get random products as fallback
-      if (fetchedProducts.length < limit / 2) {
-        console.log('📦 Not enough filtered products, getting random products as fallback');
-        const randomProducts = await furnitureApi.getRandomProducts(limit);
+      // If no room-specific results or no room type, fetch general products
+      if (allProducts.length === 0) {
+        console.log('📦 Fetching general products (no room type or no category matches)');
+        const filters: FurnitureFilters = {
+          limit: limit * 2,
+          featured: true,
+        };
 
-        // Merge with existing products, avoiding duplicates
-        const existingIds = new Set(fetchedProducts.map(p => p.id));
-        const additionalProducts = randomProducts.filter(p => !existingIds.has(p.id));
+        if (min !== undefined) filters.min_price = min;
+        if (max !== undefined) filters.max_price = max;
 
-        fetchedProducts = [...fetchedProducts, ...additionalProducts];
+        const response = await furnitureApi.getProducts(filters);
+        allProducts = response.data;
       }
 
       // Shuffle the results for variety
-      const shuffled = [...fetchedProducts];
+      const shuffled = [...allProducts];
       for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -98,8 +113,9 @@ export function useFurnitureSuggestions({
       // Limit to requested number
       const finalProducts = shuffled.slice(0, limit);
 
-      console.log(`✅ Returning ${finalProducts.length} furniture suggestions`);
+      console.log(`✅ Returning ${finalProducts.length} furniture suggestions for "${roomType || 'general'}"`);
       setProducts(finalProducts);
+      lastRoomTypeRef.current = roomType;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch furniture suggestions';
       console.error('❌ Error fetching furniture suggestions:', err);

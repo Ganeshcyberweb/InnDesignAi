@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Settings as SettingsIcon, User, Lock, Palette, Loader2 } from "lucide-react"
+import { Settings as SettingsIcon, User, Lock, Palette, Loader2, ArrowLeft, Home } from "lucide-react"
+import Link from "next/link"
 import { toast } from "sonner"
 
 interface UserProfile {
@@ -187,6 +188,30 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Navigation */}
+      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 py-4 max-w-4xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Dashboard
+              </Link>
+            </div>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Home className="w-4 h-4" />
+              Home
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       <div className="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
         {/* Header */}
         <div className="mb-8">

@@ -188,6 +188,20 @@ class FurnitureApiService {
   clearCache(): void {
     this.cache.clear();
   }
+
+  // Clear cache entries for specific category
+  clearCategoryCache(category?: string): void {
+    if (!category) {
+      this.cache.clear();
+      return;
+    }
+    // Clear any cache entries that include this category
+    for (const [key] of this.cache) {
+      if (key.includes(category)) {
+        this.cache.delete(key);
+      }
+    }
+  }
 }
 
 export const furnitureApi = new FurnitureApiService();

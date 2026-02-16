@@ -133,10 +133,14 @@ export async function GET(request: NextRequest) {
       })
 
       if (error) {
-        return NextResponse.redirect(new URL('/auth/signin?error=confirmation_failed', request.url))
+        return NextResponse.redirect(new URL('/login?error=confirmation_failed', request.url))
       }
 
-      return NextResponse.redirect(new URL('/dashboard?confirmed=true', request.url))
+      // Sign out the user so they must log in manually
+      await supabase.auth.signOut()
+
+      // Redirect to home page with success message
+      return NextResponse.redirect(new URL('/?email_verified=true', request.url))
     }
 
     if (type === 'recovery') {

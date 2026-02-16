@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
+import { Menu, X, LayoutDashboard } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/smoothui/button"
+import { useAuth } from "@/lib/auth/context"
+import { UserMenu } from "@/components/auth/user-menu"
 
 const menuItems = [
   { id: "features", name: "Features", href: "/features" },
@@ -15,6 +17,16 @@ const menuItems = [
 
 export const HeroHeader = () => {
   const [menuState, setMenuState] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const { user, loading } = useAuth()
+
+  // Wait for client-side mount to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Show loading state until mounted and auth check complete
+  const isLoading = !mounted || loading
 
   return (
     <div className="relative">
@@ -128,16 +140,35 @@ export const HeroHeader = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
                     >
-                      <Button asChild variant="ghost" size="sm">
-                        <Link href="/login" className="text-foreground hover:text-primary">
-                          <span>Login</span>
-                        </Link>
-                      </Button>
-                      <Button asChild size="sm">
-                        <Link href="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                          <span>Sign Up</span>
-                        </Link>
-                      </Button>
+                      {isLoading ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="h-9 w-16 bg-muted rounded-md animate-pulse" />
+                          <div className="h-9 w-16 bg-muted rounded-md animate-pulse" />
+                        </div>
+                      ) : user ? (
+                        <>
+                          <Button asChild size="sm">
+                            <Link href="/dashboard" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                              <LayoutDashboard className="mr-2 h-4 w-4" />
+                              <span>Dashboard</span>
+                            </Link>
+                          </Button>
+                          <UserMenu />
+                        </>
+                      ) : (
+                        <>
+                          <Button asChild variant="ghost" size="sm">
+                            <Link href="/login" className="text-foreground hover:text-primary">
+                              <span>Login</span>
+                            </Link>
+                          </Button>
+                          <Button asChild size="sm">
+                            <Link href="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                              <span>Sign Up</span>
+                            </Link>
+                          </Button>
+                        </>
+                      )}
                     </motion.div>
                   </motion.div>
                 )}
@@ -145,21 +176,40 @@ export const HeroHeader = () => {
 
               {/* Desktop buttons */}
               <motion.div
-                className="hidden lg:flex lg:gap-3"
+                className="hidden lg:flex lg:gap-3 lg:items-center"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/login" className="text-foreground hover:text-primary">
-                    <span>Login</span>
-                  </Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link href="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                    <span>Sign Up</span>
-                  </Link>
-                </Button>
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="h-9 w-16 bg-muted rounded-md animate-pulse" />
+                    <div className="h-9 w-16 bg-muted rounded-md animate-pulse" />
+                  </div>
+                ) : user ? (
+                  <>
+                    <Button asChild size="sm">
+                      <Link href="/dashboard" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </Button>
+                    <UserMenu />
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href="/login" className="text-foreground hover:text-primary">
+                        <span>Login</span>
+                      </Link>
+                    </Button>
+                    <Button asChild size="sm">
+                      <Link href="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        <span>Sign Up</span>
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </motion.div>
             </div>
           </div>
