@@ -46,6 +46,7 @@ import {
 import { useDesignFormStore } from "@/stores/design-form-store"
 import { useClickOutside } from "@/components/smoothui/hooks/use-click-outside"
 import { useChatWidth } from "@/hooks/use-chat-width"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { COLOR_PALETTES } from "@/constants/color-palettes"
 import SiriOrb from "@/components/smoothui/ui/SiriOrb"
@@ -76,13 +77,29 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
   const [showChat, setShowChat] = React.useState(alwaysOpen)
   const [success, setSuccess] = React.useState(false)
   const chatWidth = useChatWidth()
+  const isMobile = useIsMobile()
   const { formData } = useDesignFormStore()
+  const [textareaHeight, setTextareaHeight] = React.useState(80)
 
   // Calculate dynamic height based on content (furniture items or uploaded images)
   const hasFurnitureItems = formData.selectedFurnitureItems.length > 0
   const [hasUploadedImages, setHasUploadedImages] = React.useState(false)
   const hasAnyAttachments = hasFurnitureItems || hasUploadedImages
-  const chatHeight = hasAnyAttachments ? CHAT_WITH_ATTACHMENTS_HEIGHT : CHAT_BASE_HEIGHT
+  const isCompactDesktop = !isMobile && chatWidth < 980
+  const minTextareaHeight = isMobile ? 96 : 80
+  const maxTextareaHeight = isMobile ? 240 : 200
+  const baseHeight = isMobile
+    ? CHAT_BASE_HEIGHT.mobile
+    : isCompactDesktop
+      ? CHAT_BASE_HEIGHT.compact
+      : CHAT_BASE_HEIGHT.desktop
+  const withAttachmentsHeight = isMobile
+    ? CHAT_WITH_ATTACHMENTS_HEIGHT.mobile
+    : isCompactDesktop
+      ? CHAT_WITH_ATTACHMENTS_HEIGHT.compact
+      : CHAT_WITH_ATTACHMENTS_HEIGHT.desktop
+  const extraTextareaHeight = Math.max(0, textareaHeight - minTextareaHeight)
+  const chatHeight = (hasAnyAttachments ? withAttachmentsHeight : baseHeight) + extraTextareaHeight
 
   const closeChat = React.useCallback(() => {
     if (!alwaysOpen) {
@@ -120,6 +137,27 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
     }
   }, [alwaysOpen, showChat])
 
+  React.useEffect(() => {
+    const el = textareaRef.current
+    if (!el) {
+      return
+    }
+
+    const updateHeight = () => {
+      const next = Math.min(
+        maxTextareaHeight,
+        Math.max(minTextareaHeight, el.scrollHeight)
+      )
+      setTextareaHeight(next)
+    }
+
+    updateHeight()
+    const observer = new ResizeObserver(updateHeight)
+    observer.observe(el)
+
+    return () => observer.disconnect()
+  }, [isMobile, maxTextareaHeight, minTextareaHeight])
+
   const context = React.useMemo(
     () => ({
       showChat,
@@ -134,25 +172,33 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
   return (
     <div
       className={cn(
-        "flex items-center justify-center",
+        "flex w-full items-center justify-center",
         className
       )}
       style={{
-        width: chatWidth,
-        height: chatHeight,
+        width: "100%",
+        maxWidth: chatWidth,
+        minHeight: showChat ? chatHeight : 44,
+        height: showChat ? "auto" : 44,
       }}
     >
       <motion.div
         data-chat
         ref={rootRef}
         className={cn(
-          "bg-white relative bottom-8 z-30 flex flex-col items-center overflow-hidden border border-stone-200 max-sm:bottom-5"
+          "relative z-30 flex w-full flex-col items-center overflow-hidden border border-stone-200 bg-white",
+          isMobile
+            ? "bottom-2 rounded-[24px] shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
+            : "bottom-8 rounded-[14px] shadow-[0_4px_14px_rgba(0,0,0,0.06)]"
         )}
         initial={false}
         animate={{
-          width: showChat ? chatWidth : "auto",
-          height: showChat ? chatHeight : 44,
+          width: showChat ? "100%" : "auto",
           borderRadius: showChat ? 14 : 20,
+        }}
+        style={{
+          minHeight: showChat ? chatHeight : 44,
+          height: showChat ? "auto" : 44,
         }}
         transition={{
           type: "spring",
@@ -163,13 +209,15 @@ export function DesignChatInput({ onSubmit, className, alwaysOpen = false }: Des
         }}
       >
         <ChatContext.Provider value={context}>
-          {!alwaysOpen && <CompactDock />}
+          {!alwaysOpen && !showChat && <CompactDock />}
           <ExpandedChat
             ref={textareaRef}
             onSuccess={onChatSuccess}
             onSubmit={onSubmit}
             chatWidth={chatWidth}
             chatHeight={chatHeight}
+            isMobile={isMobile}
+            textareaHeight={textareaHeight}
             onImagesChange={setHasUploadedImages}
           />
         </ChatContext.Provider>
@@ -225,8 +273,17 @@ function CompactDock() {
   )
 }
 
-const CHAT_BASE_HEIGHT = 200
-const CHAT_WITH_ATTACHMENTS_HEIGHT = 300
+const CHAT_BASE_HEIGHT = {
+  desktop: 200,
+  compact: 240,
+  mobile: 290,
+}
+
+const CHAT_WITH_ATTACHMENTS_HEIGHT = {
+  desktop: 300,
+  compact: 340,
+  mobile: 410,
+}
 
 interface ExpandedChatProps {
   ref: React.Ref<HTMLTextAreaElement>
@@ -234,6 +291,8 @@ interface ExpandedChatProps {
   onSubmit?: (message: PromptInputMessage) => void
   chatWidth: number
   chatHeight: number
+  isMobile: boolean
+  textareaHeight: number
   onImagesChange: (hasImages: boolean) => void
 }
 
@@ -243,6 +302,8 @@ function ExpandedChat({
   onSubmit,
   chatWidth,
   chatHeight,
+  isMobile,
+  textareaHeight,
   onImagesChange,
 }: ExpandedChatProps) {
   const { closeChat, showChat, alwaysOpen } = useChat()
@@ -308,10 +369,12 @@ function ExpandedChat({
 
   return (
     <div
-      className="absolute bottom-0"
+      className="relative w-full"
       style={{
-        width: chatWidth,
-        height: chatHeight,
+        width: "100%",
+        maxWidth: chatWidth,
+        minHeight: chatHeight,
+        height: "auto",
         pointerEvents: showChat ? "all" : "none",
       }}
     >
@@ -330,7 +393,12 @@ function ExpandedChat({
             className="flex h-full flex-col p-1"
           >
             <PromptInput
-              className="bg-white border-stone-200  divide-stone-200 h-full overflow-visible"
+              className={cn(
+                "h-full overflow-visible divide-stone-200 border-stone-200 bg-white",
+                isMobile
+                  ? "rounded-[20px] border shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+                  : "rounded-[12px] border"
+              )}
               onSubmit={handleSubmit}
               accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
               multiple
@@ -340,10 +408,13 @@ function ExpandedChat({
               <ImageTracker onImagesChange={onImagesChange} />
               <PromptInputBody className="space-y-0 h-full flex flex-col overflow-visible">
                 {/* Header */}
-                <div className="flex justify-between items-center py-2 px-3">
+                <div className={cn(
+                  "flex items-center justify-between px-3 py-2",
+                  isMobile && "border-b border-stone-100"
+                )}>
                   <div className="flex items-center gap-2">
                     <SiriOrb
-                      size="20px"
+                      size={isMobile ? "24px" : "20px"}
                       colors={{
                         bg: "oklch(64.7% 0.196 254.1)",
                       }}
@@ -366,30 +437,44 @@ function ExpandedChat({
                 <CombinedImagesSection />
 
                 {/* Main Textarea */}
-                <div className="flex-1 p-3 min-h-0 overflow-y-auto">
+                <div className={cn(
+                  "flex-none p-3",
+                  isMobile ? "pt-4" : "pt-3"
+                )}>
                   <PromptInputTextarea
                     ref={ref}
                     placeholder="Describe your design vision..."
                     value={formData.prompt}
                     onChange={(e) => updateField("prompt", e.target.value)}
+                    style={{ height: textareaHeight }}
                     className={cn(
                       "text-stone-900 placeholder:text-stone-500 bg-transparent",
-                      "text-sm border-none shadow-none",
+                      isMobile ? "text-[15px]" : "text-sm",
+                      "border-none shadow-none",
                       "focus-visible:ring-0 focus-visible:ring-offset-0",
-                      "resize-none w-full h-full"
+                      "resize-none w-full h-full",
+                      isMobile && "leading-relaxed"
                     )}
                     onKeyDown={onKeyDown}
                   />
                 </div>
 
                 {/* Design Form Toolbar */}
-                <PromptInputToolbar className="p-3 pt-2 overflow-visible">
-                  <PromptInputTools className="flex-wrap gap-2 mb-3 overflow-visible">
+                <PromptInputToolbar className={cn(
+                  "overflow-visible p-3 pt-2",
+                  isMobile && "border-t border-stone-100 pt-3"
+                )}>
+                  <PromptInputTools className={cn(
+                    "mb-3 gap-2 overflow-visible",
+                    isMobile
+                      ? "flex-nowrap overflow-x-auto pb-1"
+                      : "flex-wrap xl:flex-nowrap"
+                  )}>
                     {/* File Upload Button */}
                     <PromptInputActionMenu>
                       <PromptInputActionMenuTrigger
                         className={cn(
-                          "h-8 px-3 text-xs rounded-md",
+                          "h-8 rounded-md px-3 text-xs shrink-0",
                           "bg-white border-stone-200 text-stone-700",
                           "hover:bg-stone-50 hover:text-stone-900",
                           "transition-colors"
@@ -406,7 +491,7 @@ function ExpandedChat({
                       onValueChange={(value) => updateField("roomType", value)}
                     >
                       <SelectTrigger className={cn(
-                        "flex items-center gap-2 h-8 w-auto px-3 text-xs",
+                        "flex h-8 w-auto shrink-0 items-center gap-2 px-3 text-xs",
                         "rounded-md bg-white border-stone-200",
                         "hover:bg-stone-50 transition-colors",
                         "focus:ring-2 focus:ring-pink-500 text-stone-900"
@@ -430,7 +515,7 @@ function ExpandedChat({
                       onValueChange={(value) => updateField("stylePreference", value)}
                     >
                       <SelectTrigger className={cn(
-                        "flex items-center gap-2 h-8 w-auto px-3 text-xs",
+                        "flex h-8 w-auto shrink-0 items-center gap-2 px-3 text-xs",
                         "rounded-md bg-white border-stone-200",
                         "hover:bg-stone-50 transition-colors",
                         "focus:ring-2 focus:ring-pink-500 text-stone-900"
@@ -454,7 +539,7 @@ function ExpandedChat({
                       onValueChange={(value) => updateField("budgetRange", value)}
                     >
                       <SelectTrigger className={cn(
-                        "flex items-center gap-2 h-8 w-auto px-3 text-xs",
+                        "flex h-8 w-auto shrink-0 items-center gap-2 px-3 text-xs",
                         "rounded-md bg-white border-stone-200",
                         "hover:bg-stone-50 transition-colors",
                         "focus:ring-2 focus:ring-pink-500 text-stone-900"
@@ -477,7 +562,7 @@ function ExpandedChat({
                       onValueChange={handleColorPaletteChange}
                     >
                       <SelectTrigger className={cn(
-                        "flex items-center gap-2 h-8 w-auto px-3 text-xs",
+                        "flex h-8 w-auto shrink-0 items-center gap-2 px-3 text-xs",
                         "rounded-md bg-white border-stone-200",
                         "hover:bg-stone-50 transition-colors",
                         "focus:ring-2 focus:ring-pink-500 text-stone-900"
@@ -532,7 +617,7 @@ function ExpandedChat({
 
                     {/* Room Size Input */}
                     <div className={cn(
-                      "flex items-center gap-2 h-8 px-3 text-xs",
+                      "flex h-8 shrink-0 items-center gap-2 px-3 text-xs",
                       "rounded-md bg-white border border-stone-200",
                       "hover:bg-stone-50 transition-colors"
                     )}>
@@ -549,10 +634,13 @@ function ExpandedChat({
                   </PromptInputTools>
 
                   {/* Submit Button */}
-                  <div className="flex justify-end">
+                  <div className={cn(
+                    "flex justify-end",
+                    isMobile && "justify-end"
+                  )}>
                     <PromptInputSubmit
                       className={cn(
-                        "h-8 w-8 rounded-md",
+                        isMobile ? "h-10 w-10 rounded-full" : "h-8 w-8 rounded-md",
                         "bg-pink-600 border-pink-600 hover:bg-pink-700",
                         "transition-colors",
                         "disabled:opacity-50 disabled:cursor-not-allowed"

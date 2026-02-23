@@ -42,15 +42,15 @@ export function AuthLayout({
       }
 
   return (
-        <div className="flex h-screen bg-[hsl(240_5%_92.16%)] md:rounded-s-3xl md:group-peer-data-[state=collapsed]/sidebar-inset:rounded-s-none transition-all ease-in-out duration-300">
+        <div className="flex min-h-svh bg-[hsl(240_5%_92.16%)] transition-all duration-300 ease-in-out md:rounded-s-3xl md:group-peer-data-[state=collapsed]/sidebar-inset:rounded-s-none">
           <div className="flex-1 w-full shadow-md md:rounded-s-[inherit] min-[1024px]:rounded-e-3xl bg-background">
-            <div className="h-full flex items-center justify-center px-4 md:px-6 lg:px-8 py-12">
+            <div className="flex min-h-svh items-center justify-center px-4 py-8 md:px-6 md:py-12 lg:px-8">
               <motion.div
                 {...motionProps}
-                className="w-full h-full max-w-md space-y-8"
+                className="w-full max-w-md space-y-6 md:space-y-8"
               >
 
-                <Card className="p-8 shadow-lg border bg-background">
+                <Card className="border bg-background p-6 shadow-lg sm:p-8">
                   <motion.div {...childMotionProps} className="space-y-6">
                     <div className="text-center space-y-2">
                       <h2 className="text-2xl font-semibold text-foreground">

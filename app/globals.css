@@ -173,6 +173,7 @@
 
 body {
   letter-spacing: var(--tracking-normal);
+  overflow-x: hidden;
 }
 /* Component NumberFlow */
 @layer utilities {

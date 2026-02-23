@@ -135,8 +135,8 @@ export default function DashboardHistoryPage() {
               <UserDropdown />
             </div>
           </header>
-          <div className="flex-1 p-6 overflow-auto">
-            <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex-1 overflow-auto p-4 md:p-6">
+            <div className="mx-auto max-w-7xl space-y-6">
               <Skeleton className="h-8 w-64" />
               <div className="grid gap-4">
                 {[1, 2, 3].map((i) => (
@@ -160,8 +160,8 @@ export default function DashboardHistoryPage() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex-1 p-6 overflow-auto">
-          <div className="max-w-7xl mx-auto">
+        <div className="flex-1 overflow-auto p-4 md:p-6">
+          <div className="mx-auto max-w-7xl min-w-0">
             {/* Back Button */}
             <Button
               variant="ghost"
@@ -174,7 +174,7 @@ export default function DashboardHistoryPage() {
 
             {/* Page Header */}
             <div className="mb-8">
-              <div className="flex items-start justify-between gap-4 mb-2">
+              <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <GitBranch className="w-8 h-8 text-primary" />
@@ -199,7 +199,7 @@ export default function DashboardHistoryPage() {
                   size="sm"
                   onClick={handleManualRefresh}
                   disabled={isLoadingAll}
-                  className="flex-shrink-0"
+                  className="w-full sm:w-auto sm:flex-shrink-0"
                 >
                   <RefreshCw className={cn("w-4 h-4 mr-2", isLoadingAll && "animate-spin")} />
                   Refresh
@@ -211,7 +211,7 @@ export default function DashboardHistoryPage() {
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
-                <AlertDescription className="flex items-center justify-between gap-2">
+                <AlertDescription className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <span>{error}</span>
                   <Button
                     variant="ghost"

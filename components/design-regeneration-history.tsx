@@ -136,7 +136,7 @@ export function DesignRegenerationHistory({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[600px] pr-4">
+        <ScrollArea className="h-[70vh] pr-4 md:h-[600px]">
           <div className="space-y-4">
             {designs.map((design, index) => {
               const isExpanded = expandedId === design.id;
@@ -236,7 +236,7 @@ export function DesignRegenerationHistory({
                                   <p className="text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">
                                     {design.roiNotes}
                                   </p>
-                                  <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-stone-100">
+                                  <div className="mt-3 grid grid-cols-1 gap-3 border-t border-stone-100 pt-3 sm:grid-cols-3">
                                     {design.roiPercentage && (
                                       <div>
                                         <p className="text-xs text-stone-500 mb-1">Expected ROI</p>
@@ -309,7 +309,7 @@ export function DesignRegenerationHistory({
                                 transition={{ duration: 0.2 }}
                                 className="overflow-hidden"
                               >
-                                <div className="grid grid-cols-2 gap-2 pt-2">
+                                <div className="grid grid-cols-1 gap-2 pt-2 sm:grid-cols-2">
                                   {design.designOutputs.map((output) => (
                                     <div 
                                       key={output.id}

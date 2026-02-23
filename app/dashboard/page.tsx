@@ -433,8 +433,8 @@ function DashboardContent() {
             <UserDropdown />
           </div>
         </header>
-        <div className="flex-1 p-4 md:p-6 h-fit overflow-auto mx-auto">
-          <div className="max-w-7xl mx-auto">
+        <div className="mx-4 h-fit flex-1 overflow-auto p-4 md:p-6">
+          <div className="mx-auto max-w-7xl min-w-0">
             <div className="mb-6 md:mb-8">
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">InnDesign Studio</h1>
               <p className="text-sm md:text-base text-muted-foreground">Create stunning interior designs with AI assistance</p>

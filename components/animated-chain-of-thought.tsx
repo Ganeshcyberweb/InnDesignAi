@@ -230,7 +230,7 @@ export function AnimatedChainOfThought({
   }
 
   return (
-    <div className={cn("not-prose max-w-prose", className)}>
+    <div className={cn("not-prose w-full max-w-full", className)}>
       {/* Header */}
       <button
         // onClick={() => setIsExpanded(!isExpanded)}
@@ -416,9 +416,9 @@ export function AnimatedChainOfThought({
 
                   {/* Theme Tabs */}
                   <Tabs value={selectedTheme} onValueChange={setSelectedTheme} className="w-full">
-                    <TabsList className="mb-4 bg-muted">
+                    <TabsList className="mb-4 w-full justify-start overflow-x-auto bg-muted">
                       {generatedDesigns.map((design) => (
-                        <TabsTrigger key={design.theme} value={design.theme} className="text-sm">
+                        <TabsTrigger key={design.theme} value={design.theme} className="shrink-0 text-sm">
                           {design.label}
                         </TabsTrigger>
                       ))}
