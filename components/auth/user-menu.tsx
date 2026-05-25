@@ -13,6 +13,8 @@ import {
   HelpCircle
 } from 'lucide-react'
 
+import Link from 'next/link'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -198,28 +200,36 @@ export function UserMenu() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+              <DropdownMenuItem asChild className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <Link href="/profile">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </Link>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+              <DropdownMenuItem asChild className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <Link href="/settings">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </Link>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                <Bell className="mr-2 h-4 w-4" />
-                <span>Notifications</span>
+              <DropdownMenuItem asChild className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <Link href="/notifications">
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notifications</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                <HelpCircle className="mr-2 h-4 w-4" />
-                <span>Help & Support</span>
+              <DropdownMenuItem asChild className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <Link href="/help">
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  <span>Help &amp; Support</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
 

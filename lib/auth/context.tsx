@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { AuthContextType, AuthUser, UserRole } from '@/types/auth'
 import { toast } from 'sonner'
@@ -12,7 +12,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClient()
+  // Create the browser client exactly once. Recreating it on every render
+  // spawns fresh clients whose session hasn't restored yet, so getUser() races
+  // and can transiently return null — which surfaced as being "logged out" when
+  // navigating to public pages.
+  const supabase = useMemo(() => createClient(), [])
 
   const refreshUser = useCallback(async () => {
     try {
