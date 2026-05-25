@@ -20,6 +20,8 @@ export interface FurnitureProduct {
   status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
+  /** Optional external product/detail link (when the data source provides one). */
+  externalUrl?: string;
 }
 
 export interface FurnitureApiResponse {

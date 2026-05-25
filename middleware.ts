@@ -16,7 +16,9 @@ const PROTECTED_ROUTES = {
   '/designer': ['DESIGNER', 'ADMIN'],
 } as const
 
-// Public routes that don't require authentication
+// Public routes that don't require authentication.
+// Marketing / informational pages are intentionally open so visitors can
+// browse the site (and refresh on them) without being redirected to login.
 const PUBLIC_ROUTES = [
   '/',
   '/login',
@@ -24,6 +26,11 @@ const PUBLIC_ROUTES = [
   '/reset-password',
   '/confirm-email',
   '/about',
+  '/features',
+  '/pricing',
+  '/guide',
+  '/help',
+  '/support',
   '/contact',
   '/privacy',
   '/terms',

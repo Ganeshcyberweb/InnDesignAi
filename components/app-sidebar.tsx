@@ -29,6 +29,10 @@ import {
   RiSettings3Line,
   RiHeartLine,
   RiCamera3Line,
+  RiHome5Line,
+  RiLayoutGridLine,
+  RiPriceTag3Line,
+  RiInformationLine,
 } from "@remixicon/react";
 import { ChevronRight } from "lucide-react";
 import { useDesignHistoryStore } from "@/stores/design-history-store";
@@ -56,14 +60,40 @@ const data = {
       ],
     },
     {
-      title: "More",
+      title: "Explore",
       url: "#",
       items: [
+        {
+          title: "Home",
+          url: "/",
+          icon: RiHome5Line,
+        },
+        {
+          title: "Features",
+          url: "/features",
+          icon: RiLayoutGridLine,
+        },
+        {
+          title: "Pricing",
+          url: "/pricing",
+          icon: RiPriceTag3Line,
+        },
         {
           title: "Design Guide",
           url: "/guide",
           icon: RiBookOpenLine,
         },
+        {
+          title: "About",
+          url: "/about",
+          icon: RiInformationLine,
+        },
+      ],
+    },
+    {
+      title: "More",
+      url: "#",
+      items: [
         {
           title: "Help & Support",
           url: "/help",
@@ -96,7 +126,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-3 px-2 py-2">
+            <Link
+              href="/"
+              aria-label="Go to InnDesign home"
+              className="flex items-center gap-3 px-2 py-2 rounded-md transition-colors hover:bg-sidebar-accent/50"
+            >
               <div className="flex aspect-square size-9 items-center justify-center rounded-md overflow-hidden bg-primary text-primary-foreground relative after:rounded-[inherit] after:absolute after:inset-0 after:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] after:pointer-events-none">
                 <img
                   src="https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp2/logo-01_upxvqe.png"
@@ -111,7 +145,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   InnDesign
                 </span>
               </div>
-            </div>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -229,9 +263,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        {/* Secondary Navigation */}
+
+        {/* Explore: navigate back to the public marketing pages */}
         <SidebarGroup>
           <SidebarGroupLabel className="uppercase text-sidebar-foreground/50">
             {data.navMain[1]?.title}
@@ -239,6 +272,43 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent className="px-2">
             <SidebarMenu>
               {data.navMain[1]?.items.map((item) => {
+                const isActive = item.url === '/'
+                  ? pathname === '/'
+                  : pathname === item.url || pathname?.startsWith(`${item.url}/`);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="group/menu-button font-medium gap-3 h-9 rounded-md text-sidebar-foreground data-[active=true]:hover:bg-transparent data-[active=true]:bg-gradient-to-b data-[active=true]:from-sidebar-primary data-[active=true]:to-sidebar-primary/70 data-[active=true]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] [&>svg]:size-auto data-[active=true]:text-white"
+                      isActive={isActive}
+                    >
+                      <Link href={item.url}>
+                        {item.icon && (
+                          <item.icon
+                            className="text-sidebar-foreground/70 group-data-[active=true]/menu-button:text-white"
+                            size={22}
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span className="group-data-[active=true]/menu-button:text-white">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        {/* Secondary Navigation */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="uppercase text-sidebar-foreground/50">
+            {data.navMain[2]?.title}
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="px-2">
+            <SidebarMenu>
+              {data.navMain[2]?.items.map((item) => {
                 const isActive = pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>

@@ -157,6 +157,7 @@ function ProductCard({ product, isSelected, onSelect, isLimitReached = false }: 
         "relative",
         isDisabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
       )}
+      title={product.category ? `${product.name} · ${product.category}` : product.name}
       whileHover={!isDisabled ? { y: -2 } : {}}
       transition={{ duration: 0.2 }}
       onHoverStart={() => setIsHovered(true)}

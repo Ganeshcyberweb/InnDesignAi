@@ -1,174 +1,212 @@
-import type { FurnitureProduct, FurnitureApiResponse, FurnitureApiError, FurnitureFilters } from '@/types/furniture';
+import type { FurnitureProduct, FurnitureApiResponse, FurnitureFilters } from '@/types/furniture';
 
-const BASE_URL = 'https://furniture-api.fly.dev/v1';
-const CACHE_KEY = 'furniture-api-cache';
+/**
+ * Furniture data is sourced from DummyJSON (https://dummyjson.com) — a free,
+ * stable, key-less product API. The previous provider (furniture-api.fly.dev)
+ * was unreachable and caused "fetch failed" 500s.
+ *
+ * Strategy:
+ *  - Pull the home/furniture-relevant categories once and cache the normalized
+ *    pool in-memory (5 min TTL), with in-flight de-duplication so concurrent
+ *    callers share a single network request.
+ *  - Never throw on network failure — return an empty list so the UI can show a
+ *    graceful fallback instead of crashing.
+ */
+const DUMMYJSON_BASE = 'https://dummyjson.com';
+// DummyJSON categories that map to interior-design furniture / decor.
+const FURNITURE_CATEGORIES = ['furniture', 'home-decoration'];
 const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes
+const REQUEST_TIMEOUT = 10000; // 10 seconds
 
-interface CacheEntry {
-  data: FurnitureApiResponse;
-  timestamp: number;
+interface DummyJsonProduct {
+  id: number;
+  title: string;
+  description?: string;
+  category?: string;
+  price: number;
+  discountPercentage?: number;
+  rating?: number;
+  stock?: number;
+  tags?: string[];
+  sku?: string;
+  dimensions?: { width: number; height: number; depth: number };
+  thumbnail?: string;
+  images?: string[];
+}
+
+interface DummyJsonCategoryResponse {
+  products?: DummyJsonProduct[];
+}
+
+/** Normalize a DummyJSON product into the app's FurnitureProduct shape. */
+function mapToFurnitureProduct(p: DummyJsonProduct): FurnitureProduct {
+  const hasDiscount = typeof p.discountPercentage === 'number' && p.discountPercentage > 0;
+  const discountPrice = hasDiscount
+    ? Math.round(p.price * (1 - (p.discountPercentage as number) / 100))
+    : undefined;
+
+  return {
+    id: String(p.id),
+    sku: p.sku || String(p.id),
+    name: p.title,
+    category: p.category || 'furniture',
+    wood_type: '',
+    description: p.description || '',
+    dimensions: p.dimensions ?? { width: 0, height: 0, depth: 0 },
+    price: p.price,
+    discount_price: discountPrice,
+    image_path: p.thumbnail || p.images?.[0] || '',
+    stock: p.stock ?? 0,
+    featured: (p.rating ?? 0) >= 4.5,
+    status: 'active',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    externalUrl: `${DUMMYJSON_BASE}/products/${p.id}`,
+  };
 }
 
 class FurnitureApiService {
-  private cache = new Map<string, CacheEntry>();
+  private poolCache: { data: FurnitureProduct[]; timestamp: number } | null = null;
+  private inflight: Promise<FurnitureProduct[]> | null = null;
 
-  private getCacheKey(filters: FurnitureFilters = {}): string {
-    return JSON.stringify(filters);
-  }
-
-  private isValidCache(entry: CacheEntry): boolean {
-    return Date.now() - entry.timestamp < CACHE_EXPIRY;
-  }
-
-  private async fetchWithErrorHandling(url: string): Promise<FurnitureApiResponse> {
-    console.log(`🔄 Fetching furniture API: ${url}`);
+  private async fetchJson<T>(url: string): Promise<T> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
       const response = await fetch(url, {
         signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: { Accept: 'application/json' },
       });
 
-      clearTimeout(timeoutId);
-
-      console.log(`📡 API Response: ${response.status} ${response.statusText}`);
-
       if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        console.error(`❌ API Error Response: ${errorText}`);
-        throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
       }
 
-      const responseText = await response.text();
-
-      if (!responseText) {
-        console.error('❌ Empty response from API');
-        throw new Error('Empty response from API');
-      }
-
-      let parsedData;
-      try {
-        parsedData = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('❌ Failed to parse JSON response:', parseError);
-        console.error('Raw response:', responseText.substring(0, 200));
-        throw new Error('Invalid JSON response from API');
-      }
-
-      // Handle different API response formats
-      let data: FurnitureProduct[];
-      if (parsedData.success && parsedData.data) {
-        // API returns { success: true, count: number, data: FurnitureProduct[] }
-        data = parsedData.data;
-        console.log(`✅ Successfully fetched ${data.length} items from API`);
-      } else if (Array.isArray(parsedData)) {
-        // API returns FurnitureProduct[] directly
-        data = parsedData;
-        console.log(`✅ Successfully fetched ${data.length} items from API (direct array)`);
-      } else {
-        console.error('❌ Unexpected API response format:', parsedData);
-        throw new Error('Unexpected API response format');
-      }
-
-      if (!Array.isArray(data)) {
-        console.error('❌ Expected array of products, got:', typeof data);
-        throw new Error('API response data is not an array');
-      }
-
-      return {
-        data,
-        pagination: {
-          page: 1,
-          per_page: data.length,
-          total: parsedData.count || data.length,
-          total_pages: 1
-        }
-      };
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.error('❌ Request timed out after 10 seconds');
-        throw new Error('Request timed out. Please check your internet connection.');
-      }
-
-      console.error('❌ Furniture API Error:', error);
-
-      // Provide more user-friendly error messages
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        throw new Error('Unable to connect to furniture API. Please check your internet connection.');
-      }
-
-      throw error;
+      return (await response.json()) as T;
+    } finally {
+      clearTimeout(timeoutId);
     }
+  }
+
+  /**
+   * Fetch & cache the normalized furniture pool.
+   * Never throws — returns [] if every category request fails.
+   */
+  private async getPool(): Promise<FurnitureProduct[]> {
+    if (this.poolCache && Date.now() - this.poolCache.timestamp < CACHE_EXPIRY) {
+      return this.poolCache.data;
+    }
+
+    // Share a single in-flight request across concurrent callers.
+    if (this.inflight) {
+      return this.inflight;
+    }
+
+    this.inflight = (async () => {
+      const results = await Promise.all(
+        FURNITURE_CATEGORIES.map(async (category) => {
+          try {
+            const json = await this.fetchJson<DummyJsonCategoryResponse>(
+              `${DUMMYJSON_BASE}/products/category/${encodeURIComponent(category)}?limit=0`
+            );
+            return Array.isArray(json.products) ? json.products : [];
+          } catch (error) {
+            console.warn(`⚠️ Failed to fetch furniture category "${category}":`, error);
+            return [] as DummyJsonProduct[];
+          }
+        })
+      );
+
+      const mapped = results.flat().map(mapToFurnitureProduct).filter((p) => p.image_path);
+      // De-duplicate by id.
+      const unique = Array.from(new Map(mapped.map((p) => [p.id, p])).values());
+
+      // Only cache successful (non-empty) results so a transient outage doesn't
+      // poison the cache for the full TTL.
+      if (unique.length > 0) {
+        this.poolCache = { data: unique, timestamp: Date.now() };
+      }
+
+      return unique;
+    })();
+
+    try {
+      return await this.inflight;
+    } finally {
+      this.inflight = null;
+    }
+  }
+
+  private applyFilters(pool: FurnitureProduct[], filters: FurnitureFilters): FurnitureProduct[] {
+    const effectivePrice = (p: FurnitureProduct) => p.discount_price ?? p.price;
+    let filtered = pool;
+
+    if (filters.min_price !== undefined || filters.max_price !== undefined) {
+      const priceFiltered = pool.filter((p) => {
+        const price = effectivePrice(p);
+        if (filters.min_price !== undefined && price < filters.min_price) return false;
+        if (filters.max_price !== undefined && price > filters.max_price) return false;
+        return true;
+      });
+      // Design budgets are room-level (often far above individual item prices),
+      // so if the price filter empties the list, fall back to the full pool
+      // rather than showing nothing.
+      filtered = priceFiltered.length > 0 ? priceFiltered : pool;
+    }
+
+    if (filters.featured) {
+      const featuredOnly = filtered.filter((p) => p.featured);
+      filtered = featuredOnly.length > 0 ? featuredOnly : filtered;
+    }
+
+    return filtered;
   }
 
   async getProducts(filters: FurnitureFilters = {}): Promise<FurnitureApiResponse> {
-    const cacheKey = this.getCacheKey(filters);
-    const cachedEntry = this.cache.get(cacheKey);
+    const pool = await this.getPool();
+    const filtered = this.applyFilters(pool, filters);
+    const limited =
+      filters.limit && filters.limit > 0 ? filtered.slice(0, filters.limit) : filtered;
 
-    if (cachedEntry && this.isValidCache(cachedEntry)) {
-      return cachedEntry.data;
-    }
-
-    const params = new URLSearchParams();
-
-    if (filters.category) params.append('category', filters.category);
-    if (filters.wood_type) params.append('wood_type', filters.wood_type);
-    if (filters.min_price) params.append('min_price', filters.min_price.toString());
-    if (filters.max_price) params.append('max_price', filters.max_price.toString());
-    if (filters.featured) params.append('featured', filters.featured.toString());
-    if (filters.limit) params.append('limit', filters.limit.toString());
-    if (filters.page) params.append('page', filters.page.toString());
-
-    const url = `${BASE_URL}/products${params.toString() ? `?${params.toString()}` : ''}`;
-    const response = await this.fetchWithErrorHandling(url);
-
-    // Cache the response
-    this.cache.set(cacheKey, {
-      data: response,
-      timestamp: Date.now()
-    });
-
-    return response;
+    return {
+      data: limited,
+      pagination: {
+        page: filters.page ?? 1,
+        per_page: limited.length,
+        total: filtered.length,
+        total_pages: 1,
+      },
+    };
   }
 
   async getProductBySku(sku: string): Promise<FurnitureProduct> {
-    const url = `${BASE_URL}/products/${sku}`;
-    const response = await this.fetchWithErrorHandling(url);
-
-    if (!response.data[0]) {
+    const pool = await this.getPool();
+    const product = pool.find((p) => p.sku === sku || p.id === sku);
+    if (!product) {
       throw new Error(`Product with SKU ${sku} not found`);
     }
-
-    return response.data[0];
+    return product;
   }
 
-  async getFeaturedProducts(limit: number = 4): Promise<FurnitureProduct[]> {
+  async getFeaturedProducts(limit = 4): Promise<FurnitureProduct[]> {
     const response = await this.getProducts({ featured: true, limit });
     return response.data;
   }
 
-  async getProductsByCategory(category: string, limit: number = 10): Promise<FurnitureProduct[]> {
+  async getProductsByCategory(category: string, limit = 10): Promise<FurnitureProduct[]> {
     const response = await this.getProducts({ category, limit });
     return response.data;
   }
 
-  async getRandomProducts(limit: number = 4): Promise<FurnitureProduct[]> {
-    // Get a larger pool to ensure randomness and avoid duplicates
-    const poolSize = Math.max(50, limit * 3);
-    const response = await this.getProducts({ limit: poolSize });
-    const products = response.data;
-
-    if (products.length === 0) {
+  async getRandomProducts(limit = 4): Promise<FurnitureProduct[]> {
+    const pool = await this.getPool();
+    if (pool.length === 0) {
       return [];
     }
 
-    // Better shuffle algorithm (Fisher-Yates)
-    const shuffled = [...products];
+    // Fisher-Yates shuffle for variety.
+    const shuffled = [...pool];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -177,30 +215,20 @@ class FurnitureApiService {
     return shuffled.slice(0, limit);
   }
 
-  // Get products suitable for a specific room type
-  async getProductsForRoom(roomType: string, limit: number = 4): Promise<FurnitureProduct[]> {
-    // For now, we'll get random products since the API categories don't perfectly match room types
-    // This can be enhanced when more category data is available
-    console.log(`🏠 Getting products for room type: ${roomType} (using random products for now)`);
+  async getProductsForRoom(roomType: string, limit = 4): Promise<FurnitureProduct[]> {
+    // DummyJSON doesn't expose room-specific subcategories, so we surface a
+    // varied selection from the furniture pool.
+    console.log(`🏠 Getting furniture suggestions for room type: ${roomType || 'any'}`);
     return this.getRandomProducts(limit);
   }
 
   clearCache(): void {
-    this.cache.clear();
+    this.poolCache = null;
   }
 
-  // Clear cache entries for specific category
-  clearCategoryCache(category?: string): void {
-    if (!category) {
-      this.cache.clear();
-      return;
-    }
-    // Clear any cache entries that include this category
-    for (const [key] of this.cache) {
-      if (key.includes(category)) {
-        this.cache.delete(key);
-      }
-    }
+  clearCategoryCache(_category?: string): void {
+    // The pool is shared across categories, so clearing it wholesale is sufficient.
+    this.poolCache = null;
   }
 }
 
