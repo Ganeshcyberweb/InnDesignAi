@@ -46,7 +46,7 @@ export function useFurnitureSuggestions({
 
       // If we have a room type, fetch products for each relevant category
       if (roomType && roomType in ROOM_FURNITURE_MAPPING) {
-        const relevantCategories = ROOM_FURNITURE_MAPPING[roomType as keyof typeof ROOM_FURNITURE_MAPPING];
+        const relevantCategories = ROOM_FURNITURE_MAPPING[roomType as keyof typeof ROOM_FURNITURE_MAPPING] ?? [];
         console.log(`🏠 Room type "${roomType}" maps to categories:`, relevantCategories);
 
         // Fetch products for each category in parallel

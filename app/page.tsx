@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -47,6 +47,25 @@ interface HeroProductProps {
   };
 }
 
+function EmailVerifiedToast() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const emailVerified = searchParams.get('email_verified');
+    if (emailVerified === 'true') {
+      toast.success(
+        "Thank you, your email is verified! You can now log in and start designing.",
+        { duration: 6000 }
+      );
+      // Clean up the URL
+      router.replace('/', { scroll: false });
+    }
+  }, [searchParams, router]);
+
+  return null;
+}
+
 export default function Home({
   badgeText = "AI-Powered Interior Design",
   description = "Create stunning interior designs in minutes with our intelligent AI design assistant.",
@@ -78,23 +97,9 @@ export default function Home({
   },
 }: HeroProductProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user } = useAuth();
   const { formData } = useDesignFormStore();
   const { savePendingDesign } = usePendingDesignStore();
-
-  // Check for email verification success
-  useEffect(() => {
-    const emailVerified = searchParams.get('email_verified');
-    if (emailVerified === 'true') {
-      toast.success(
-        "Thank you, your email is verified! You can now log in and start designing.",
-        { duration: 6000 }
-      );
-      // Clean up the URL
-      router.replace('/', { scroll: false });
-    }
-  }, [searchParams, router]);
 
   const handleDesignSubmit = async (message: PromptInputMessage) => {
     console.log('🎨 Design submitted from home page:', {
@@ -143,6 +148,9 @@ export default function Home({
 
   return (
     <div className="relative">
+      <Suspense fallback={null}>
+        <EmailVerifiedToast />
+      </Suspense>
       {/* <BeamsBackground intensity="subtle" className="absolute inset-0" colorTheme="pink" /> */}
       <div className="relative z-10">
         <HeroHeader />
