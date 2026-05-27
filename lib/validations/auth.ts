@@ -6,7 +6,7 @@
 import { z } from 'zod'
 
 // User role validation
-export const userRoleSchema = z.enum(['CLIENT', 'DESIGNER', 'ADMIN'])
+export const userRoleSchema = z.enum(['GUEST', 'USER', 'ADMIN', 'SUPER_ADMIN'])
 
 // Email validation (more strict than default)
 const emailSchema = z
@@ -40,13 +40,14 @@ const companySchema = z
   .trim()
   .optional()
 
-// Sign up validation schema
+// Sign up validation schema.
+// Note: role is intentionally NOT accepted here — all sign-ups become USER.
+// Elevated roles are granted only by a Super Admin (see admin module).
 export const signUpSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   name: nameSchema,
   company: companySchema,
-  role: userRoleSchema.optional().default('CLIENT'),
 })
 
 export type SignUpData = z.infer<typeof signUpSchema>

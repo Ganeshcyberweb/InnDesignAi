@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   user_id: authUser.id,
                   name: authUser.user_metadata?.name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || '',
                   company: null,
-                  role: 'CLIENT' as UserRole,
+                  role: 'USER' as UserRole,
                   avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null,
                   created_at: authUser.created_at,
                   updated_at: authUser.updated_at || authUser.created_at,
@@ -119,7 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     name: string,
-    role: UserRole,
     company?: string
   ) => {
     try {
@@ -133,7 +132,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email,
           password,
           name,
-          role,
           company,
         }),
         credentials: 'include',

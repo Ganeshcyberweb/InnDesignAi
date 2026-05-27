@@ -5,18 +5,14 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Eye, EyeOff, Loader2, Building2, Palette, Mail, CheckCircle2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Mail, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form'
 import { OAuthButtons } from '@/components/auth/oauth-buttons'
 import { useAuth } from '@/lib/auth/context'
-import { UserRole } from '@/types/auth'
-
-type SignupRole = 'CLIENT' | 'DESIGNER'
 
 const signupSchema = z.object({
   name: z
@@ -37,9 +33,6 @@ const signupSchema = z.object({
   confirmPassword: z
     .string()
     .min(1, 'Please confirm your password'),
-  role: z.enum(['CLIENT', 'DESIGNER'], {
-    required_error: 'Please select your role',
-  }) as z.ZodType<SignupRole>,
   company: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
@@ -69,21 +62,6 @@ const buttonVariants = {
   tap: { scale: 0.98 },
 }
 
-const roleOptions = [
-  {
-    value: 'CLIENT' as UserRole,
-    label: 'Client',
-    description: 'I want to design my space',
-    icon: Building2,
-  },
-  {
-    value: 'DESIGNER' as UserRole,
-    label: 'Designer',
-    description: 'I want to help others with design',
-    icon: Palette,
-  },
-]
-
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -103,14 +81,11 @@ export function SignupForm() {
     },
   })
 
-  const watchedRole = form.watch('role')
-
   const onSubmit = async (data: SignupFormData) => {
     const { error } = await signUp(
       data.email,
       data.password,
       data.name,
-      data.role,
       data.company
     )
     if (error) {
@@ -285,71 +260,23 @@ export function SignupForm() {
         <motion.div {...fieldMotionProps}>
           <FormField
             control={form.control}
-            name="role"
+            name="company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>I am a...</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={loading}>
-                  <FormControl>
-                    <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/20">
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {roleOptions.map((option) => {
-                      const Icon = option.icon
-                      return (
-                        <SelectItem key={option.value} value={option.value}>
-                          <div className="flex items-center space-x-3">
-                            <Icon className="h-4 w-4" />
-                            <div>
-                              <div className="font-medium">{option.label}</div>
-                              <div className="text-xs text-slate-500 dark:text-slate-400">
-                                {option.description}
-                              </div>
-                            </div>
-                          </div>
-                        </SelectItem>
-                      )
-                    })}
-                  </SelectContent>
-                </Select>
+                <FormLabel>Company <span className="text-muted-foreground font-normal">(optional)</span></FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Your company or studio name"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
+                    disabled={loading}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </motion.div>
-
-        {watchedRole === 'DESIGNER' && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <FormField
-              control={form.control}
-              name="company"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company/Studio Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter your company or studio name"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    This will be displayed on your designer profile
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </motion.div>
-        )}
 
         <motion.div {...fieldMotionProps}>
           <FormField

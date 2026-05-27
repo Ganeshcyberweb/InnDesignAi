@@ -130,24 +130,17 @@ export function hasRole(userRole: UserRole, requiredRole: UserRole | UserRole[])
 }
 
 /**
- * Check if user is admin
+ * Check if user is an admin (ADMIN or SUPER_ADMIN)
  */
 export function isAdmin(userRole: UserRole): boolean {
-  return userRole === 'ADMIN'
+  return userRole === 'ADMIN' || userRole === 'SUPER_ADMIN'
 }
 
 /**
- * Check if user is designer
+ * Check if user is a super admin
  */
-export function isDesigner(userRole: UserRole): boolean {
-  return userRole === 'DESIGNER'
-}
-
-/**
- * Check if user is client
- */
-export function isClient(userRole: UserRole): boolean {
-  return userRole === 'CLIENT'
+export function isSuperAdmin(userRole: UserRole): boolean {
+  return userRole === 'SUPER_ADMIN'
 }
 
 /**
@@ -337,12 +330,18 @@ export function getUserInitials(user: AuthUser, profile?: AuthProfile): string {
  */
 export function formatUserRole(role: UserRole): string {
   switch (role) {
-    case 'CLIENT':
-      return 'Client'
-    case 'DESIGNER':
-      return 'Designer'
+    case 'SUPER_ADMIN':
+      return 'Super Admin'
     case 'ADMIN':
       return 'Administrator'
+    case 'GUEST':
+      return 'Guest'
+    case 'USER':
+      return 'User'
+    // Legacy values (mapped to USER after migration)
+    case 'CLIENT':
+    case 'DESIGNER':
+      return 'User'
     default:
       return role
   }
