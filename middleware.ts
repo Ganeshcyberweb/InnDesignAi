@@ -6,14 +6,15 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import type { Database } from '@/types/database'
+import { normalizeRole, isAdminRole } from '@/lib/auth/roles'
 
-// Define protected routes and their required roles
+// Define protected routes and their required roles (canonical RBAC model).
+// Legacy CLIENT/DESIGNER roles are normalized to USER before these checks.
 const PROTECTED_ROUTES = {
-  '/dashboard': ['CLIENT', 'DESIGNER', 'ADMIN'],
-  '/profile': ['CLIENT', 'DESIGNER', 'ADMIN'],
-  '/designs': ['CLIENT', 'DESIGNER', 'ADMIN'],
-  '/admin': ['ADMIN'],
-  '/designer': ['DESIGNER', 'ADMIN'],
+  '/dashboard': ['USER', 'ADMIN', 'SUPER_ADMIN'],
+  '/profile': ['USER', 'ADMIN', 'SUPER_ADMIN'],
+  '/designs': ['USER', 'ADMIN', 'SUPER_ADMIN'],
+  '/admin': ['ADMIN', 'SUPER_ADMIN'],
 } as const
 
 // Public routes that don't require authentication.
@@ -112,6 +113,22 @@ export async function middleware(request: NextRequest) {
       )
     }
 
+    // Admin APIs require an admin role — return a proper 403 otherwise.
+    if (pathname.startsWith('/api/admin')) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single()
+
+      if (!isAdminRole(profile?.role)) {
+        return NextResponse.json(
+          { success: false, error: 'Forbidden - Admin access required' },
+          { status: 403 }
+        )
+      }
+    }
+
     // Add user ID to request headers for API routes
     response.headers.set('x-user-id', user.id)
     return response
@@ -128,28 +145,23 @@ export async function middleware(request: NextRequest) {
   // Check role-based access for protected routes
   for (const [route, requiredRoles] of Object.entries(PROTECTED_ROUTES)) {
     if (pathname.startsWith(route)) {
+      // Default to USER when the profile is missing/unreadable: regular routes
+      // stay accessible, admin routes are denied. Legacy roles are normalized.
+      let role: string = 'USER'
       try {
-        // Get user profile to check role
-        const { data: profile, error } = await supabase
+        const { data: profile } = await supabase
           .from('profiles')
           .select('role')
           .eq('user_id', user.id)
           .single()
-
-        if (error || !profile) {
-          // Allow access for all authenticated users regardless of profile status
-          // Profile will be created by trigger or app logic
-          response.headers.set('x-user-id', user.id)
-          return response
-        }
-
-        if (!requiredRoles.includes(profile.role as any)) {
-          // Redirect to unauthorized page if user doesn't have required role
-          return NextResponse.redirect(new URL('/unauthorized', request.url))
-        }
+        role = normalizeRole(profile?.role)
       } catch (error) {
         console.error('Middleware error checking user role:', error)
-        return NextResponse.redirect(new URL('/login', request.url))
+      }
+
+      if (!(requiredRoles as readonly string[]).includes(role)) {
+        // Insufficient role — send them to a page they can access.
+        return NextResponse.redirect(new URL('/dashboard', request.url))
       }
       break
     }

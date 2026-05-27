@@ -8,7 +8,6 @@ import {
   Mail,
   Building2,
   Shield,
-  Palette,
   User as UserIcon,
   CalendarDays,
   BadgeCheck,
@@ -21,20 +20,13 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/lib/auth/context"
-
-function formatRole(role?: string) {
-  if (!role) return "User"
-  return role.charAt(0) + role.slice(1).toLowerCase()
-}
+import { normalizeRole, formatRole } from "@/lib/auth/roles"
 
 function roleIcon(role?: string) {
-  switch (role) {
-    case "DESIGNER":
-      return <Palette className="h-3.5 w-3.5" />
+  switch (normalizeRole(role)) {
+    case "SUPER_ADMIN":
     case "ADMIN":
       return <Shield className="h-3.5 w-3.5" />
-    case "CLIENT":
-      return <Building2 className="h-3.5 w-3.5" />
     default:
       return <UserIcon className="h-3.5 w-3.5" />
   }

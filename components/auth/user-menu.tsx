@@ -5,8 +5,6 @@ import {
   User,
   Settings,
   LogOut,
-  Palette,
-  Building2,
   Shield,
   ChevronDown,
   Bell,
@@ -27,6 +25,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth/context'
+import { normalizeRole, formatRole } from '@/lib/auth/roles'
 
 const dropdownVariants = {
   hidden: {
@@ -67,11 +66,8 @@ const avatarVariants = {
 }
 
 const getRoleIcon = (role: string) => {
-  switch (role) {
-    case 'DESIGNER':
-      return <Palette className="h-4 w-4" />
-    case 'CLIENT':
-      return <Building2 className="h-4 w-4" />
+  switch (normalizeRole(role)) {
+    case 'SUPER_ADMIN':
     case 'ADMIN':
       return <Shield className="h-4 w-4" />
     default:
@@ -80,20 +76,14 @@ const getRoleIcon = (role: string) => {
 }
 
 const getRoleBadgeColor = (role: string) => {
-  switch (role) {
-    case 'DESIGNER':
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
-    case 'CLIENT':
-      return 'bg-primary/10 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+  switch (normalizeRole(role)) {
+    case 'SUPER_ADMIN':
+      return 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400'
     case 'ADMIN':
       return 'bg-destructive/10 text-red-800 dark:bg-red-900/20 dark:text-red-400'
     default:
-      return 'bg-muted text-foreground dark:bg-background/20 dark:text-muted-foreground'
+      return 'bg-primary/10 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
   }
-}
-
-const formatRoleTitle = (role: string) => {
-  return role.charAt(0) + role.slice(1).toLowerCase()
 }
 
 export function UserMenu() {
@@ -185,7 +175,7 @@ export function UserMenu() {
                   <div className="flex items-center justify-between">
                     <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(profile.role)}`}>
                       {getRoleIcon(profile.role)}
-                      <span>{formatRoleTitle(profile.role)}</span>
+                      <span>{formatRole(profile.role)}</span>
                     </span>
                     {profile.company && (
                       <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-20">

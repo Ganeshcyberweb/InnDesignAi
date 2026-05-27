@@ -23,7 +23,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { email, password, name, company, role } = validation.data!
+    const { email, password, name, company } = validation.data!
+
+    // All self-service sign-ups are regular USERs. Elevated roles (ADMIN /
+    // SUPER_ADMIN) are only granted by a Super Admin, never via this endpoint.
+    const role = 'USER' as const
 
     const supabase = await createClient()
     const authUrls = getAuthUrls()

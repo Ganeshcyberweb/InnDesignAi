@@ -1,6 +1,6 @@
 import { Database } from './database'
 
-export type UserRole = 'CLIENT' | 'DESIGNER' | 'ADMIN'
+export type UserRole = 'GUEST' | 'USER' | 'ADMIN' | 'SUPER_ADMIN'
 
 export interface User {
   id: string
@@ -28,7 +28,7 @@ export interface AuthUser extends User {
 export interface AuthContextType {
   user: AuthUser | null
   loading: boolean
-  signUp: (email: string, password: string, name: string, role: UserRole, company?: string) => Promise<{ data: any; error: Error | null }>
+  signUp: (email: string, password: string, name: string, company?: string) => Promise<{ data: any; error: Error | null }>
   signIn: (email: string, password: string) => Promise<{ data: any; error: Error | null }>
   signOut: () => Promise<{ error: Error | null }>
   resetPassword: (email: string) => Promise<{ error: Error | null }>

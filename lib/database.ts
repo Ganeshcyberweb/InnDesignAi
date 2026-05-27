@@ -33,7 +33,7 @@ export async function createUserProfile(user: User, additionalData?: {
         userId: user.id,
         name: additionalData?.name || user.user_metadata?.name || user.email?.split('@')[0] || null,
         company: additionalData?.company || user.user_metadata?.company || null,
-        role: additionalData?.role || UserRole.CLIENT,
+        role: additionalData?.role || UserRole.USER,
         avatar: user.user_metadata?.avatar_url || null,
       },
     })
