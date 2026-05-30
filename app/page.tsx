@@ -97,7 +97,7 @@ export default function Home({
   },
 }: HeroProductProps) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, startGuestSession } = useAuth();
   const { formData } = useDesignFormStore();
   const { savePendingDesign } = usePendingDesignStore();
 
@@ -108,41 +108,45 @@ export default function Home({
       isAuthenticated: !!user,
     });
 
-    // Check if user is authenticated
+    // Logged-in users go straight to the studio.
     if (user) {
-      // User is logged in - redirect directly to dashboard
       console.log('✅ User authenticated, redirecting to dashboard');
       router.push('/dashboard');
-    } else {
-      // User not logged in - save pending design and redirect to login
-      console.log('🔐 User not authenticated, saving pending design and redirecting to login');
+      return;
+    }
 
-      try {
-        // Convert uploaded images to base64
-        // Extract File objects from FileUIPart array
-        const fileObjects = message.files?.map(f => (f as any).file as File).filter(Boolean) || [];
-        const serializedImages = fileObjects.length > 0 ? await filesToBase64(fileObjects) : [];
+    // Anonymous: auto-start a guest session so the prompt runs immediately on
+    // the dashboard (no detour through /login). If guest start fails, fall back
+    // to the login page so the user can still proceed manually.
+    console.log('🔐 Anonymous user — starting guest session and continuing to dashboard');
+    try {
+      const fileObjects = message.files?.map(f => (f as any).file as File).filter(Boolean) || [];
+      const serializedImages = fileObjects.length > 0 ? await filesToBase64(fileObjects) : [];
 
-        // Save all design data to pending store
-        savePendingDesign({
-          prompt: message.text || "",
-          roomType: formData.roomType,
-          roomSize: formData.roomSize,
-          stylePreference: formData.stylePreference,
-          budgetRange: formData.budgetRange,
-          colorPalette: formData.colorPalette,
-          customColors: formData.customColors,
-          selectedFurnitureItems: formData.selectedFurnitureItems,
-          images: serializedImages,
-        });
+      savePendingDesign({
+        prompt: message.text || "",
+        roomType: formData.roomType,
+        roomSize: formData.roomSize,
+        stylePreference: formData.stylePreference,
+        budgetRange: formData.budgetRange,
+        colorPalette: formData.colorPalette,
+        customColors: formData.customColors,
+        selectedFurnitureItems: formData.selectedFurnitureItems,
+        images: serializedImages,
+      });
 
-        console.log('💾 Pending design saved, redirecting to login');
+      const { error } = await startGuestSession();
+      if (error) {
+        console.warn('Guest start failed, falling back to /login:', error.message);
         router.push('/login');
-      } catch (error) {
-        console.error('❌ Failed to save pending design:', error);
-        // Still redirect to login even if save fails
-        router.push('/login');
+        return;
       }
+
+      console.log('👤 Guest session started, navigating to dashboard');
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('❌ Failed to start guest flow:', error);
+      router.push('/login');
     }
   };
 
