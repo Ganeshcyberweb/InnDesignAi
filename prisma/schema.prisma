@@ -71,21 +71,86 @@ model Design {
 
 /// Anonymous "Continue as guest" sessions. Counts free-trial prompts so the
 /// server can enforce the limit independent of client-side localStorage.
-/// `converted_user_id` is set when the guest signs up — useful for analytics
-/// but kept as a plain uuid (auth.users lives outside Prisma's scope).
+/// `converted_user_id` (+ `converted_at`) are set when the guest signs up —
+/// the timestamp lets the admin compute conversion rate / time-to-convert.
 model GuestSession {
-  id              String   @id @default(uuid()) @db.Uuid
-  promptCount     Int      @default(0) @map("prompt_count")
-  ipAddress       String?  @map("ip_address")
-  userAgent       String?  @map("user_agent") @db.Text
-  convertedUserId String?  @map("converted_user_id") @db.Uuid
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  lastSeenAt      DateTime @default(now()) @map("last_seen_at")
+  id              String    @id @default(uuid()) @db.Uuid
+  promptCount     Int       @default(0) @map("prompt_count")
+  ipAddress       String?   @map("ip_address")
+  userAgent       String?   @map("user_agent") @db.Text
+  convertedUserId String?   @map("converted_user_id") @db.Uuid
+  convertedAt     DateTime? @map("converted_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  lastSeenAt      DateTime  @default(now()) @map("last_seen_at")
 
   @@index([createdAt])
   @@index([convertedUserId])
   @@map("guest_sessions")
+}
+
+/// Per-request log of AI generation attempts. Powers admin analytics (usage
+/// volume, token spend, success rate, guest vs user mix). Written fire-and-
+/// forget by /api/ai/generate-themes — never blocks the response.
+model AiGeneration {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String?  @map("user_id") @db.Uuid
+  guestSessionId String?  @map("guest_session_id") @db.Uuid
+  promptPreview  String?  @map("prompt_preview") @db.Text
+  status         String // success | failed | limit_reached | auth_required
+  themeCount     Int      @default(0) @map("theme_count")
+  imageCount     Int      @default(0) @map("image_count")
+  tokensInput    Int?     @map("tokens_input")
+  tokensOutput   Int?     @map("tokens_output")
+  durationMs     Int?     @map("duration_ms")
+  errorMessage   String?  @map("error_message") @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([guestSessionId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("ai_generations")
+}
+
+/// Auth events for activity / DAU-MAU / security analytics. `userId` is null
+/// for failed signins (user not yet identified); `email` is captured so the
+/// admin can spot brute-force attempts.
+model AuthEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  email     String?
+  eventType String   @map("event_type") // signin | signin_failed | signup | signout | password_reset_requested
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("auth_events")
+}
+
+/// Admin audit trail — populated by Phase 5 admin actions (role changes,
+/// user suspensions, admin invites, etc.). Schema is in place now so writers
+/// are ready the moment the admin UI lands.
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  actorRole  String?  @map("actor_role")
+  action     String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  before     Json?
+  after      Json?
+  ipAddress  String?  @map("ip_address")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([actorId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 model DesignOutput {

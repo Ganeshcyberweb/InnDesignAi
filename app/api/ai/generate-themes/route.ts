@@ -8,6 +8,7 @@ import {
   getGuestCookieId,
   tryIncrementGuestPrompt,
 } from "@/lib/guest/session";
+import { trackAiGeneration, type AiGenerationStatus } from "@/lib/analytics/track";
 
 // Theme configurations
 const THEMES = [
@@ -43,9 +44,25 @@ const VIEWS = [
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
 
+  // Per-request analytics state. Mutated as we go, written to ai_generations
+  // in the `finally` block so every exit path (success / failed / limit /
+  // auth_required) is captured exactly once.
+  const tracking = {
+    userId: null as string | null,
+    guestSessionId: null as string | null,
+    promptText: null as string | null,
+    status: 'failed' as AiGenerationStatus,
+    themeCount: 0,
+    imageCount: 0,
+    tokensInput: 0,
+    tokensOutput: 0,
+    errorMessage: null as string | null,
+  };
+
   try {
     const body = await request.json();
     const { userPrompt, images, formData } = body;
+    tracking.promptText = typeof userPrompt === 'string' ? userPrompt : null;
 
     // --- Auth / guest-trial gate ---------------------------------------------
     // For authenticated users, middleware sets x-user-id. For unauthenticated
@@ -59,13 +76,16 @@ export async function POST(request: NextRequest) {
     if (!authedUserId) {
       const guestId = await getGuestCookieId();
       if (!guestId) {
+        tracking.status = 'auth_required';
         return NextResponse.json(
           { error: 'Sign in or continue as guest to generate designs.', code: 'AUTH_REQUIRED' },
           { status: 401 }
         );
       }
+      tracking.guestSessionId = guestId;
       const newCount = await tryIncrementGuestPrompt(guestId);
       if (newCount === null) {
+        tracking.status = 'limit_reached';
         return NextResponse.json(
           {
             error: "You've used your free guest prompts. Sign up to keep generating.",
@@ -78,6 +98,8 @@ export async function POST(request: NextRequest) {
       isGuest = true;
       guestPromptsRemaining = Math.max(0, GUEST_PROMPT_LIMIT - newCount);
       console.log(`👤 Guest request — used ${newCount}/${GUEST_PROMPT_LIMIT} prompt(s), ${guestPromptsRemaining} remaining`);
+    } else {
+      tracking.userId = authedUserId;
     }
     // -------------------------------------------------------------------------
 
@@ -160,6 +182,17 @@ export async function POST(request: NextRequest) {
           const apiDuration = Date.now() - apiStartTime;
           console.log(`   ⏱️ API Response Time: ${apiDuration}ms`);
 
+          // Accumulate token usage from this call (if Gemini reports it).
+          const usage = (response as any)?.usageMetadata;
+          if (usage) {
+            if (typeof usage.promptTokenCount === 'number') {
+              tracking.tokensInput += usage.promptTokenCount;
+            }
+            if (typeof usage.candidatesTokenCount === 'number') {
+              tracking.tokensOutput += usage.candidatesTokenCount;
+            }
+          }
+
           // Extract image data
           let imageData = null;
           if (response.candidates?.[0]?.content?.parts) {
@@ -228,6 +261,10 @@ export async function POST(request: NextRequest) {
     console.log(`Total Time: ${(totalDuration / 1000).toFixed(1)}s`);
     console.log('=================================\n');
 
+    tracking.status = 'success';
+    tracking.themeCount = results.length;
+    tracking.imageCount = results.reduce((acc, r) => acc + r.images.length, 0);
+
     return NextResponse.json({
       success: true,
       themes: results,
@@ -251,12 +288,29 @@ export async function POST(request: NextRequest) {
     console.error('Error:', error);
     console.error('=================================\n');
 
+    tracking.status = 'failed';
+    tracking.errorMessage = error instanceof Error ? error.message : String(error);
+
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: error instanceof Error ? error.message : "Failed to generate themes"
       },
       { status: 500 }
     );
+  } finally {
+    // Fire-and-forget — never blocks the response, never throws.
+    trackAiGeneration({
+      userId: tracking.userId,
+      guestSessionId: tracking.guestSessionId,
+      promptText: tracking.promptText,
+      status: tracking.status,
+      themeCount: tracking.themeCount,
+      imageCount: tracking.imageCount,
+      tokensInput: tracking.tokensInput || null,
+      tokensOutput: tracking.tokensOutput || null,
+      durationMs: Date.now() - startTime,
+      errorMessage: tracking.errorMessage,
+    });
   }
 }

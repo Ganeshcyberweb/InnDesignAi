@@ -109,14 +109,18 @@ export async function tryIncrementGuestPrompt(id: string): Promise<number | null
 
 /**
  * Mark a guest session as converted to a registered user. Called at signup
- * when a guest cookie is present. Idempotent.
+ * when a guest cookie is present. Idempotent. Stamps `converted_at` so the
+ * admin can compute conversion rate / time-to-convert later.
  */
 export async function linkGuestToUser(guestId: string, userId: string): Promise<void> {
   if (!isValidUuid(guestId) || !isValidUuid(userId)) return
   try {
     await prisma.guestSession.update({
       where: { id: guestId },
-      data: { convertedUserId: userId },
+      data: {
+        convertedUserId: userId,
+        convertedAt: new Date(),
+      },
     })
   } catch {
     // If the session row doesn't exist (e.g., manually deleted), silently skip.
