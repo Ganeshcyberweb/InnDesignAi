@@ -69,6 +69,25 @@ model Design {
   @@map("designs")
 }
 
+/// Anonymous "Continue as guest" sessions. Counts free-trial prompts so the
+/// server can enforce the limit independent of client-side localStorage.
+/// `converted_user_id` is set when the guest signs up — useful for analytics
+/// but kept as a plain uuid (auth.users lives outside Prisma's scope).
+model GuestSession {
+  id              String   @id @default(uuid()) @db.Uuid
+  promptCount     Int      @default(0) @map("prompt_count")
+  ipAddress       String?  @map("ip_address")
+  userAgent       String?  @map("user_agent") @db.Text
+  convertedUserId String?  @map("converted_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  lastSeenAt      DateTime @default(now()) @map("last_seen_at")
+
+  @@index([createdAt])
+  @@index([convertedUserId])
+  @@map("guest_sessions")
+}
+
 model DesignOutput {
   id                   String   @id @default(uuid()) @db.Uuid
   designId             String   @map("design_id") @db.Uuid

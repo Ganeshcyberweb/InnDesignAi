@@ -17,7 +17,10 @@ import { useDesignFormStore } from "@/stores/design-form-store";
 import { useDesignHistoryStore } from "@/stores/design-history-store";
 import { usePendingDesignStore } from "@/stores/pending-design-store";
 import { useBatchImageUpload } from "@/hooks/use-batch-image-upload";
-import { base64ToFiles } from "@/lib/utils/design-persistence";
+import { base64ToFiles, filesToBase64 } from "@/lib/utils/design-persistence";
+import { useAuth } from "@/lib/auth/context";
+import { GuestPromptsBadge } from "@/components/auth/guest-prompts-badge";
+import { GuestLimitModal } from "@/components/auth/guest-limit-modal";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { History, RefreshCw, X } from "lucide-react";
 
@@ -32,13 +35,15 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const { formData, updateFormData, updateFurnitureItems } = useDesignFormStore();
   const { addNewDesign, invalidateCache } = useDesignHistoryStore();
-  const { loadAndClear: loadPendingDesign } = usePendingDesignStore();
+  const { loadAndClear: loadPendingDesign, savePendingDesign } = usePendingDesignStore();
   const { uploadImages, progress: uploadProgress, isUploading, overallProgress } = useBatchImageUpload();
+  const { isGuest, guest, setGuestPromptsRemaining } = useAuth();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedDesigns, setGeneratedDesigns] = useState<ThemeDesign[] | null>(null);
   const [roiAnalysis, setRoiAnalysis] = useState<string | null>(null);
   const [savedDesignId, setSavedDesignId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   // Regeneration state
   const [parentDesignId, setParentDesignId] = useState<string | null>(null);
@@ -190,7 +195,39 @@ function DashboardContent() {
     router.push('/dashboard');
   };
 
+  // Persist the in-flight prompt + form so it can be auto-resumed after the
+  // guest signs up / logs in. Mirrors the home-page flow.
+  const savePendingFromMessage = async (message: PromptInputMessage) => {
+    const fileObjects = (message.files || [])
+      .map((f) => (f as any).file as File | undefined)
+      .filter((f): f is File => !!f);
+    const serializedImages = fileObjects.length > 0 ? await filesToBase64(fileObjects) : [];
+    savePendingDesign({
+      prompt: message.text || "",
+      roomType: formData.roomType,
+      roomSize: formData.roomSize,
+      stylePreference: formData.stylePreference,
+      budgetRange: formData.budgetRange,
+      colorPalette: formData.colorPalette,
+      customColors: formData.customColors,
+      selectedFurnitureItems: formData.selectedFurnitureItems,
+      images: serializedImages,
+    });
+  };
+
   const handleGenerateDesign = async (message: PromptInputMessage) => {
+    // Guest hard-stop: if there are no free prompts left, save the prompt for
+    // post-signup resume and open the auth modal instead of calling the API.
+    if (isGuest && guest && guest.promptsRemaining <= 0) {
+      try {
+        await savePendingFromMessage(message);
+      } catch (e) {
+        console.error('Failed to save pending design before limit modal:', e);
+      }
+      setShowLimitModal(true);
+      return;
+    }
+
     setIsGenerating(true);
     setError(null); // Clear any previous errors
     setRoiAnalysis(null); // Clear any previous ROI analysis
@@ -263,11 +300,28 @@ function DashboardContent() {
       const result = await response.json();
 
       if (!response.ok) {
+        // Server-side backstop: a guest hit the trial limit. Save the prompt
+        // for resume after auth and open the signup/login modal.
+        if (response.status === 429 && result.code === 'GUEST_LIMIT_REACHED') {
+          try {
+            await savePendingFromMessage(message);
+          } catch (e) {
+            console.error('Failed to save pending design on 429:', e);
+          }
+          setShowLimitModal(true);
+          setIsGenerating(false);
+          return;
+        }
         if (response.status === 429 && result.retryAfter) {
           // Handle quota exceeded with retry suggestion
           throw new Error(`${result.error} Please wait ${Math.ceil(result.retryAfter / 1000)} seconds before trying again.`);
         }
         throw new Error(result.error || 'Failed to generate design');
+      }
+
+      // Update the guest counter from the response when present.
+      if (result.guest && typeof result.guest.promptsRemaining === 'number') {
+        setGuestPromptsRemaining(result.guest.promptsRemaining);
       }
 
       if (result.success && result.themes && result.themes.length > 0) {
@@ -278,8 +332,11 @@ function DashboardContent() {
           console.log('💰 ROI Analysis generated successfully');
         }
         
-        // Save the generated design to database
-        try {
+        // Save the generated design to database (skipped for guests — they
+        // have no user_id; results stay in the in-memory session).
+        if (isGuest) {
+          console.log('👤 Guest mode — skipping designs save (results stay in session)');
+        } else try {
           console.log('\n💾 === SAVING TO DATABASE ===');
           console.log('📊 Payload Summary:', {
             promptLength: message.text?.length || 0,
@@ -429,7 +486,8 @@ function DashboardContent() {
       <SidebarInset className="bg-background group/sidebar-inset">
         <header className="flex h-16 shrink-0 items-center gap-2 px-4 md:px-6 lg:px-8 bg-background text-sidebar-foreground relative before:absolute before:inset-y-3 before:-left-px before:w-px before:bg-gradient-to-b before:from-white/5 before:via-white/15 before:to-white/5 before:z-50">
           <SidebarTrigger className="-ms-2" />
-          <div className="flex items-center gap-8 ml-auto">
+          <div className="flex items-center gap-3 md:gap-6 ml-auto">
+            <GuestPromptsBadge className="hidden sm:inline-flex" />
             <UserDropdown />
           </div>
         </header>
@@ -582,6 +640,7 @@ function DashboardContent() {
           </div>
         </div>
       </SidebarInset>
+      <GuestLimitModal open={showLimitModal} onOpenChange={setShowLimitModal} />
     </SidebarProvider>
   );
 }

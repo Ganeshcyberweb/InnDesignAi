@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createUserProfile } from '@/lib/database'
 import { signUpSchema, validateAuthData } from '@/lib/validations/auth'
 import { createAuthSuccessResponse, createAuthErrorResponse, getAuthUrls } from '@/lib/auth/helpers'
+import { clearGuestCookie, getGuestCookieId, linkGuestToUser } from '@/lib/guest/session'
 
 export async function POST(request: NextRequest) {
   try {
@@ -79,6 +80,19 @@ export async function POST(request: NextRequest) {
         500,
         'NO_USER_DATA'
       )
+    }
+
+    // Link the guest session (if any) to the new user for conversion tracking
+    // and clear the guest cookie. Best-effort — never blocks signup.
+    try {
+      const guestId = await getGuestCookieId()
+      if (guestId) {
+        await linkGuestToUser(guestId, data.user.id)
+        await clearGuestCookie()
+        console.log(`👤 Linked guest session -> user ${data.user.id}`)
+      }
+    } catch (linkErr) {
+      console.error('Failed to link guest session on signup:', linkErr)
     }
 
     // Create user profile in database
