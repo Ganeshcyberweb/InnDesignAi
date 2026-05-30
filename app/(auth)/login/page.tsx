@@ -2,6 +2,7 @@
 
 import { AuthLayout } from '@/components/auth/auth-layout'
 import { LoginForm } from '@/components/auth/login-form'
+import { ContinueAsGuestButton } from '@/components/auth/continue-as-guest-button'
 import { usePendingDesignStore } from '@/stores/pending-design-store'
 import { Info } from 'lucide-react'
 
@@ -26,6 +27,7 @@ export default function LoginPage() {
         </div>
       )}
       <LoginForm />
+      <ContinueAsGuestButton />
     </AuthLayout>
   )
 }

@@ -3,6 +3,11 @@ import googleAI, { dataUrlToPart, urlToPart, SYSTEM_INSTRUCTIONS } from "@/lib/g
 import { buildDesignPrompt } from "@/lib/utils/prompt-builder";
 import { Modality } from "@google/genai";
 import { generateROIAnalysis, parseROIMetrics } from "@/lib/roi/gemini-roi-analysis";
+import {
+  GUEST_PROMPT_LIMIT,
+  getGuestCookieId,
+  tryIncrementGuestPrompt,
+} from "@/lib/guest/session";
 
 // Theme configurations
 const THEMES = [
@@ -41,6 +46,40 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { userPrompt, images, formData } = body;
+
+    // --- Auth / guest-trial gate ---------------------------------------------
+    // For authenticated users, middleware sets x-user-id. For unauthenticated
+    // requests we require a valid guest cookie and atomically increment the
+    // counter — the SQL UPDATE both checks and bumps in one step, so two
+    // concurrent requests can't both squeak past the limit.
+    const authedUserId = request.headers.get('x-user-id');
+    let isGuest = false;
+    let guestPromptsRemaining: number | null = null;
+
+    if (!authedUserId) {
+      const guestId = await getGuestCookieId();
+      if (!guestId) {
+        return NextResponse.json(
+          { error: 'Sign in or continue as guest to generate designs.', code: 'AUTH_REQUIRED' },
+          { status: 401 }
+        );
+      }
+      const newCount = await tryIncrementGuestPrompt(guestId);
+      if (newCount === null) {
+        return NextResponse.json(
+          {
+            error: "You've used your free guest prompts. Sign up to keep generating.",
+            code: 'GUEST_LIMIT_REACHED',
+            promptLimit: GUEST_PROMPT_LIMIT,
+          },
+          { status: 429 }
+        );
+      }
+      isGuest = true;
+      guestPromptsRemaining = Math.max(0, GUEST_PROMPT_LIMIT - newCount);
+      console.log(`👤 Guest request — used ${newCount}/${GUEST_PROMPT_LIMIT} prompt(s), ${guestPromptsRemaining} remaining`);
+    }
+    // -------------------------------------------------------------------------
 
     console.log('\n🚀 === MULTI-THEME GENERATION REQUEST ===');
     console.log('📝 User Prompt:', userPrompt || '(empty)');
@@ -194,6 +233,11 @@ export async function POST(request: NextRequest) {
       themes: results,
       roiAnalysis,
       roiMetrics,
+      // When the request was served as a guest, surface the remaining count so
+      // the dashboard can update its "X of 2 prompts left" badge in one round-trip.
+      guest: isGuest
+        ? { promptLimit: GUEST_PROMPT_LIMIT, promptsRemaining: guestPromptsRemaining }
+        : undefined,
       metadata: {
         totalImages: results.reduce((acc, r) => acc + r.images.length, 0),
         totalDuration,

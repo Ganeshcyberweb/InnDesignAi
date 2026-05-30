@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, useMemo, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { AuthContextType, AuthUser, UserRole } from '@/types/auth'
+import { AuthContextType, AuthUser, GuestState, UserRole } from '@/types/auth'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 
@@ -10,6 +10,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [guest, setGuest] = useState<GuestState | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   // Create the browser client exactly once. Recreating it on every render
@@ -98,22 +99,80 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [supabase])
 
+  const refreshGuest = useCallback(async () => {
+    try {
+      const res = await fetch('/api/guest/me', { credentials: 'include' })
+      if (!res.ok) {
+        setGuest(null)
+        return
+      }
+      const data = await res.json()
+      setGuest(data?.guest ?? null)
+    } catch (error) {
+      console.error('Error refreshing guest session:', error)
+      setGuest(null)
+    }
+  }, [])
+
+  const startGuestSession = useCallback(async () => {
+    try {
+      const res = await fetch('/api/guest/start', {
+        method: 'POST',
+        credentials: 'include',
+      })
+      const data = await res.json()
+      if (!res.ok || !data?.success) {
+        return { error: new Error(data?.error || 'Failed to start guest session') }
+      }
+      setGuest(data.guest)
+      return { error: null }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to start guest session'
+      return { error: new Error(message) }
+    }
+  }, [])
+
+  const setGuestPromptsRemaining = useCallback((remaining: number) => {
+    setGuest((prev) => {
+      if (!prev) return prev
+      const capped = Math.max(0, Math.min(prev.promptLimit, remaining))
+      return {
+        ...prev,
+        promptsRemaining: capped,
+        promptCount: prev.promptLimit - capped,
+      }
+    })
+  }, [])
+
   useEffect(() => {
-    refreshUser()
+    // Initial load: resolve auth user, then (if there's no user) check for a
+    // guest session. Both states need to settle before children should rely on
+    // them, but the guest fetch is cheap.
+    let cancelled = false
+    ;(async () => {
+      await refreshUser()
+      if (!cancelled) await refreshGuest()
+    })()
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event) => {
         if (event === 'SIGNED_IN') {
           refreshUser()
+          // Signing in supersedes any guest session.
+          setGuest(null)
         } else if (event === 'SIGNED_OUT') {
           setUser(null)
+          refreshGuest()
         }
       }
     )
 
-    return () => subscription.unsubscribe()
-  }, [supabase.auth, refreshUser])
+    return () => {
+      cancelled = true
+      subscription.unsubscribe()
+    }
+  }, [supabase.auth, refreshUser, refreshGuest])
 
   const signUp = async (
     email: string,
@@ -284,6 +343,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextType = {
     user,
     loading,
+    guest,
+    isGuest: !user && !!guest,
     signUp,
     signIn,
     signOut,
@@ -291,6 +352,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updatePassword,
     resendConfirmation,
     refreshUser,
+    refreshGuest,
+    startGuestSession,
+    setGuestPromptsRemaining,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

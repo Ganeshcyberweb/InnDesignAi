@@ -25,9 +25,19 @@ export interface AuthUser extends User {
   profile?: Profile
 }
 
+export interface GuestState {
+  id: string
+  promptCount: number
+  promptLimit: number
+  promptsRemaining: number
+}
+
 export interface AuthContextType {
   user: AuthUser | null
   loading: boolean
+  // Guest free-trial state (null when there's no active guest session).
+  guest: GuestState | null
+  isGuest: boolean
   signUp: (email: string, password: string, name: string, company?: string) => Promise<{ data: any; error: Error | null }>
   signIn: (email: string, password: string) => Promise<{ data: any; error: Error | null }>
   signOut: () => Promise<{ error: Error | null }>
@@ -35,6 +45,10 @@ export interface AuthContextType {
   updatePassword: (password: string, token?: string) => Promise<{ error: Error | null }>
   resendConfirmation: (email: string) => Promise<{ error: Error | null }>
   refreshUser: () => Promise<void>
+  refreshGuest: () => Promise<void>
+  startGuestSession: () => Promise<{ error: Error | null }>
+  // Optimistic update from API responses that report the new remaining count.
+  setGuestPromptsRemaining: (remaining: number) => void
 }
 
 export interface LoginFormData {

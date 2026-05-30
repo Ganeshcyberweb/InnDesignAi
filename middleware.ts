@@ -7,6 +7,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import type { Database } from '@/types/database'
 import { normalizeRole, isAdminRole } from '@/lib/auth/roles'
+import { GUEST_COOKIE_NAME } from '@/lib/guest/constants'
 
 // Define protected routes and their required roles (canonical RBAC model).
 // Legacy CLIENT/DESIGNER roles are normalized to USER before these checks.
@@ -46,6 +47,21 @@ const PUBLIC_API_ROUTES = [
   '/api/auth/confirm',
   '/api/auth/callback',
   '/api/health',
+  // Guest-trial endpoints: callable while logged out.
+  '/api/guest/start',
+  '/api/guest/me',
+]
+
+// API routes that work for BOTH authenticated users and guests with a valid
+// guest cookie. The route handlers themselves enforce the per-guest limit.
+const GUEST_ALLOWED_API_ROUTES = [
+  '/api/ai/generate-themes',
+]
+
+// Page routes a guest (no auth, valid guest cookie) is allowed to load. Other
+// authenticated pages (history, settings, profile, notifications) still require login.
+const GUEST_ALLOWED_PAGE_ROUTES = [
+  '/dashboard',
 ]
 
 // Auth routes that don't require authentication
@@ -95,6 +111,8 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const hasGuestCookie = !!request.cookies.get(GUEST_COOKIE_NAME)?.value
+
   // Handle public routes and auth callback
   if (PUBLIC_ROUTES.includes(pathname) || PUBLIC_API_ROUTES.includes(pathname) || AUTH_ROUTES.includes(pathname)) {
     if (user && (pathname === '/login' || pathname === '/signup')) {
@@ -105,7 +123,20 @@ export async function middleware(request: NextRequest) {
 
   // Handle API routes
   if (pathname.startsWith('/api/')) {
-    // All API routes require authentication
+    // Guest-allowed APIs: pass through if either authed OR a guest cookie is
+    // present. The route handler does its own per-guest counter check.
+    if (GUEST_ALLOWED_API_ROUTES.includes(pathname)) {
+      if (!user && !hasGuestCookie) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized - Please sign in or continue as guest' },
+          { status: 401 }
+        )
+      }
+      if (user) response.headers.set('x-user-id', user.id)
+      return response
+    }
+
+    // All other API routes require an authenticated user.
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized - Please sign in' },
@@ -136,7 +167,14 @@ export async function middleware(request: NextRequest) {
 
   // Handle protected routes
   if (!user) {
-    // Redirect unauthenticated users to login
+    // Guests with a valid cookie may load the explicitly guest-allowed pages
+    // (currently just /dashboard). Everything else still redirects to login.
+    const guestAllowed = GUEST_ALLOWED_PAGE_ROUTES.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
+    )
+    if (guestAllowed && hasGuestCookie) {
+      return response
+    }
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirectTo', pathname)
     return NextResponse.redirect(loginUrl)

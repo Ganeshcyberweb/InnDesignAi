@@ -1,10 +1,10 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Star } from "lucide-react";
+import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import { MorphSurface } from "@/components/smoothui/ui/AiInput";
@@ -97,9 +97,13 @@ export default function Home({
   },
 }: HeroProductProps) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, startGuestSession } = useAuth();
   const { formData } = useDesignFormStore();
   const { savePendingDesign } = usePendingDesignStore();
+  // Shown as a full-screen overlay while we serialize images, start the guest
+  // session, and navigate — otherwise the page just sits idle for a second or
+  // two and the user has no idea their click registered.
+  const [isStarting, setIsStarting] = useState(false);
 
   const handleDesignSubmit = async (message: PromptInputMessage) => {
     console.log('🎨 Design submitted from home page:', {
@@ -108,41 +112,49 @@ export default function Home({
       isAuthenticated: !!user,
     });
 
-    // Check if user is authenticated
+    // Logged-in users go straight to the studio.
     if (user) {
-      // User is logged in - redirect directly to dashboard
       console.log('✅ User authenticated, redirecting to dashboard');
+      setIsStarting(true);
       router.push('/dashboard');
-    } else {
-      // User not logged in - save pending design and redirect to login
-      console.log('🔐 User not authenticated, saving pending design and redirecting to login');
+      return;
+    }
 
-      try {
-        // Convert uploaded images to base64
-        // Extract File objects from FileUIPart array
-        const fileObjects = message.files?.map(f => (f as any).file as File).filter(Boolean) || [];
-        const serializedImages = fileObjects.length > 0 ? await filesToBase64(fileObjects) : [];
+    // Anonymous: auto-start a guest session so the prompt runs immediately on
+    // the dashboard (no detour through /login). If guest start fails, fall back
+    // to the login page so the user can still proceed manually.
+    console.log('🔐 Anonymous user — starting guest session and continuing to dashboard');
+    setIsStarting(true);
+    try {
+      const fileObjects = message.files?.map(f => (f as any).file as File).filter(Boolean) || [];
+      const serializedImages = fileObjects.length > 0 ? await filesToBase64(fileObjects) : [];
 
-        // Save all design data to pending store
-        savePendingDesign({
-          prompt: message.text || "",
-          roomType: formData.roomType,
-          roomSize: formData.roomSize,
-          stylePreference: formData.stylePreference,
-          budgetRange: formData.budgetRange,
-          colorPalette: formData.colorPalette,
-          customColors: formData.customColors,
-          selectedFurnitureItems: formData.selectedFurnitureItems,
-          images: serializedImages,
-        });
+      savePendingDesign({
+        prompt: message.text || "",
+        roomType: formData.roomType,
+        roomSize: formData.roomSize,
+        stylePreference: formData.stylePreference,
+        budgetRange: formData.budgetRange,
+        colorPalette: formData.colorPalette,
+        customColors: formData.customColors,
+        selectedFurnitureItems: formData.selectedFurnitureItems,
+        images: serializedImages,
+      });
 
-        console.log('💾 Pending design saved, redirecting to login');
+      const { error } = await startGuestSession();
+      if (error) {
+        console.warn('Guest start failed, falling back to /login:', error.message);
+        setIsStarting(false);
         router.push('/login');
-      } catch (error) {
-        console.error('❌ Failed to save pending design:', error);
-        // Still redirect to login even if save fails
-        router.push('/login');
+        return;
       }
+
+      console.log('👤 Guest session started, navigating to dashboard');
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('❌ Failed to start guest flow:', error);
+      setIsStarting(false);
+      router.push('/login');
     }
   };
 
@@ -151,6 +163,22 @@ export default function Home({
       <Suspense fallback={null}>
         <EmailVerifiedToast />
       </Suspense>
+
+      {/* Full-screen feedback while we serialize images, start the guest
+          session, and navigate to /dashboard. Without this, the page sits
+          idle for a moment and looks unresponsive. */}
+      {isStarting && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm"
+          role="status"
+          aria-live="polite"
+        >
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-base font-medium text-foreground">Starting your design&hellip;</p>
+          <p className="text-sm text-muted-foreground">Hang tight, this only takes a moment.</p>
+        </div>
+      )}
+
       {/* <BeamsBackground intensity="subtle" className="absolute inset-0" colorTheme="pink" /> */}
       <div className="relative z-10">
         <HeroHeader />
