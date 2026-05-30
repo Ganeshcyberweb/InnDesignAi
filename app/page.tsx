@@ -1,10 +1,10 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Star } from "lucide-react";
+import { Star, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import { MorphSurface } from "@/components/smoothui/ui/AiInput";
@@ -100,6 +100,10 @@ export default function Home({
   const { user, startGuestSession } = useAuth();
   const { formData } = useDesignFormStore();
   const { savePendingDesign } = usePendingDesignStore();
+  // Shown as a full-screen overlay while we serialize images, start the guest
+  // session, and navigate — otherwise the page just sits idle for a second or
+  // two and the user has no idea their click registered.
+  const [isStarting, setIsStarting] = useState(false);
 
   const handleDesignSubmit = async (message: PromptInputMessage) => {
     console.log('🎨 Design submitted from home page:', {
@@ -111,6 +115,7 @@ export default function Home({
     // Logged-in users go straight to the studio.
     if (user) {
       console.log('✅ User authenticated, redirecting to dashboard');
+      setIsStarting(true);
       router.push('/dashboard');
       return;
     }
@@ -119,6 +124,7 @@ export default function Home({
     // the dashboard (no detour through /login). If guest start fails, fall back
     // to the login page so the user can still proceed manually.
     console.log('🔐 Anonymous user — starting guest session and continuing to dashboard');
+    setIsStarting(true);
     try {
       const fileObjects = message.files?.map(f => (f as any).file as File).filter(Boolean) || [];
       const serializedImages = fileObjects.length > 0 ? await filesToBase64(fileObjects) : [];
@@ -138,6 +144,7 @@ export default function Home({
       const { error } = await startGuestSession();
       if (error) {
         console.warn('Guest start failed, falling back to /login:', error.message);
+        setIsStarting(false);
         router.push('/login');
         return;
       }
@@ -146,6 +153,7 @@ export default function Home({
       router.push('/dashboard');
     } catch (error) {
       console.error('❌ Failed to start guest flow:', error);
+      setIsStarting(false);
       router.push('/login');
     }
   };
@@ -155,6 +163,22 @@ export default function Home({
       <Suspense fallback={null}>
         <EmailVerifiedToast />
       </Suspense>
+
+      {/* Full-screen feedback while we serialize images, start the guest
+          session, and navigate to /dashboard. Without this, the page sits
+          idle for a moment and looks unresponsive. */}
+      {isStarting && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm"
+          role="status"
+          aria-live="polite"
+        >
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-base font-medium text-foreground">Starting your design&hellip;</p>
+          <p className="text-sm text-muted-foreground">Hang tight, this only takes a moment.</p>
+        </div>
+      )}
+
       {/* <BeamsBackground intensity="subtle" className="absolute inset-0" colorTheme="pink" /> */}
       <div className="relative z-10">
         <HeroHeader />

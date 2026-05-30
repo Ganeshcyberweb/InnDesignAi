@@ -105,13 +105,15 @@ function DashboardContent() {
         file: file,
       }));
 
-      // Trigger generation automatically with a slight delay to ensure form is populated
+      // Trigger generation immediately on the next tick so React has flushed
+      // the form-store updates above. (Was 500ms — the long timer made the
+      // submit-from-home flow feel laggy.)
       setTimeout(() => {
         handleGenerateDesign({
           text: pendingDesign.prompt,
           files: fileUIParts as any,
         });
-      }, 500);
+      }, 0);
     }
   }, []); // Empty dependency array - only run once on mount
 
