@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-type ReportType = "user_activity" | "ai_usage" | "conversion"
+type ReportType = "per_user" | "per_guest" | "ai_usage" | "conversion"
 
 interface ReportResponse {
   type: ReportType
@@ -26,9 +26,10 @@ interface ReportResponse {
 }
 
 const REPORT_TYPES: Array<{ value: ReportType; label: string }> = [
-  { value: "user_activity", label: "User activity (signins / signups)" },
-  { value: "ai_usage", label: "AI usage (generations + tokens)" },
-  { value: "conversion", label: "Guest -> user conversion" },
+  { value: "per_user", label: "Per-user activity (prompts, images, tokens)" },
+  { value: "per_guest", label: "Per-guest sessions (usage, conversion)" },
+  { value: "ai_usage", label: "AI usage by day (generations + tokens)" },
+  { value: "conversion", label: "Guest -> user conversion by day" },
 ]
 
 const PRESETS: Array<{ value: string; label: string; days: number | null }> = [
@@ -89,7 +90,7 @@ function downloadCsv(filename: string, csv: string) {
 }
 
 export default function AdminReportsPage() {
-  const [type, setType] = useState<ReportType>("user_activity")
+  const [type, setType] = useState<ReportType>("per_user")
   const [preset, setPreset] = useState("30d")
   const [{ from, to }, setRange] = useState(rangeForPreset("30d"))
   const [data, setData] = useState<ReportResponse | null>(null)
