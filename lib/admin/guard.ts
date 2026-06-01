@@ -13,6 +13,7 @@
  */
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { prisma } from '@/lib/prisma'
 import {
   type AppRole,
   isAdminRole,
@@ -38,11 +39,18 @@ async function loadActor(): Promise<AdminActor | { error: 'unauthenticated' | 'n
   } = await supabase.auth.getUser()
   if (error || !user) return { error: 'unauthenticated' }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('user_id', user.id)
-    .single()
+  // Read the role via Prisma (postgres user) so RLS on the `profiles` table
+  // can't hide the row from the user's anon-key JWT. supabase-js queries here
+  // were silently returning null and dropping us back to the USER fallback.
+  const profile = await prisma.profile
+    .findUnique({
+      where: { userId: user.id },
+      select: { role: true },
+    })
+    .catch((err) => {
+      console.error('admin guard: prisma profile lookup failed', err)
+      return null
+    })
 
   if (!profile) return { error: 'no_profile' }
 
