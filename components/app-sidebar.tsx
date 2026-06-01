@@ -33,11 +33,14 @@ import {
   RiLayoutGridLine,
   RiPriceTag3Line,
   RiInformationLine,
+  RiShieldUserLine,
 } from "@remixicon/react";
 import { ChevronRight } from "lucide-react";
 import { useDesignHistoryStore } from "@/stores/design-history-store";
 import { formatDistanceToNow } from "date-fns";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useAuth } from "@/lib/auth/context";
+import { isAdminRole } from "@/lib/auth/roles";
 
 // Interior Design navigation data
 const data = {
@@ -111,8 +114,10 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const { getAllDesigns, refreshIfStale } = useDesignHistoryStore();
   const [isHistoryOpen, setIsHistoryOpen] = React.useState(true);
+  const showAdminLink = isAdminRole(user?.profile?.role);
 
   // Load recent designs when component mounts
   React.useEffect(() => {
@@ -263,6 +268,37 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Admin: only rendered for admin / super-admin accounts. */}
+        {showAdminLink && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="uppercase text-sidebar-foreground/50">
+              Admin
+            </SidebarGroupLabel>
+            <SidebarGroupContent className="px-2">
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === "/admin" || pathname?.startsWith("/admin/")}
+                    className="group/menu-button font-medium gap-3 h-9 rounded-md text-sidebar-foreground data-[active=true]:hover:bg-transparent data-[active=true]:bg-gradient-to-b data-[active=true]:from-sidebar-primary data-[active=true]:to-sidebar-primary/70 data-[active=true]:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] [&>svg]:size-auto data-[active=true]:text-white"
+                  >
+                    <Link href="/admin">
+                      <RiShieldUserLine
+                        className="text-sidebar-foreground/70 group-data-[active=true]/menu-button:text-white"
+                        size={22}
+                        aria-hidden="true"
+                      />
+                      <span className="group-data-[active=true]/menu-button:text-white">
+                        Admin dashboard
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         {/* Explore: navigate back to the public marketing pages */}
         <SidebarGroup>

@@ -13,9 +13,11 @@ import {
 import {
   RiLogoutCircleLine,
   RiFindReplaceLine,
+  RiShieldUserLine,
 } from "@remixicon/react";
 
 import { useAuth } from "@/lib/auth/context";
+import { isAdminRole } from "@/lib/auth/roles";
 import { useRouter } from "next/navigation";
 
 export default function UserDropdown() {
@@ -68,6 +70,19 @@ export default function UserDropdown() {
             {userEmail}
           </span>
         </DropdownMenuLabel>
+        {isAdminRole(user?.profile?.role) && (
+          <DropdownMenuItem
+            className="gap-3 px-1 cursor-pointer"
+            onClick={() => handleNavigation('/admin')}
+          >
+            <RiShieldUserLine
+              size={20}
+              className="text-muted-foreground/70"
+              aria-hidden="true"
+            />
+            <span>Admin dashboard</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           className="gap-3 px-1 cursor-pointer"
           onClick={() => handleNavigation('/dashboard/history')}
