@@ -233,7 +233,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { data: null, error: new Error(data.error || 'Sign in failed') }
       }
 
-      setUser(data.user)
+      // Clear any in-memory guest state — signing in always supersedes the
+      // free-trial session — and fetch the canonical user (with profile +
+      // role) BEFORE navigating, so the dashboard renders the right state
+      // immediately instead of flashing the guest UI for a few seconds
+      // while /api/auth/me catches up in the background.
+      setGuest(null)
+      try {
+        const meRes = await fetch('/api/auth/me', { credentials: 'include' })
+        if (meRes.ok) {
+          setUser(await meRes.json())
+        } else {
+          setUser(data.user)
+        }
+      } catch {
+        setUser(data.user)
+      }
+
       toast.success('Successfully signed in!')
       router.push('/dashboard')
       return { data, error: null }
