@@ -9,6 +9,11 @@ import { createUserProfile } from '@/lib/database'
 import { signUpSchema, validateAuthData } from '@/lib/validations/auth'
 import { createAuthSuccessResponse, createAuthErrorResponse, getAuthUrls } from '@/lib/auth/helpers'
 import { clearGuestCookie, getGuestCookieId, linkGuestToUser } from '@/lib/guest/session'
+import {
+  ipFromHeaders,
+  trackAuthEvent,
+  userAgentFromHeaders,
+} from '@/lib/analytics/track'
 
 export async function POST(request: NextRequest) {
   try {
@@ -94,6 +99,15 @@ export async function POST(request: NextRequest) {
     } catch (linkErr) {
       console.error('Failed to link guest session on signup:', linkErr)
     }
+
+    // Record the signup event for analytics.
+    trackAuthEvent({
+      userId: data.user.id,
+      email: data.user.email ?? email,
+      eventType: 'signup',
+      ipAddress: ipFromHeaders(request.headers),
+      userAgent: userAgentFromHeaders(request.headers),
+    })
 
     // Create user profile in database
     const { profile, error: profileError } = await createUserProfile(data.user, {

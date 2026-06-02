@@ -7,6 +7,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { resetPasswordRequestSchema, validateAuthData } from '@/lib/validations/auth'
 import { createAuthSuccessResponse, createAuthErrorResponse, getAuthUrls } from '@/lib/auth/helpers'
+import {
+  ipFromHeaders,
+  trackAuthEvent,
+  userAgentFromHeaders,
+} from '@/lib/analytics/track'
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,6 +31,16 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
     const authUrls = getAuthUrls()
+
+    // Record the reset request regardless of whether the email exists — the
+    // response is intentionally indistinguishable from the success path to
+    // avoid email enumeration, and the analytics row captures the attempt.
+    trackAuthEvent({
+      email,
+      eventType: 'password_reset_requested',
+      ipAddress: ipFromHeaders(request.headers),
+      userAgent: userAgentFromHeaders(request.headers),
+    })
 
     // Send password reset email
     const { error } = await supabase.auth.resetPasswordForEmail(email, {

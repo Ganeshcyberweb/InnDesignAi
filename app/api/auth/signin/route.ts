@@ -8,6 +8,12 @@ import { createClient } from '@/lib/supabase/server'
 import { getOrCreateUserProfile } from '@/lib/database'
 import { signInSchema, validateAuthData } from '@/lib/validations/auth'
 import { createAuthSuccessResponse, createAuthErrorResponse } from '@/lib/auth/helpers'
+import { prisma } from '@/lib/prisma'
+import {
+  ipFromHeaders,
+  trackAuthEvent,
+  userAgentFromHeaders,
+} from '@/lib/analytics/track'
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +31,10 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = validation.data!
 
+    // Extracted once for the analytics events below.
+    const ipAddress = ipFromHeaders(request.headers)
+    const userAgent = userAgentFromHeaders(request.headers)
+
     const supabase = await createClient()
 
     // Sign in user with Supabase Auth
@@ -35,6 +45,14 @@ export async function POST(request: NextRequest) {
 
     if (authError) {
       console.error('Supabase auth signin error:', authError)
+
+      // Record the failure once — covers all the specific error branches below.
+      trackAuthEvent({
+        email,
+        eventType: 'signin_failed',
+        ipAddress,
+        userAgent,
+      })
 
       // Handle specific auth errors
       if (authError.message.includes('Invalid login credentials')) {
@@ -75,6 +93,26 @@ export async function POST(request: NextRequest) {
         'NO_USER_DATA'
       )
     }
+
+    // Record the successful signin + bump last_login. Both are fire-and-forget
+    // so they never delay the response.
+    trackAuthEvent({
+      userId: data.user.id,
+      email: data.user.email ?? email,
+      eventType: 'signin',
+      ipAddress,
+      userAgent,
+    })
+    prisma.profile
+      .update({
+        where: { userId: data.user.id },
+        data: { lastLogin: new Date() },
+      })
+      .catch((err) => {
+        // Common case: no profile row yet — getOrCreateUserProfile below will
+        // create one, and we'll capture last_login on the next signin.
+        console.warn('Failed to bump last_login (likely missing profile):', err?.message ?? err)
+      })
 
     // Get or create user profile
     const { profile, error: profileError, created } = await getOrCreateUserProfile(data.user)

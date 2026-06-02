@@ -6,16 +6,23 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import type { Database } from '@/types/database'
-import { normalizeRole, isAdminRole } from '@/lib/auth/roles'
+import { normalizeRole } from '@/lib/auth/roles'
 import { GUEST_COOKIE_NAME } from '@/lib/guest/constants'
 
 // Define protected routes and their required roles (canonical RBAC model).
 // Legacy CLIENT/DESIGNER roles are normalized to USER before these checks.
+//
+// NOTE: /admin is NOT listed here. The Edge middleware queries `profiles`
+// via supabase-js + the user JWT, and the table's RLS policy can hide the
+// row from that client — which incorrectly demoted real super-admins to the
+// USER fallback and bounced them to /dashboard. Role enforcement for the
+// admin area now lives in the layout (app/admin/layout.tsx) and each admin
+// route handler (lib/admin/guard.ts), both of which read the role via
+// Prisma (postgres user → bypasses RLS).
 const PROTECTED_ROUTES = {
   '/dashboard': ['USER', 'ADMIN', 'SUPER_ADMIN'],
   '/profile': ['USER', 'ADMIN', 'SUPER_ADMIN'],
   '/designs': ['USER', 'ADMIN', 'SUPER_ADMIN'],
-  '/admin': ['ADMIN', 'SUPER_ADMIN'],
 } as const
 
 // Public routes that don't require authentication.
@@ -144,21 +151,9 @@ export async function middleware(request: NextRequest) {
       )
     }
 
-    // Admin APIs require an admin role — return a proper 403 otherwise.
-    if (pathname.startsWith('/api/admin')) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', user.id)
-        .single()
-
-      if (!isAdminRole(profile?.role)) {
-        return NextResponse.json(
-          { success: false, error: 'Forbidden - Admin access required' },
-          { status: 403 }
-        )
-      }
-    }
+    // Admin role enforcement for /api/admin/* lives in each handler's
+    // requireAdmin (lib/admin/guard.ts) — it queries `profiles` via Prisma
+    // and so isn't fooled by RLS the way a supabase-js anon-key lookup is.
 
     // Add user ID to request headers for API routes
     response.headers.set('x-user-id', user.id)

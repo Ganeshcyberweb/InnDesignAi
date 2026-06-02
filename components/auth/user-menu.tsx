@@ -8,7 +8,8 @@ import {
   Shield,
   ChevronDown,
   Bell,
-  HelpCircle
+  HelpCircle,
+  LayoutDashboard,
 } from 'lucide-react'
 
 import Link from 'next/link'
@@ -25,7 +26,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth/context'
-import { normalizeRole, formatRole } from '@/lib/auth/roles'
+import { normalizeRole, formatRole, isAdminRole } from '@/lib/auth/roles'
 
 const dropdownVariants = {
   hidden: {
@@ -188,6 +189,20 @@ export function UserMenu() {
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
+
+            {isAdminRole(profile?.role) && (
+              <>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <Link href="/admin">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>Admin dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+              </>
+            )}
 
             <DropdownMenuGroup>
               <DropdownMenuItem asChild className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
