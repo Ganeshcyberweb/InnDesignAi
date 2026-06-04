@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "motion/react"
-import { BrainIcon, Loader2, ChevronDownIcon, Download, Package, Wand2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { BrainIcon, Loader2, ChevronDownIcon, Download, Package, Wand2, Lock, LineChart } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { TextDotsLoader } from "@/components/ui/loader"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
@@ -41,6 +42,12 @@ interface AnimatedChainOfThoughtProps {
    * component can transition out of its busy state.
    */
   onRefineTheme?: (themeKey: string, feedback: string) => Promise<void> | void
+  /**
+   * Phase 7c — when true, image downloads are intercepted with a sign-up
+   * upsell and the ROI panel is replaced by an "unlock the cost breakdown"
+   * card. The dashboard passes the value from useAuth().isGuest.
+   */
+  isGuest?: boolean
 }
 
 // Predefined AI design process thoughts
@@ -71,7 +78,9 @@ export function AnimatedChainOfThought({
   designId = null,
   onComplete,
   onRefineTheme,
+  isGuest = false,
 }: AnimatedChainOfThoughtProps) {
+  const router = useRouter()
   // Phase 7b — per-theme refinement state.
   const [refineOpenFor, setRefineOpenFor] = useState<string | null>(null)
   const [refineFeedback, setRefineFeedback] = useState("")
@@ -186,9 +195,22 @@ export function AnimatedChainOfThought({
     return 0.4 // 6th - most faded
   }
 
-  // Download individual image
+  // Download individual image. Guests get an upsell instead — downloads are
+  // a signed-in benefit.
   const handleDownloadImage = async (imageUrl: string, imageName: string, e: React.MouseEvent) => {
     e.stopPropagation() // Prevent lightbox from opening
+
+    if (isGuest) {
+      toast.message("Sign up to download high-res images", {
+        description: "Create a free account to save the images you love.",
+        action: {
+          label: "Sign up",
+          onClick: () => router.push("/signup"),
+        },
+      })
+      return
+    }
+
     try {
       const response = await fetch(imageUrl)
       const blob = await response.blob()
@@ -584,9 +606,14 @@ export function AnimatedChainOfThought({
                                   e
                                 )}
                                 className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded transition-colors z-10"
-                                title="Download image"
+                                title={isGuest ? "Sign up to download" : "Download image"}
+                                aria-label={isGuest ? "Sign up to download" : "Download image"}
                               >
-                                <Download className="w-4 h-4" />
+                                {isGuest ? (
+                                  <Lock className="w-4 h-4" />
+                                ) : (
+                                  <Download className="w-4 h-4" />
+                                )}
                               </button>
                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
@@ -764,6 +791,47 @@ export function AnimatedChainOfThought({
                       </p>
                     </div>
                   </motion.div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Guest upsell — ROI is signed-in-only. Shown in place of the
+                full breakdown so the value is obvious without giving it away. */}
+            {isGuest && !roiAnalysis && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.4 }}
+                className="mt-4 md:mt-6 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 via-background to-background p-5"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                    <LineChart className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">
+                      Cost breakdown &amp; ROI estimate &mdash; for signed-in members
+                    </p>
+                    <p className="mt-1 text-xs md:text-sm text-muted-foreground">
+                      Sign up free to see the projected cost, payback timeline,
+                      and ROI for each generated theme alongside your designs.
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => router.push("/signup")}
+                      >
+                        Sign up &mdash; it&apos;s free
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => router.push("/login")}
+                      >
+                        I already have an account
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}

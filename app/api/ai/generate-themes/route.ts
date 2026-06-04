@@ -228,8 +228,11 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // ROI analysis after all themes complete.
-        if (results.length > 0 && formData) {
+        // ROI analysis after all themes complete. Skipped for guests — the
+        // cost breakdown is a signed-in benefit, and skipping saves the
+        // Gemini call cost for free-trial sessions. The client renders a
+        // "Sign up to see ROI" upsell card in its place.
+        if (!isGuest && results.length > 0 && formData) {
           try {
             send({ type: 'progress', step: 'Calculating ROI analysis…' });
             roiAnalysis = await generateROIAnalysis(

@@ -813,6 +813,7 @@ function DashboardContent() {
                   roiAnalysis={roiAnalysis}
                   designId={savedDesignId}
                   onRefineTheme={handleRefineTheme}
+                  isGuest={isGuest}
                 />
               )}
 
