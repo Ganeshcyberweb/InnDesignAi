@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { normalizeR2Url } from "@/lib/r2-storage"
 import { ImageLightbox } from "@/components/image-lightbox"
+import { FavoriteHeart } from "@/components/favorite-heart"
 import { toast } from "sonner"
 
 interface ChainOfThoughtItem {
@@ -426,6 +427,24 @@ export function AnimatedChainOfThought({
 
                     {generatedDesigns.map((design) => (
                       <TabsContent key={design.theme} value={design.theme}>
+                        {/* Theme toolbar — label + per-theme favourite. Only
+                            authed users (designId present) can save. */}
+                        {designId && (
+                          <div className="mb-3 flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-semibold">{design.label}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {design.images.length} view{design.images.length === 1 ? "" : "s"}
+                              </p>
+                            </div>
+                            <FavoriteHeart
+                              designId={designId}
+                              themeKey={design.theme}
+                              size="md"
+                            />
+                          </div>
+                        )}
+
                         {/* Image Grid - 2 views side by side */}
                         <motion.div
                           initial={{ opacity: 0, scale: 0.9 }}

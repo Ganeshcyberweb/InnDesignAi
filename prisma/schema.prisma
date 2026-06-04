@@ -58,6 +58,7 @@ model Design {
   roiNotes            String?        @map("roi_notes")
   roiPercentage       Float?         @map("roi_percentage")
   outputs             DesignOutput[]
+  favorites           DesignFavorite[]
   parentDesign        Design?        @relation("DesignRegeneration", fields: [parentId], references: [id])
   childDesigns        Design[]       @relation("DesignRegeneration")
   profile             Profile        @relation(fields: [userId], references: [userId], onDelete: Cascade)
@@ -67,6 +68,25 @@ model Design {
   @@index([status])
   @@index([userId])
   @@map("designs")
+}
+
+/// User-saved favourites at the THEME level — one row per
+/// (user, design, theme) tuple. A "theme" here is the high-level style
+/// produced during generation (modern / cozy / luxury), so favouriting it
+/// implicitly covers all of that theme's view outputs.
+model DesignFavorite {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  designId  String   @map("design_id") @db.Uuid
+  themeKey  String   @map("theme_key")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  design    Design   @relation(fields: [designId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, designId, themeKey])
+  @@index([userId])
+  @@index([designId])
+  @@map("design_favorites")
 }
 
 /// Anonymous "Continue as guest" sessions. Counts free-trial prompts so the

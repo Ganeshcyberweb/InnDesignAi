@@ -60,6 +60,11 @@ const data = {
           icon: RiHistoryLine,
           hasSubItems: true,
         },
+        {
+          title: "Favourites",
+          url: "/dashboard/favorites",
+          icon: RiHeartLine,
+        },
       ],
     },
     {
