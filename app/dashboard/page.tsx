@@ -21,6 +21,11 @@ import { base64ToFiles, filesToBase64 } from "@/lib/utils/design-persistence";
 import { useAuth } from "@/lib/auth/context";
 import { GuestPromptsBadge } from "@/components/auth/guest-prompts-badge";
 import { GuestLimitModal } from "@/components/auth/guest-limit-modal";
+import {
+  DesignRefinementCard,
+  type RefinementAnswers,
+  type RefinementQuestion,
+} from "@/components/design-refinement-card";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import { History, RefreshCw, X } from "lucide-react";
 
@@ -44,6 +49,14 @@ function DashboardContent() {
   const [savedDesignId, setSavedDesignId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
+
+  // Phase 6 — follow-back refinement step. When set, we pause between the
+  // user submitting their prompt and the actual /api/ai/generate-themes call
+  // to ask 1–2 quick chip questions that steer the result.
+  const [refinement, setRefinement] = useState<{
+    questions: RefinementQuestion[];
+    message: PromptInputMessage;
+  } | null>(null);
 
   // Regeneration state
   const [parentDesignId, setParentDesignId] = useState<string | null>(null);
@@ -230,6 +243,63 @@ function DashboardContent() {
       return;
     }
 
+    // Phase 6 — smart-intake refinement: ask 0–2 chip questions to fill in
+    // missing context (mood, budget) before generation. Cheap rule-based
+    // endpoint; doesn't count against the guest limit. Failures are silent —
+    // we just skip refinement and generate.
+    try {
+      const refineRes = await fetch('/api/ai/refine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ userPrompt: message.text, formData }),
+      });
+      if (refineRes.ok) {
+        const data = await refineRes.json();
+        if (data?.success && Array.isArray(data.questions) && data.questions.length > 0) {
+          // Pause for the chip questions; handleRefinementSubmit resumes.
+          setRefinement({ questions: data.questions, message });
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Refinement step failed, generating without it:', e);
+    }
+
+    await runGeneration(message);
+  };
+
+  const handleRefinementCancel = () => {
+    setRefinement(null);
+  };
+
+  const handleRefinementSubmit = async (answers: RefinementAnswers) => {
+    const message = refinement?.message;
+    setRefinement(null);
+    if (!message) return;
+
+    // Merge chip picks into both the form store (structured fields read by
+    // the API) and a short appended note (so the LLM "sees" them in the
+    // prompt body too).
+    const updates: Partial<typeof formData> = {};
+    if (answers.mood) updates.stylePreference = answers.mood;
+    if (answers.budget) updates.budgetRange = answers.budget;
+    if (Object.keys(updates).length > 0) updateFormData(updates);
+
+    const note = [
+      answers.mood ? `Mood: ${answers.mood}` : null,
+      answers.budget ? `Budget: ${answers.budget}` : null,
+    ]
+      .filter(Boolean)
+      .join('. ');
+    const enriched: PromptInputMessage = note
+      ? { ...message, text: `${(message.text ?? '').trim()}\n\n${note}.` }
+      : message;
+
+    await runGeneration(enriched);
+  };
+
+  const runGeneration = async (message: PromptInputMessage) => {
     setIsGenerating(true);
     setError(null); // Clear any previous errors
     setRoiAnalysis(null); // Clear any previous ROI analysis
@@ -299,12 +369,17 @@ function DashboardContent() {
         }),
       });
 
-      const result = await response.json();
+      // Early-gate failures (401 / 429) come back as a regular JSON payload;
+      // the streaming success path uses application/x-ndjson. Detect via
+      // content-type so we can handle either shape from the same call.
+      const contentType = response.headers.get('content-type') || '';
+      const isStream = contentType.includes('ndjson') && !!response.body;
 
-      if (!response.ok) {
-        // Server-side backstop: a guest hit the trial limit. Save the prompt
-        // for resume after auth and open the signup/login modal.
-        if (response.status === 429 && result.code === 'GUEST_LIMIT_REACHED') {
+      let result: any;
+
+      if (!isStream) {
+        const failure = await response.json().catch(() => ({}));
+        if (response.status === 429 && failure.code === 'GUEST_LIMIT_REACHED') {
           try {
             await savePendingFromMessage(message);
           } catch (e) {
@@ -314,14 +389,98 @@ function DashboardContent() {
           setIsGenerating(false);
           return;
         }
-        if (response.status === 429 && result.retryAfter) {
-          // Handle quota exceeded with retry suggestion
-          throw new Error(`${result.error} Please wait ${Math.ceil(result.retryAfter / 1000)} seconds before trying again.`);
+        if (response.status === 429 && failure.retryAfter) {
+          throw new Error(`${failure.error} Please wait ${Math.ceil(failure.retryAfter / 1000)} seconds before trying again.`);
         }
-        throw new Error(result.error || 'Failed to generate design');
+        throw new Error(failure.error || 'Failed to generate design');
       }
 
-      // Update the guest counter from the response when present.
+      // --- Streaming success path -------------------------------------------
+      // Read NDJSON events, accumulating into the same `result` shape the rest
+      // of the function expects. Themes update state as soon as they arrive so
+      // the dashboard renders them one-by-one (Phase 6 perceived-speed win).
+      const collected = {
+        themes: [] as ThemeDesign[],
+        roiAnalysis: '',
+        roiMetrics: {} as Record<string, unknown>,
+        metadata: null as null | {
+          totalImages: number;
+          totalDuration: number;
+          themesGenerated: number;
+          hasROIAnalysis: boolean;
+        },
+        guest: undefined as undefined | { promptLimit: number; promptsRemaining: number },
+        errorMessage: null as string | null,
+      };
+
+      // Start with an empty list so the results UI mounts and themes can pop
+      // in progressively instead of appearing all at once at the end.
+      setGeneratedDesigns([]);
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+          try {
+            const event = JSON.parse(trimmed);
+            switch (event.type) {
+              case 'progress':
+                console.log(`🤖 ${event.step}`);
+                break;
+              case 'theme':
+                collected.themes.push(event.theme);
+                setGeneratedDesigns([...collected.themes]);
+                break;
+              case 'roi':
+                collected.roiAnalysis = event.roiAnalysis;
+                collected.roiMetrics = event.roiMetrics;
+                setRoiAnalysis(event.roiAnalysis);
+                break;
+              case 'done':
+                collected.metadata = event.metadata;
+                collected.guest = event.guest;
+                break;
+              case 'error':
+                collected.errorMessage = event.error;
+                break;
+            }
+          } catch (parseErr) {
+            console.warn('Failed to parse stream line:', trimmed, parseErr);
+          }
+        }
+      }
+
+      if (collected.errorMessage) {
+        throw new Error(collected.errorMessage);
+      }
+      if (collected.themes.length === 0) {
+        throw new Error('No themes generated');
+      }
+
+      result = {
+        success: true,
+        themes: collected.themes,
+        roiAnalysis: collected.roiAnalysis,
+        roiMetrics: collected.roiMetrics,
+        metadata: collected.metadata || {
+          totalImages: collected.themes.reduce((a, r) => a + r.images.length, 0),
+          totalDuration: 0,
+          themesGenerated: collected.themes.length,
+          hasROIAnalysis: !!collected.roiAnalysis,
+        },
+        guest: collected.guest,
+      };
+
+      // Update the guest counter from the streamed `done` event when present.
       if (result.guest && typeof result.guest.promptsRemaining === 'number') {
         setGuestPromptsRemaining(result.guest.promptsRemaining);
       }
@@ -564,6 +723,15 @@ function DashboardContent() {
                     </div>
                   )}
                 </div>
+              )}
+
+              {refinement && !isGenerating && (
+                <DesignRefinementCard
+                  className="mb-6"
+                  questions={refinement.questions}
+                  onSubmit={handleRefinementSubmit}
+                  onCancel={handleRefinementCancel}
+                />
               )}
 
               {(isGenerating || generatedDesigns) && (

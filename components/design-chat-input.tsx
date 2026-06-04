@@ -364,6 +364,24 @@ function ExpandedChat({
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Escape") {
       closeChat()
+      return
+    }
+    // Chat-style submit: Enter alone submits the form; Shift+Enter inserts a
+    // newline. `isComposing` skips while IMEs (CJK input) are still building a
+    // character; modifier keys other than Shift also fall through to default.
+    if (
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      !e.altKey &&
+      !e.ctrlKey &&
+      !e.metaKey &&
+      !e.nativeEvent.isComposing
+    ) {
+      const form = e.currentTarget.closest("form")
+      if (form) {
+        e.preventDefault()
+        form.requestSubmit()
+      }
     }
   }
 

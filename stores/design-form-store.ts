@@ -32,12 +32,16 @@ interface DesignFormState {
   getSelectedItemsCount: () => number;
 }
 
+// NOTE: stylePreference and budgetRange are deliberately empty so the
+// Phase 6 refinement step (lib/api/ai/refine) can detect "user hasn't picked
+// these yet" and ask them via the chip card. Picking them in the settings
+// panel still works the same way — updateField fills them in.
 const initialFormData: DesignFormData = {
   prompt: "",
   roomType: "living_room",
   roomSize: "",
-  stylePreference: "modern",
-  budgetRange: "$1,000 - $5,000",
+  stylePreference: "",
+  budgetRange: "",
   colorPalette: "neutral",
   customColors: ["#000000", "#808080", "#ffffff"], // Default custom colors
   selectedFurnitureItems: [],

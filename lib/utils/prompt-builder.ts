@@ -67,8 +67,11 @@ export function buildDesignPrompt(formData: DesignFormData): string {
   // Room size guidance
   const sizeGuidance = roomSize ? `The space is approximately ${roomSize} square feet.` : '';
 
-  // Budget considerations
-  const budgetGuidance = `Budget range: ${budgetRange}. Design should reflect appropriate quality and materials for this budget level.`;
+  // Budget considerations — skipped when the user hasn't picked one so we
+  // don't emit a confusing empty "Budget range: ." line.
+  const budgetGuidance = budgetRange
+    ? `Budget range: ${budgetRange}. Design should reflect appropriate quality and materials for this budget level.`
+    : '';
 
   // Selected furniture integration
   let furnitureGuidance = '';
