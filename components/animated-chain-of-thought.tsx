@@ -845,6 +845,7 @@ export function AnimatedChainOfThought({
         open={lightboxOpen}
         index={lightboxIndex}
         onClose={() => setLightboxOpen(false)}
+        isGuest={isGuest}
       />
     </div>
   )
