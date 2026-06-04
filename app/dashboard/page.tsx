@@ -200,6 +200,76 @@ function DashboardContent() {
     }));
   };
 
+  /**
+   * Phase 7b — regenerate a single theme of the current saved design with the
+   * user's feedback. Reads the NDJSON stream from the regenerate-theme route
+   * and replaces that theme's images on `generatedDesigns` when the new URLs
+   * arrive. Throws on failure so the calling UI can show a toast.
+   */
+  const handleRefineTheme = async (themeKey: string, feedback: string): Promise<void> => {
+    if (!savedDesignId) {
+      throw new Error('Save the design before refining a theme');
+    }
+
+    const res = await fetch(`/api/designs/${savedDesignId}/regenerate-theme`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ themeKey, feedback }),
+    });
+
+    if (!res.ok || !res.body) {
+      const fallback = await res.json().catch(() => ({}));
+      throw new Error(fallback?.error || `Refine failed (${res.status})`);
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let finalImages: string[] | null = null;
+    let streamError: string | null = null;
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        try {
+          const event = JSON.parse(trimmed);
+          switch (event.type) {
+            case 'progress':
+              console.log(`🪄 ${event.step}`);
+              break;
+            case 'done':
+              finalImages = Array.isArray(event.images) ? event.images : null;
+              break;
+            case 'error':
+              streamError = event.error || 'Refine failed';
+              break;
+          }
+        } catch (parseErr) {
+          console.warn('Refine stream parse failed:', trimmed, parseErr);
+        }
+      }
+    }
+
+    if (streamError) throw new Error(streamError);
+    if (!finalImages || finalImages.length === 0) {
+      throw new Error('No images returned from refine');
+    }
+
+    // Replace the matching theme's images in-place.
+    setGeneratedDesigns((prev) =>
+      prev
+        ? prev.map((t) => (t.theme === themeKey ? { ...t, images: finalImages! } : t))
+        : prev
+    );
+  };
+
   const clearRegenerationContext = () => {
     setParentDesignId(null);
     setPreviousDesign(null);
@@ -742,6 +812,7 @@ function DashboardContent() {
                   generatedDesigns={generatedDesigns}
                   roiAnalysis={roiAnalysis}
                   designId={savedDesignId}
+                  onRefineTheme={handleRefineTheme}
                 />
               )}
 
