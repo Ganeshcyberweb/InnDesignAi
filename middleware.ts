@@ -57,6 +57,8 @@ const PUBLIC_API_ROUTES = [
   // Guest-trial endpoints: callable while logged out.
   '/api/guest/start',
   '/api/guest/me',
+  // Refinement question generator — rule-based, no DB writes, safe for all callers.
+  '/api/ai/refine',
 ]
 
 // API routes that work for BOTH authenticated users and guests with a valid
