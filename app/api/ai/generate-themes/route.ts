@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import googleAI, { dataUrlToPart, urlToPart, SYSTEM_INSTRUCTIONS } from "@/lib/gemini/ai";
-import { buildDesignPrompt } from "@/lib/utils/prompt-builder";
 import { Modality } from "@google/genai";
 import { generateROIAnalysis, parseROIMetrics } from "@/lib/roi/gemini-roi-analysis";
 import {
@@ -9,37 +8,7 @@ import {
   tryIncrementGuestPrompt,
 } from "@/lib/guest/session";
 import { trackAiGeneration, type AiGenerationStatus } from "@/lib/analytics/track";
-
-// Theme configurations
-const THEMES = [
-  {
-    theme: 'modern',
-    label: 'Modern Minimalist',
-    styleModifier: 'modern minimalist style with clean lines, neutral colors, and contemporary furniture'
-  },
-  {
-    theme: 'cozy',
-    label: 'Cozy Traditional',
-    styleModifier: 'cozy traditional style with warm colors, comfortable textiles, and classic furniture'
-  },
-  {
-    theme: 'luxury',
-    label: 'Luxury Contemporary',
-    styleModifier: 'luxury contemporary style with premium materials, elegant finishes, and high-end furniture'
-  }
-];
-
-// View configurations for each theme
-const VIEWS = [
-  {
-    angle: 'main',
-    description: 'Main view showing the full room layout from eye level'
-  },
-  {
-    angle: 'detail',
-    description: 'Detailed view focusing on key design elements and furniture arrangement'
-  }
-];
+import { THEMES, VIEWS, buildThemePrompt } from "@/lib/gemini/themes";
 
 /**
  * Streaming AI generation endpoint.
@@ -193,15 +162,19 @@ export async function POST(request: NextRequest) {
           const themeImages: string[] = [];
           for (const view of VIEWS) {
             try {
-              const basePrompt = formData
-                ? buildDesignPrompt({
-                    ...formData,
-                    prompt: userPrompt,
-                    selectedFurnitureItems: formData.selectedFurnitureItems || [],
-                  })
-                : userPrompt;
-
-              const themePrompt = `${basePrompt}\n\nSTYLE: ${theme.styleModifier}\nVIEW: ${view.description}`;
+              const themePrompt = buildThemePrompt(
+                {
+                  prompt: userPrompt,
+                  roomType: formData?.roomType,
+                  roomSize: formData?.roomSize,
+                  budgetRange: formData?.budgetRange,
+                  colorPalette: formData?.colorPalette,
+                  customColors: formData?.customColors,
+                  selectedFurnitureItems: formData?.selectedFurnitureItems || [],
+                },
+                theme,
+                view
+              );
 
               const response = await googleAI.models.generateContent({
                 model: 'gemini-2.5-flash-image',
