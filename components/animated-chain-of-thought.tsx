@@ -2,13 +2,16 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "motion/react"
-import { BrainIcon, Loader2, ChevronDownIcon, Download, Package } from "lucide-react"
+import { BrainIcon, Loader2, ChevronDownIcon, Download, Package, Wand2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { TextDotsLoader } from "@/components/ui/loader"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { normalizeR2Url } from "@/lib/r2-storage"
 import { ImageLightbox } from "@/components/image-lightbox"
+import { FavoriteHeart } from "@/components/favorite-heart"
 import { toast } from "sonner"
 
 interface ChainOfThoughtItem {
@@ -32,6 +35,12 @@ interface AnimatedChainOfThoughtProps {
   roiAnalysis?: string | null
   designId?: string | null
   onComplete?: () => void
+  /**
+   * Phase 7b — when provided, each theme tab gets a "Refine this" button +
+   * inline feedback input. Returns the new image URLs for the theme so this
+   * component can transition out of its busy state.
+   */
+  onRefineTheme?: (themeKey: string, feedback: string) => Promise<void> | void
 }
 
 // Predefined AI design process thoughts
@@ -60,8 +69,13 @@ export function AnimatedChainOfThought({
   generatedDesigns = null,
   roiAnalysis = null,
   designId = null,
-  onComplete
+  onComplete,
+  onRefineTheme,
 }: AnimatedChainOfThoughtProps) {
+  // Phase 7b — per-theme refinement state.
+  const [refineOpenFor, setRefineOpenFor] = useState<string | null>(null)
+  const [refineFeedback, setRefineFeedback] = useState("")
+  const [refiningThemeKey, setRefiningThemeKey] = useState<string | null>(null)
   const [thoughts, setThoughts] = useState<ChainOfThoughtItem[]>([])
   const [isExpanded, setIsExpanded] = useState(true)
   const [showDesigns, setShowDesigns] = useState(false)
@@ -426,13 +440,119 @@ export function AnimatedChainOfThought({
 
                     {generatedDesigns.map((design) => (
                       <TabsContent key={design.theme} value={design.theme}>
+                        {/* Theme toolbar — label + per-theme favourite + refine.
+                            Only authed users (designId present) can save / refine. */}
+                        {designId && (
+                          <div className="mb-3 flex items-center justify-between flex-wrap gap-2">
+                            <div>
+                              <p className="text-sm font-semibold">{design.label}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {design.images.length} view{design.images.length === 1 ? "" : "s"}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {onRefineTheme && (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={!!refiningThemeKey}
+                                  onClick={() => {
+                                    if (refineOpenFor === design.theme) {
+                                      setRefineOpenFor(null)
+                                      return
+                                    }
+                                    setRefineOpenFor(design.theme)
+                                    setRefineFeedback("")
+                                  }}
+                                >
+                                  <Wand2 className="mr-2 h-4 w-4" />
+                                  Refine this
+                                </Button>
+                              )}
+                              <FavoriteHeart
+                                designId={designId}
+                                themeKey={design.theme}
+                                size="md"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Inline feedback input (only for the theme whose
+                            "Refine this" was clicked). */}
+                        {onRefineTheme && refineOpenFor === design.theme && (
+                          <div className="mb-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
+                            <Label className="text-xs">
+                              Tell me what to change about <span className="font-medium">{design.label}</span>
+                            </Label>
+                            <Textarea
+                              value={refineFeedback}
+                              onChange={(e) => setRefineFeedback(e.target.value)}
+                              placeholder="e.g. make it warmer; swap the sofa for a sectional; add more plants; darker walls"
+                              rows={2}
+                              maxLength={500}
+                              className="mt-1 mb-2 resize-none bg-background"
+                              autoFocus
+                            />
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] text-muted-foreground">
+                                {refineFeedback.length} / 500
+                              </span>
+                              <div className="flex gap-2">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setRefineOpenFor(null)}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  disabled={!refineFeedback.trim() || !!refiningThemeKey}
+                                  onClick={async () => {
+                                    const fb = refineFeedback.trim()
+                                    if (!fb || !onRefineTheme) return
+                                    setRefineOpenFor(null)
+                                    setRefineFeedback("")
+                                    setRefiningThemeKey(design.theme)
+                                    try {
+                                      await onRefineTheme(design.theme, fb)
+                                      toast.success(`Refined ${design.label}`)
+                                    } catch (err) {
+                                      toast.error(
+                                        err instanceof Error ? err.message : "Couldn't refine — try again"
+                                      )
+                                    } finally {
+                                      setRefiningThemeKey(null)
+                                    }
+                                  }}
+                                >
+                                  <Wand2 className="mr-2 h-4 w-4" />
+                                  Refine
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         {/* Image Grid - 2 views side by side */}
                         <motion.div
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.4, delay: 0.2 }}
-                          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                          className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative"
                         >
+                          {refiningThemeKey === design.theme && (
+                            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
+                              <div className="flex items-center gap-2 rounded-full bg-background px-3 py-1.5 border shadow-sm">
+                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                <span className="text-sm font-medium">Refining {design.label}…</span>
+                              </div>
+                            </div>
+                          )}
                           {design.images.map((imageUrl, index) => (
                             <div
                               key={index}
