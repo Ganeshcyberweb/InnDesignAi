@@ -3,7 +3,8 @@
 import { useState } from "react"
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
-import { Download } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Download, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 
@@ -16,12 +17,28 @@ interface ImageLightboxProps {
   open: boolean
   index: number
   onClose: () => void
+  /**
+   * Phase 7c — when true, the toolbar Download button becomes a Lock and
+   * clicks open a sign-up upsell toast instead of saving the file.
+   */
+  isGuest?: boolean
 }
 
-export function ImageLightbox({ images, open, index, onClose }: ImageLightboxProps) {
+export function ImageLightbox({ images, open, index, onClose, isGuest = false }: ImageLightboxProps) {
   const [downloading, setDownloading] = useState(false)
+  const router = useRouter()
 
   const handleDownload = async (imageUrl: string, imageName?: string) => {
+    if (isGuest) {
+      toast.message("Sign up to download high-res images", {
+        description: "Create a free account to save the images you love.",
+        action: {
+          label: "Sign up",
+          onClick: () => router.push("/signup"),
+        },
+      })
+      return
+    }
     try {
       setDownloading(true)
 
@@ -87,6 +104,8 @@ export function ImageLightbox({ images, open, index, onClose }: ImageLightboxPro
             variant="ghost"
             size="icon"
             className="text-white hover:bg-white/20"
+            title={isGuest ? "Sign up to download" : "Download image"}
+            aria-label={isGuest ? "Sign up to download" : "Download image"}
             onClick={() => {
               const currentImage = images[index]
               if (currentImage) {
@@ -98,7 +117,11 @@ export function ImageLightbox({ images, open, index, onClose }: ImageLightboxPro
             }}
             disabled={downloading}
           >
-            <Download className="w-5 h-5" />
+            {isGuest ? (
+              <Lock className="w-5 h-5" />
+            ) : (
+              <Download className="w-5 h-5" />
+            )}
           </Button>,
           "close",
         ],

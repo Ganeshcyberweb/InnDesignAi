@@ -18,6 +18,7 @@ import { useDesignHistoryStore } from "@/stores/design-history-store";
 import { usePendingDesignStore } from "@/stores/pending-design-store";
 import { useBatchImageUpload } from "@/hooks/use-batch-image-upload";
 import { base64ToFiles, filesToBase64 } from "@/lib/utils/design-persistence";
+import { detectRoomTypeFromPrompt } from "@/lib/utils/prompt-detection";
 import { useAuth } from "@/lib/auth/context";
 import { GuestPromptsBadge } from "@/components/auth/guest-prompts-badge";
 import { GuestLimitModal } from "@/components/auth/guest-limit-modal";
@@ -636,12 +637,20 @@ function DashboardContent() {
 
           console.log('✅ All images mapped successfully');
 
+          // Mirror the server-side override so the saved design's roomType
+          // reflects what was actually rendered (e.g. "kitchen" from the
+          // prompt) instead of the chip's leftover default.
+          const detectedRoomType = detectRoomTypeFromPrompt(message.text);
+          const effectiveFormData = detectedRoomType
+            ? { ...formData, roomType: detectedRoomType }
+            : formData;
+
           const savePayload = {
             inputPrompt: message.text,
             uploadedImageUrl: imageFiles[0]?.url || null,
             aiModelUsed: 'gemini-2.5-flash-image',
             themes: themesWithR2Urls,
-            formData: formData,
+            formData: effectiveFormData,
             parentDesignId: parentDesignId, // Include for regeneration chain
             roiAnalysis: result.roiAnalysis || null, // Include ROI analysis for storage
           };
@@ -813,6 +822,7 @@ function DashboardContent() {
                   roiAnalysis={roiAnalysis}
                   designId={savedDesignId}
                   onRefineTheme={handleRefineTheme}
+                  isGuest={isGuest}
                 />
               )}
 
