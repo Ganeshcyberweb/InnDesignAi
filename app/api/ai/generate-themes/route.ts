@@ -9,6 +9,7 @@ import {
 } from "@/lib/guest/session";
 import { trackAiGeneration, type AiGenerationStatus } from "@/lib/analytics/track";
 import { THEMES, VIEWS, buildThemePrompt } from "@/lib/gemini/themes";
+import { detectRoomTypeFromPrompt } from "@/lib/utils/prompt-detection";
 
 /**
  * Streaming AI generation endpoint.
@@ -155,6 +156,17 @@ export async function POST(request: NextRequest) {
 
         const allImageParts = [...uploadedImageParts, ...furnitureImageParts];
 
+        // The chat input takes priority over any leftover form-store room
+        // selection — if the user typed "design a kitchen" we shouldn't keep
+        // generating living rooms because the chip was never touched.
+        const detectedRoomType = detectRoomTypeFromPrompt(userPrompt);
+        const effectiveRoomType = detectedRoomType ?? formData?.roomType;
+        if (detectedRoomType && detectedRoomType !== formData?.roomType) {
+          console.log(
+            `📐 Room type override: prompt says "${detectedRoomType}", form had "${formData?.roomType ?? '(none)'}"`
+          );
+        }
+
         // Generate themes — emit each completed theme as it finishes.
         for (const theme of THEMES) {
           send({ type: 'progress', step: `Generating ${theme.label}…` });
@@ -165,7 +177,7 @@ export async function POST(request: NextRequest) {
               const themePrompt = buildThemePrompt(
                 {
                   prompt: userPrompt,
-                  roomType: formData?.roomType,
+                  roomType: effectiveRoomType,
                   roomSize: formData?.roomSize,
                   budgetRange: formData?.budgetRange,
                   colorPalette: formData?.colorPalette,
