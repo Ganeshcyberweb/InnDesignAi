@@ -1,0 +1,54 @@
+# Pings the Supabase Postgres database daily so the free-tier project doesn't
+# auto-pause after ~7 days of inactivity. Reads the connection string from a
+# repository secret (SUPABASE_DB_URL) and runs a trivial SELECT NOW() query.
+#
+# Setup (one-time):
+#   1. In GitHub, go to Settings → Secrets and variables → Actions.
+#   2. Click "New repository secret".
+#   3. Name: SUPABASE_DB_URL
+#      Value: your DIRECT_URL from .env (session-mode pooler, port 5432).
+#      Paste it exactly — the runner passes it through as-is, so any '$' in
+#      the password is safe.
+#   4. Save. This workflow will start firing on the next scheduled run.
+#
+# You can also trigger it manually from the Actions tab (workflow_dispatch)
+# after a manual resume to confirm the ping works.
+
+name: Keep Supabase warm
+
+on:
+  schedule:
+    # Runs daily at 03:17 UTC (~08:47 IST). The odd minute avoids the top-of-
+    # hour crush on GitHub Actions runners, which can delay scheduled jobs.
+    - cron: "17 3 * * *"
+  workflow_dispatch: {}
+
+# One concurrent run is plenty; skip newer triggers if an older one is still going.
+concurrency:
+  group: keep-supabase-warm
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify secret is present
+        env:
+          URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$URL" ]; then
+            echo "::error::SUPABASE_DB_URL secret is missing. See the comment at the top of this workflow file."
+            exit 1
+          fi
+
+      - name: Ping the database
+        env:
+          # psql picks these up automatically.
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PGCONNECT_TIMEOUT: "15"
+        run: |
+          # Runs a single, cheap query and exits. Any connection failure fails
+          # the workflow so you get a notification email from GitHub.
+          psql "$SUPABASE_DB_URL" -X -A -t -c "SELECT NOW() AS pinged_at, current_database() AS db;"
+          echo "Database pinged successfully at $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
