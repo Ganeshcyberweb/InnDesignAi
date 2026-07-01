@@ -5,25 +5,25 @@
 # Setup (one-time):
 #   1. In GitHub, go to Settings → Secrets and variables → Actions.
 #   2. Click "New repository secret".
-#   3. Name: SUPABASE_DB_URL
+#   3. Name:  SUPABASE_DB_URL
 #      Value: your DIRECT_URL from .env (session-mode pooler, port 5432).
-#      Paste it exactly — the runner passes it through as-is, so any '$' in
-#      the password is safe.
+#             Should look like:
+#               postgresql://postgres.<ref>:<password>@aws-...:5432/postgres
+#             Percent-encode any special chars in the password (e.g. `$` -> `%24`).
 #   4. Save. This workflow will start firing on the next scheduled run.
 #
-# You can also trigger it manually from the Actions tab (workflow_dispatch)
-# after a manual resume to confirm the ping works.
+# Trigger it manually from the Actions tab (workflow_dispatch) after saving
+# the secret to confirm the ping works.
 
 name: Keep Supabase warm
 
 on:
   schedule:
-    # Runs daily at 03:17 UTC (~08:47 IST). The odd minute avoids the top-of-
-    # hour crush on GitHub Actions runners, which can delay scheduled jobs.
+    # Daily at 03:17 UTC (~08:47 IST). The odd minute avoids the top-of-hour
+    # crush on GitHub Actions schedulers.
     - cron: "17 3 * * *"
   workflow_dispatch: {}
 
-# One concurrent run is plenty; skip newer triggers if an older one is still going.
 concurrency:
   group: keep-supabase-warm
   cancel-in-progress: false
@@ -33,22 +33,56 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Verify secret is present
+      - name: Inspect secret (host + length only — password NEVER logged)
         env:
           URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           if [ -z "$URL" ]; then
-            echo "::error::SUPABASE_DB_URL secret is missing. See the comment at the top of this workflow file."
+            echo "::error::SUPABASE_DB_URL secret is missing. Add it under Settings → Secrets and variables → Actions."
             exit 1
           fi
+          # Mask user:password before any logging.
+          masked="$(printf '%s' "$URL" | sed -E 's|://[^@]+@|://***:***@|')"
+          echo "Length : ${#URL} chars"
+          echo "URL    : $masked"
+          # Sanity check for the two most common paste mistakes.
+          case "$URL" in
+            postgres://*|postgresql://*) : ;;
+            *) echo "::warning::URL doesn't start with postgres:// or postgresql://. Copy-paste probably went wrong." ;;
+          esac
+          if printf '%s' "$URL" | grep -q '[[:space:]]$'; then
+            echo "::warning::URL has trailing whitespace — this often breaks psql. Re-save the secret without a newline at the end."
+          fi
+
+      - name: Install psql (fallback if not preinstalled)
+        run: |
+          if ! command -v psql >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends postgresql-client
+          fi
+          psql --version
 
       - name: Ping the database
         env:
-          # psql picks these up automatically.
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-          PGCONNECT_TIMEOUT: "15"
+          PGCONNECT_TIMEOUT: "20"
+          # Force SSL — Supabase requires it and this avoids ambiguity.
+          PGSSLMODE: require
         run: |
-          # Runs a single, cheap query and exits. Any connection failure fails
-          # the workflow so you get a notification email from GitHub.
-          psql "$SUPABASE_DB_URL" -X -A -t -c "SELECT NOW() AS pinged_at, current_database() AS db;"
-          echo "Database pinged successfully at $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          set -o pipefail
+          if psql "$SUPABASE_DB_URL" -X -A -t \
+              -c "SELECT NOW() AS pinged_at, current_database() AS db;" 2>&1 | tee /tmp/psql.log; then
+            echo "Database pinged successfully at $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          else
+            code=$?
+            echo "::error::psql exited with code $code"
+            echo "----- last lines of psql output -----"
+            tail -n 20 /tmp/psql.log
+            echo "-------------------------------------"
+            echo "Common causes:"
+            echo "  • Wrong URL — did you paste DATABASE_URL (port 6543) instead of DIRECT_URL (port 5432)?"
+            echo "  • Password not URL-encoded — '\$' must be '%24', '@' must be '%40', etc."
+            echo "  • Trailing newline in the secret value."
+            echo "  • Supabase project paused right now — resume it and re-run."
+            exit "$code"
+          fi
