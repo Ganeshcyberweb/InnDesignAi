@@ -39,20 +39,40 @@ jobs:
         run: |
           if [ -z "$URL" ]; then
             echo "::error::SUPABASE_DB_URL secret is missing. Add it under Settings → Secrets and variables → Actions."
+            {
+              echo "### ❌ Secret missing"
+              echo ""
+              echo "The \`SUPABASE_DB_URL\` repository secret is not set."
+            } >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
           # Mask user:password before any logging.
           masked="$(printf '%s' "$URL" | sed -E 's|://[^@]+@|://***:***@|')"
-          echo "Length : ${#URL} chars"
+          len=${#URL}
+          scheme_ok="yes"
+          case "$URL" in postgres://*|postgresql://*) ;; *) scheme_ok="no" ;; esac
+          trailing_ws="no"
+          if printf '%s' "$URL" | grep -q '[[:space:]]$'; then trailing_ws="yes"; fi
+          # Extract host:port fragment (never touches user:password).
+          hostport="$(printf '%s' "$URL" | sed -E 's|.*://[^@]+@||; s|/.*||')"
+
+          echo "Length : $len chars"
           echo "URL    : $masked"
-          # Sanity check for the two most common paste mistakes.
-          case "$URL" in
-            postgres://*|postgresql://*) : ;;
-            *) echo "::warning::URL doesn't start with postgres:// or postgresql://. Copy-paste probably went wrong." ;;
-          esac
-          if printf '%s' "$URL" | grep -q '[[:space:]]$'; then
-            echo "::warning::URL has trailing whitespace — this often breaks psql. Re-save the secret without a newline at the end."
-          fi
+          echo "Scheme OK : $scheme_ok"
+          echo "Trailing whitespace : $trailing_ws"
+          echo "Host:port : $hostport"
+
+          {
+            echo "### 🔎 Secret inspection"
+            echo ""
+            echo "| Check | Value |"
+            echo "|---|---|"
+            echo "| URL length | $len chars |"
+            echo "| Masked URL | \`$masked\` |"
+            echo "| Host:port  | \`$hostport\` |"
+            echo "| Scheme is postgres:// or postgresql:// | $scheme_ok |"
+            echo "| Trailing whitespace / newline | $trailing_ws |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Install psql (fallback if not preinstalled)
         run: |
@@ -73,16 +93,34 @@ jobs:
           if psql "$SUPABASE_DB_URL" -X -A -t \
               -c "SELECT NOW() AS pinged_at, current_database() AS db;" 2>&1 | tee /tmp/psql.log; then
             echo "Database pinged successfully at $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+            {
+              echo ""
+              echo "### ✅ Ping succeeded"
+              echo ""
+              echo '```'
+              cat /tmp/psql.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
           else
             code=$?
             echo "::error::psql exited with code $code"
             echo "----- last lines of psql output -----"
             tail -n 20 /tmp/psql.log
             echo "-------------------------------------"
-            echo "Common causes:"
-            echo "  • Wrong URL — did you paste DATABASE_URL (port 6543) instead of DIRECT_URL (port 5432)?"
-            echo "  • Password not URL-encoded — '\$' must be '%24', '@' must be '%40', etc."
-            echo "  • Trailing newline in the secret value."
-            echo "  • Supabase project paused right now — resume it and re-run."
+            {
+              echo ""
+              echo "### ❌ Ping failed (psql exit $code)"
+              echo ""
+              echo "**psql output:**"
+              echo '```'
+              tail -n 30 /tmp/psql.log
+              echo '```'
+              echo ""
+              echo "**Most likely causes:**"
+              echo "- Wrong URL — did you paste \`DATABASE_URL\` (port 6543) instead of \`DIRECT_URL\` (port 5432)?"
+              echo "- Password not URL-encoded — \`\$\` must be \`%24\`, \`@\` must be \`%40\`, etc."
+              echo "- Trailing newline in the secret value."
+              echo "- Supabase project paused right now — resume it and re-run."
+            } >> "$GITHUB_STEP_SUMMARY"
             exit "$code"
           fi
