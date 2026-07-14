@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
 import {
@@ -9,6 +10,12 @@ import UserDropdown from "@/components/user-dropdown"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { getAdminActor } from "@/lib/admin/guard"
 import { formatRole } from "@/lib/auth/roles"
+
+export const metadata: Metadata = {
+  title: "Admin",
+  description: "InnDesign admin console — users, reports, and audit log.",
+  robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+}
 
 /**
  * Server-side gate for the whole /admin area. Middleware already protects

@@ -91,6 +91,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Skip middleware for Next.js SEO file-convention routes — these are crawler
+  // assets and must be reachable without auth. Match with startsWith because
+  // Next.js appends a cache-busting query segment (e.g. /opengraph-image/<hash>).
+  if (
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/manifest.webmanifest' ||
+    pathname.startsWith('/opengraph-image') ||
+    pathname.startsWith('/twitter-image') ||
+    pathname.startsWith('/icon') ||
+    pathname.startsWith('/apple-icon')
+  ) {
+    return NextResponse.next()
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,

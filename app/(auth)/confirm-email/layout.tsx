@@ -1,8 +1,8 @@
-import { Metadata } from 'next'
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: 'Confirm Email | InnDesign',
-  description: 'Confirm your email address to activate your InnDesign account.',
+  title: "Confirm Email",
+  description: "Confirm your email address to activate your InnDesign account.",
 }
 
 export default function ConfirmEmailLayout({
